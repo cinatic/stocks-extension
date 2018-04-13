@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extension-stocks">
+    <enum id="org.gnome.shell.extensions.stocks.position">
+        <value value="0" nick="center"/>
+        <value value="1" nick="right"/>
+        <value value="2" nick="left"/>
+    </enum>
+    <enum id="org.gnome.shell.extensions.stocks.displaytype">
+        <value value="0" nick="icon-and-text"/>
+        <value value="1" nick="icon-only"/>
+        <value value="2" nick="text-only"/>
+    </enum>
+    <schema path="/org/gnome/shell/extensions/stocks/" id="org.gnome.shell.extensions.stocks">
+        <key name="position-in-panel" enum="org.gnome.shell.extensions.stocks.position">
+            <default>'center'</default>
+            <summary>Position in Panel</summary>
+        </key>
+        <key name="display-type" enum="org.gnome.shell.extensions.stocks.displaytype">
+            <default>'icon-and-text'</default>
+            <summary>Display Type in Panel</summary>
+        </key>
+        <key name="use-alternative-theme" type="b">
+            <default>false</default>
+            <summary>Use alternative theme</summary>
+        </key>
+        <key type="s" name="whaaat">
+            <default>''</default>
+            <summary>asd</summary>
+        </key>
+        <key type="s" name="symbol-pairs">
+            <default>'Xetra Alibaba-§§-ETR:AHLA'</default>
+            <summary>A google stock symbol definitions e.g. ETR:AHLA</summary>
+        </key>
+        <key type="s" name="symbol-previous-quotes">
+            <default>''</default>
+            <summary>JSON representation of symbol data</summary>
+        </key>
+        <key type="s" name="symbol-current-quotes">
+            <default>''</default>
+            <summary>JSON representation of symbol data</summary>
+        </key>
+    </schema>
+</schemalist>
