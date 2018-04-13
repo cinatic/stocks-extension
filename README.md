@@ -1,7 +1,7 @@
 # stocks-extension
 A extension to display stock quotes in GNOME Shell Panel
 
-![Screenshot](https://github.com/cinatic/taskwhisperer/raw/master/images/menu.png)
+![Screenshot](https://github.com/cinatic/stocks-extension/raw/master/images/extension.png)
 
 *stocks-extension* integrates stock quotes to your GNOME Shell Panel =)
 
@@ -27,11 +27,14 @@ To add stocks you need a google symbol-exchange pair. Search for stocks on googl
 2. Click on the + icon on the bottom of the first tab
 3. Enter the symbol-exchange pair (e.g. ETR: XONA) and give it a name
 
+![Screenshot](https://github.com/cinatic/stocks-extension/raw/master/images/settings.png)
+
 ## ToDo
 1. Keep older Quotes in case no new quoates are available
 2. Add exchange information & currency data
-3. Add Watchlist functionality
-4. Add new alternate services for data
+3. Avoid complete Rerender on Quote update
+4. Add Watchlist functionality
+5. Add new alternate services for data
 
 
 ## Troubleshooting
