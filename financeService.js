@@ -32,7 +32,6 @@ const Me = ExtensionUtils.getCurrentExtension();
 const EXTENSIONDIR = Me.dir.get_path();
 
 const Convenience = Me.imports.convenience;
-const SpawnReader = Me.imports.spawnReader;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Soup = imports.gi.Soup;
@@ -45,11 +44,11 @@ const SortOrder = {
 
 const CLOSE_VALUE_RE = /pcls:([0-9\,\.]*)/;
 const FALLBACK_CLOSE_VALUE_RE = /Previous<br>close<br>([0-9,]*)/;
-const PREVIOUS_CLOSE_URL = 'https://www.google.com/search?hl=en&gl=en';
+const PREVIOUS_CLOSE_URL = 'https://www.google.com/search?hl=en&gl=en&tbm=fin';
 const LAST_QUOTE_URL = 'https://finance.google.com/finance/getprices?hl=en&gl=en';
 
 const _httpSession = new Soup.Session();
-_httpSession.user_agent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
+_httpSession.user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36";
 _httpSession.timeout = 10;
 
 
@@ -75,6 +74,37 @@ const Quote = new Lang.Class({
 
 const FinanceService = new Lang.Class({
     Name: "FinanceService",
+    loadPreviousCloseFromPriceData: function (symbol, onComplete) {
+        if (!symbol) {
+            return;
+        }
+
+        const symbolData = symbol.split(":");
+        if (!symbolData || !symbolData.length === 2) {
+            return;
+        }
+
+        const message = Soup.Message.new('GET', LAST_QUOTE_URL + "&i=25&p=3d" + "&q=" + symbolData[1].toUpperCase() + "&x=" + symbolData[0].toUpperCase());
+
+        _httpSession.queue_message(message, Lang.bind(this, function (_httpSession, message) {
+            if (!message.response_body.data) {
+                onComplete.call(this, symbol, null);
+                return;
+            }
+
+            let quoteData;
+            try {
+                quoteData = this._getPreviousCloseQuote(message.response_body.data, new Date());
+            } catch (e) {
+            }
+
+            const quote = new Quote(symbol, quoteData);
+
+            if (quote && quote.Close) {
+                onComplete.call(this, symbol, quote.Close);
+            }
+        }));
+    },
     /**
      * Loads the data from big g with interval 30s and period 3600s
      * @param symbol googles exchange/symbol pair (e.g. ETR:AHLA, NYSE:DIS, TYO:7974)
@@ -144,7 +174,7 @@ const FinanceService = new Lang.Class({
             let matches = CLOSE_VALUE_RE.exec(html);
             closeValue = parseFloat(matches[1].replace(",", ""));
 
-            if(!closeValue){
+            if (!closeValue) {
                 matches = FALLBACK_CLOSE_VALUE_RE.ex.exec(html);
                 closeValue = parseFloat(matches[1].replace(",", "."));
             }
@@ -195,15 +225,74 @@ const FinanceService = new Lang.Class({
             [intervalCount, close, high, low, open, volume] = row.split(",");
         }
 
-        print(intervalCount);
-
         if (intervalCount && interval) {
-            print("yoooo");
             referenceTimestamp += (parseInt(intervalCount) * interval);
         }
 
-        print(intervalCount);
-
         return [referenceTimestamp, parseFloat(close.replace(",", "")), parseFloat(open.replace(",", "")), parseFloat(high.replace(",", "")), parseFloat(low.replace(",", "")), parseInt(volume.replace(",", ""))];
+    },
+
+
+    /**
+     * Load most recent quote from previous bank day
+     * @param content content big g's finance data
+     * @param currentDate current bank day
+     * @returns undefined|{*[]} most recent quote as object
+     * @private
+     */
+    _getPreviousCloseQuote: function (content, currentDate) {
+        if (!content || !currentDate) {
+            return;
+        }
+
+        let timestamp, close, high, low, open, volume = null;
+
+        let interval = null;
+        let intervalCount = null;
+        let previousData = null;
+
+        const dataRows = content.split('\n');
+        const currentDay = [currentDate.getDate(), currentDate.getMonth() + 1, currentDate.getFullYear()].join('');
+
+        for (let i = 0; i < dataRows.length; i++) {
+            const row = dataRows[i];
+
+            if (!row) {
+                continue;
+            }
+
+            if (row.startsWith("INTERVAL")) {
+                interval = parseInt(row.replace("INTERVAL=", ""));
+                continue;
+            }
+
+            if (row.startsWith("a")) {
+                [timestamp, close, high, low, open, volume] = row.split(",");
+                timestamp = parseInt(timestamp.replace("a", ""));
+            } else {
+                [intervalCount, close, high, low, open, volume] = row.split(",");
+                intervalCount = parseInt(intervalCount);
+            }
+
+            if (!timestamp) {
+                continue;
+            }
+
+            if (intervalCount) {
+                timestamp = timestamp + (intervalCount * interval);
+            }
+
+            const rowDate = new Date(timestamp * 1000);
+
+            if ([rowDate.getDate(), rowDate.getMonth() + 1, rowDate.getFullYear()].join('') === currentDay) {
+                break;
+            }
+
+            previousData = [timestamp, close, high, low, open, volume];
+        }
+
+        [timestamp, close, high, low, open, volume] = previousData;
+
+        return [timestamp, parseFloat(close.replace(",", "")), parseFloat(open.replace(",", "")), parseFloat(high.replace(",", "")), parseFloat(low.replace(",", "")), parseInt(volume.replace(",", ""))];
     }
 });

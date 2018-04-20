@@ -378,7 +378,7 @@ const PrefsWidget = new GObject.Class({
      */
     saveSymbol: function () {
         let name = this.newName.get_text();
-        let symbol = this.newSymbol.get_text();
+        let symbol = this.newSymbol.get_text().replace(/ /g, '');
 
         // append new item and write it to config
         this.symbolPairs = this.symbolPairs ? this.symbolPairs + "-&&-" + name + "-§§-" + symbol : name + "-§§-" + symbol;
@@ -407,7 +407,7 @@ const PrefsWidget = new GObject.Class({
         }
 
         // set new data and write it to config
-        values[selectionIndex] = this.editName.get_text() + "-§§-" + this.editSymbol.get_text();
+        values[selectionIndex] = this.editName.get_text() + "-§§-" + this.editSymbol.get_text().replace(/ /g, '');
         this.symbolPairs = values.join("-&&-");
 
         this.editWidget.hide();

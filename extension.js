@@ -229,6 +229,9 @@ const ScrollBox = new Lang.Class({
     },
 
     addGridItem: function (quote) {
+        if (!quote) {
+            return;
+        }
 
         const description = quote.Name;
 
@@ -414,14 +417,12 @@ const ScrollBox = new Lang.Class({
         print(JSON.stringify(currentQuotes));
         print(JSON.stringify(previousQuotes));
 
-        print("WHAT 1");
-
         this.menu._symbol_pairs.split("-&&-").forEach(symbolPair => {
             const [name, symbol] = symbolPair.split("-§§-");
             const previousQuote = previousQuotes[symbol];
-            let quote = currentQuotes[symbol];
+            let quote = currentQuotes[symbol] || Quote();
 
-            quote.Name = name;
+            quote.Name = name.toString();
 
             //TODO: previous close only when timestamp is from today
             if (previousQuote) {
@@ -440,10 +441,6 @@ const ScrollBox = new Lang.Class({
         let now = new Date().getTime() / 1000;
         if (refreshCache || !_cacheExpirationTime || _cacheExpirationTime < now) {
             _cacheExpirationTime = now + _cacheDurationInSeconds;
-
-            // reset data
-            // this.menu._symbol_current_quotes = "";
-            // this.menu._symbol_previous_quotes = "";
 
             const currentQuotes = JSON.parse(this.menu._symbol_current_quotes || '{}');
             const previousQuotes = JSON.parse(this.menu._symbol_previous_quotes || '{}');
@@ -470,7 +467,7 @@ const ScrollBox = new Lang.Class({
                 }
 
                 if (!previousQuote || refreshPreviousQuote) {
-                    this.menu.service.loadPreviousCloseAsync(symbol, Lang.bind(this, function (symbol, price) {
+                    this.menu.service.loadPreviousCloseFromPriceData(symbol, Lang.bind(this, function (symbol, price) {
                         previousQuotes[symbol] = [price, Convenience.getDayTimeStamp()];
                         this.menu._symbol_previous_quotes = JSON.stringify(previousQuotes);
                     }));
@@ -555,6 +552,10 @@ const StocksMenuButton = new Lang.Class({
 
         // Load settings
         this.loadSettings();
+
+        // reset data
+        // this._symbol_current_quotes = "";
+        // this._symbol_previous_quotes = "";
 
         // Label
         this.globalStockNameLabel = new St.Label({
