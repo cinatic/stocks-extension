@@ -1,6 +1,6 @@
 const Gtk = imports.gi.Gtk;
 const GObject = imports.gi.GObject;
-const Gettext = imports.gettext.domain('gnome-shell-extension-stocks');
+const Gettext = imports.gettext.domain('stocks@infinicode.de');
 const _ = Gettext.gettext;
 const Soup = imports.gi.Soup;
 

@@ -80,7 +80,7 @@ const FinanceService = new Lang.Class({
         }
 
         const symbolData = symbol.split(":");
-        if (!symbolData || !symbolData.length === 2) {
+        if (!symbolData || symbolData.length < 2) {
             return;
         }
 
@@ -116,7 +116,8 @@ const FinanceService = new Lang.Class({
         }
 
         const symbolData = symbol.split(":");
-        if (!symbolData || !symbolData.length === 2) {
+
+        if (!symbolData || symbolData.length < 2) {
             return;
         }
 

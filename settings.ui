@@ -44,7 +44,7 @@
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="hexpand">True</property>
-                        <property name="label" translatable="yes">Create name</property>
+                        <property name="label" translatable="yes">Name</property>
                         <property name="ellipsize">end</property>
                     </object>
                     <packing>
@@ -76,7 +76,7 @@
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="hexpand">True</property>
-                        <property name="label" translatable="yes">Edit Google Symbol</property>
+                        <property name="label" translatable="yes">Google Symbol</property>
                     </object>
                     <packing>
                         <property name="expand">False</property>
@@ -410,7 +410,7 @@
                             <object class="GtkLabel" id="symbols-label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Locations</property>
+                                <property name="label" translatable="yes">Symbols</property>
                             </object>
                             <packing>
                                 <property name="tab_fill">False</property>
@@ -527,7 +527,7 @@
                                     <object class="GtkLabel" id="extension-label">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label">&lt;b&gt;Taskwhisperer&lt;/b&gt;</property>
+                                        <property name="label">&lt;b&gt;Stocks-Extension&lt;/b&gt;</property>
                                         <property name="use_markup">True</property>
                                     </object>
                                     <packing>
@@ -546,7 +546,7 @@
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Version:</property>
+                                                <property name="label" translatable="yes">Version: </property>
                                                 <property name="track_visited_links">False</property>
                                             </object>
                                             <packing>
@@ -580,7 +580,7 @@
                                     <object class="GtkLabel" id="description-label">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">&lt;span&gt;Taskwhisperer is a extension for TaskWarrior Application &lt;a href="https://taskwarrior.org"&gt;https://taskwarrior.org&lt;/a&gt;. It is to display upcoming tasks and task details as well as to create and modify them.&lt;/span&gt;</property>
+                                        <property name="label" translatable="yes">&lt;span&gt;Stocks-Extension is an extension to display and observe Stock quotes in GNOME Shell Panel&lt;/span&gt;</property>
                                         <property name="use_markup">True</property>
                                         <property name="justify">center</property>
                                         <property name="wrap">True</property>
@@ -633,7 +633,7 @@
                                 </child>
                                 <child>
                                     <object class="GtkLinkButton" id="github-link">
-                                        <property name="label" translatable="no">https://github.com/cinatic/taskwhisperer</property>
+                                        <property name="label" translatable="no">https://github.com/cinatic/stocks-extension</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
@@ -641,7 +641,7 @@
                                         <property name="opacity">0.99999999977648257</property>
                                         <property name="halign">center</property>
                                         <property name="relief">none</property>
-                                        <property name="uri">https://github.com/cinatic/taskwhisperer</property>
+                                        <property name="uri">https://github.com/cinatic/stocks-extension</property>
                                     </object>
                                     <packing>
                                         <property name="expand">False</property>
@@ -654,12 +654,13 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="valign">end</property>
-                                        <property name="label" translatable="yes">&lt;span size="small"&gt;This program comes with ABSOLUTELY NO WARRANTY.
-                                            See the &lt;a href="https://www.gnu.org/licenses/gpl"&gt;GNU General Public License, version 3 or later&lt;/a&gt; for details.&lt;/span&gt;
+                                        <property name="label" translatable="yes">&lt;span size="small"&gt;This program comes with ABSOLUTELY NO WARRANTY. See the &lt;a href="https://www.gnu.org/licenses/gpl"&gt;GNU General Public License, version 3 or later&lt;/a&gt; for details.&lt;/span&gt;
                                         </property>
                                         <property name="use_markup">True</property>
                                         <property name="justify">center</property>
                                         <property name="wrap">True</property>
+                                        <property name="wrap_mode">word-char</property>
+                                        <property name="max_width_chars">1</property>
                                     </object>
                                     <packing>
                                         <property name="expand">True</property>

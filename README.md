@@ -7,6 +7,9 @@ A extension to display stock quotes in GNOME Shell Panel
 
 The data is fetched is currently only fetched from big g's [finance service](https://finance.google.com)
 
+> The 'Previous Close' Price is not correct because it is the last quote is the last price we get from previous day from google
+> Let me know if someone has a better solution for this!
+
 ----
 
 ## Installation
@@ -32,7 +35,7 @@ To add stocks you need a google symbol-exchange pair. Search for stocks on googl
 ## ToDo
 1. Keep older Quotes in case no new quoates are available
 2. Add exchange information & currency data
-3. Avoid complete Rerender on Quote update
+3. ~~Avoid complete Rerender on Quote update~~
 4. Add Watchlist functionality
 5. Add new alternate services for data
 

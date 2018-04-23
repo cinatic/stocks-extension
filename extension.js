@@ -29,29 +29,24 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const UiHelper = Me.imports.uiHelper;
-const Dialogs = Me.imports.dialogs;
 const financeService = Me.imports.financeService;
 const Prefs = Me.imports.prefs;
 const FinanceService = financeService.FinanceService;
 
 const Config = imports.misc.config;
 const Clutter = imports.gi.Clutter;
-const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
-const Shell = imports.gi.Shell;
-const ShellEntry = imports.ui.shellEntry;
 const Pango = imports.gi.Pango;
 const St = imports.gi.St;
 const Util = imports.misc.util;
 
-const Gettext = imports.gettext.domain('gnome-shell-extension-stocks');
+const Gettext = imports.gettext.domain('stocks@infinicode.de');
 const _ = Gettext.gettext;
 const ngettext = Gettext.ngettext;
 
 const Main = imports.ui.main;
-const ModalDialog = imports.ui.modalDialog;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
@@ -71,6 +66,8 @@ const DisplayType = {
     ICON: 1,
     TEXT: 2
 };
+
+const symbolControlMapping = {};
 
 let _cacheExpirationTime;
 const _cacheDurationInSeconds = 900;
@@ -225,7 +222,6 @@ const ScrollBox = new Lang.Class({
         this.reloadTaskData(true);
 
         this.renderRows();
-
     },
 
     addGridItem: function (quote) {
@@ -253,6 +249,10 @@ const ScrollBox = new Lang.Class({
             formattedDate = Convenience.formatDate(new Date(quote.Timestamp * 1000), N_("H:N:S D.M.Y"));
         }
 
+        let closeRowBox, closeRowValueLabel, changeRowBox, changeRowValueLabel,
+            previousCloseRowValueLabel, openRowValueLabel, lowRowValueLabel, highRowValueLabel,
+            volumeRowValueLabel, timestampRowValueLabel;
+
         const gridMenu = new PopupMenu.PopupSubMenuMenuItem(description, true);
 
         // Label
@@ -276,38 +276,8 @@ const ScrollBox = new Lang.Class({
         _quoteInformationBox.add(_quoteLabel, {expand: true, x_fill: true, x_align: St.Align.MIDDLE});
         _quoteInformationBox.add(_quoteInformationLabel, {expand: true, x_fill: true, x_align: St.Align.MIDDLE});
 
-        // let iconName = this.menu._use_alternative_theme ? "task_done_dark" : "task_done_white";
-        // let changeButton = UiHelper.createActionButton(iconName, "hatt2", "rowMenuIconButton", Lang.bind(this, function () {
-        //     this.emit('setDone', task);
-        // }));
         gridMenu.actor.insert_child_at_index(_quoteInformationBox, 4);
-
-        // if (!task.IsCompleted) {
-        //     let iconName = this.menu._use_alternative_theme ? "task_done_dark" : "task_done_white";
-        //     let changeButton = UiHelper.createActionButton(iconName, "hatt2", "rowMenuIconButton", Lang.bind(this, function () {
-        //         this.emit('setDone', task);
-        //     }));
-        //     gridMenu.actor.insert_child_at_index(changeButton, 4);
-        // }
-        // else {
-        //     let iconName = this.menu._use_alternative_theme ? "in_progress_dark" : "in_progress";
-        //     let changeButton = UiHelper.createActionButton(iconName, "hatt2", "rowMenuIconButton", Lang.bind(this, function () {
-        //         this.emit('setUndone', task);
-        //     }));
-        //     gridMenu.actor.insert_child_at_index(changeButton, 4);
-        // }
-
-        // if (task.Started) {
-        //     gridMenu.actor.add_style_class_name("activeTask");
-        //     let icon = new St.Icon();
-        //     icon.icon_name = 'in_progress';
-        //     icon.add_style_class_name("progressIcon");
-        //     icon.set_icon_size(19);
-        //     gridMenu.actor.insert_child_at_index(icon, 1);
-        // }
-        // else {
         gridMenu.actor.add_style_class_name("taskGrid");
-        // }
 
         gridMenu.menu.box.add_style_class_name("taskGridInner");
         gridMenu.menu._needsScrollbar = function () {
@@ -318,46 +288,68 @@ const ScrollBox = new Lang.Class({
             _quoteInformationLabel.text = formattedDate;
         }
 
-        this._appendDataRow(gridMenu, _("Symbol:"), quote.Symbol);
+        if (quote.Symbol) {
+            this._appendDataRow(gridMenu, _("Symbol:"), quote.Symbol);
+        }
 
         if (quote.Close) {
             const close = Convenience.round(quote.Close, 2).toString();
-            this._appendDataRow(gridMenu, _("Close:"), close, additionalRowClass);
+            [closeRowBox, , closeRowValueLabel] = this._appendDataRow(gridMenu, _("Close:"), close, additionalRowClass);
             _quoteLabel.text = close;
         }
 
         if (quote.PreviousClose) {
-            this._appendDataRow(gridMenu, _("Previous Close:"), Convenience.round(quote.PreviousClose, 2).toString());
+            [, , previousCloseRowValueLabel] = this._appendDataRow(gridMenu, _("Previous Close:"), Convenience.round(quote.PreviousClose, 2).toString());
         }
 
         if (rawChangeValue != null) {
             const formattedChange = (Convenience.round(rawChangeValue, 2)) + " %";
-            this._appendDataRow(gridMenu, _("Change:"), formattedChange, additionalRowClass);
+            [changeRowBox, , changeRowValueLabel] = this._appendDataRow(gridMenu, _("Change:"), formattedChange, additionalRowClass);
             _quoteLabel.text += " (" + formattedChange + ")";
         }
 
         if (quote.Open) {
-            this._appendDataRow(gridMenu, _("Open:"), Convenience.round(quote.Open, 2).toString());
+            [, , openRowValueLabel] = this._appendDataRow(gridMenu, _("Open:"), Convenience.round(quote.Open, 2).toString());
         }
 
         if (quote.Low) {
-            this._appendDataRow(gridMenu, _("Low:"), Convenience.round(quote.Low, 2).toString());
+            [, , lowRowValueLabel] = this._appendDataRow(gridMenu, _("Low:"), Convenience.round(quote.Low, 2).toString());
         }
 
         if (quote.High) {
-            this._appendDataRow(gridMenu, _("High:"), Convenience.round(quote.High, 2).toString());
+            [, , highRowValueLabel] = this._appendDataRow(gridMenu, _("High:"), Convenience.round(quote.High, 2).toString());
         }
 
         if (quote.Volume) {
-            this._appendDataRow(gridMenu, _("Volume:"), quote.Volume.toString());
+            [, , volumeRowValueLabel] = this._appendDataRow(gridMenu, _("Volume:"), quote.Volume.toString());
             _quoteInformationLabel.text = quote.Volume + " | " + _quoteInformationLabel.text;
         }
 
         if (formattedDate) {
-            this._appendDataRow(gridMenu, _("Timestamp:"), formattedDate);
+            [, , timestampRowValueLabel] = this._appendDataRow(gridMenu, _("Timestamp:"), formattedDate);
         }
 
+        symbolControlMapping[quote.Symbol] = {
+            'QuoteBox': _quoteInformationBox,
+            'QuoteLabel': _quoteLabel,
+            'QuoteInfoLabel': _quoteInformationLabel,
+            'PreviousCloseRowValueLabel': previousCloseRowValueLabel,
+            'CloseRowBox': closeRowBox,
+            'CloseRowValueLabel': closeRowValueLabel,
+            'ChangeRowBox': changeRowBox,
+            'ChangeRowValueLabel': changeRowValueLabel,
+            'OpenRowValueLabel': openRowValueLabel,
+            'LowRowValueLabel': lowRowValueLabel,
+            'HighRowValueLabel': highRowValueLabel,
+            'VolumeRowValueLabel': volumeRowValueLabel,
+            'TimestampRowValueLabel': timestampRowValueLabel
+        };
+
         this.addMenuItem(gridMenu);
+    },
+
+    _setOpenedSubMenu: function () {
+
     },
 
     _appendDataRow: function (gridMenu, title, value, classes) {
@@ -391,6 +383,8 @@ const ScrollBox = new Lang.Class({
         }
 
         gridMenu.menu.addMenuItem(rowMenuItem);
+
+        return [taskDataRow, titleLabel, valueLabel];
     },
 
     _destroyItems: function () {
@@ -414,26 +408,26 @@ const ScrollBox = new Lang.Class({
         const currentQuotes = JSON.parse(this.menu._symbol_current_quotes || '{}');
         const previousQuotes = JSON.parse(this.menu._symbol_previous_quotes || '{}');
 
-        print(JSON.stringify(currentQuotes));
-        print(JSON.stringify(previousQuotes));
+        // print(JSON.stringify(currentQuotes));
+        // print(JSON.stringify(previousQuotes));
 
-        this.menu._symbol_pairs.split("-&&-").forEach(symbolPair => {
-            const [name, symbol] = symbolPair.split("-§§-");
-            const previousQuote = previousQuotes[symbol];
-            let quote = currentQuotes[symbol] || Quote();
+        if (this.menu._symbol_pairs) {
+            this.menu._symbol_pairs.split("-&&-").forEach(symbolPair => {
+                const [name, symbol] = symbolPair.split("-§§-");
+                const previousQuote = previousQuotes[symbol];
+                let quote = currentQuotes[symbol] || new financeService.Quote();
 
-            quote.Name = name.toString();
+                quote.Name = name.toString();
 
-            //TODO: previous close only when timestamp is from today
-            if (previousQuote) {
-                quote.PreviousClose = previousQuote[0];
-            }
+                //TODO: previous close only when timestamp is from today
+                if (previousQuote) {
+                    quote.PreviousClose = previousQuote[0];
+                }
 
-            this.addGridItem(quote);
-        });
-
-        if (!this.box.get_children().length) {
-            this.showTextBox(_("No Tasks to show! \n\n Add some more tasks or change filter settings."), "noTasks");
+                this.addGridItem(quote);
+            });
+        } else {
+            this.showTextBox(_("No Data to show!\n\nAdd some symbols via settings."), "noTasks");
         }
     },
 
@@ -445,8 +439,8 @@ const ScrollBox = new Lang.Class({
             const currentQuotes = JSON.parse(this.menu._symbol_current_quotes || '{}');
             const previousQuotes = JSON.parse(this.menu._symbol_previous_quotes || '{}');
 
-            print(JSON.stringify(currentQuotes));
-            print(JSON.stringify(previousQuotes));
+            // print(JSON.stringify(currentQuotes));
+            // print(JSON.stringify(previousQuotes));
 
             this.menu._symbol_pairs.split("-&&-").forEach(symbolPair => {
                 const [name, symbol] = symbolPair.split("-§§-");
@@ -470,14 +464,95 @@ const ScrollBox = new Lang.Class({
                     this.menu.service.loadPreviousCloseFromPriceData(symbol, Lang.bind(this, function (symbol, price) {
                         previousQuotes[symbol] = [price, Convenience.getDayTimeStamp()];
                         this.menu._symbol_previous_quotes = JSON.stringify(previousQuotes);
+                        this.setNewQuoteValues(symbol, currentQuotes[symbol], price);
                     }));
                 }
 
                 this.menu.service.loadLastQuoteAsync(symbol, Lang.bind(this, function (quote) {
                     currentQuotes[symbol] = quote;
                     this.menu._symbol_current_quotes = JSON.stringify(currentQuotes);
+                    this.setNewQuoteValues(symbol, quote, previousQuotes[symbol]);
                 }));
             });
+        }
+    },
+    setNewQuoteValues: function (symbol, quote, previousQuote) {
+        if (!quote) {
+            return;
+        }
+
+        const todayStamp = Convenience.getDayTimeStamp();
+
+        if (previousQuote && todayStamp == previousQuote[1]) {
+            quote.PreviousClose = previousQuote[0];
+        }
+
+        const elementsData = symbolControlMapping[symbol];
+
+        if (!elementsData) {
+            return;
+        }
+
+        let rawChangeValue = null;
+        let additionalRowClass = "";
+        let formattedDate = null;
+
+        if (quote.PreviousClose && quote.Close) {
+            rawChangeValue = ((quote.Close / quote.PreviousClose) * 100) - 100;
+        }
+
+        if (rawChangeValue > 0) {
+            additionalRowClass = "positiv";
+        } else if (rawChangeValue < 0) {
+            additionalRowClass = "negative";
+        }
+
+        if (quote.Timestamp) {
+            formattedDate = Convenience.formatDate(new Date(quote.Timestamp * 1000), N_("H:N:S D.M.Y"));
+        }
+
+        if (formattedDate) {
+            elementsData.QuoteInfoLabel.text = formattedDate;
+        }
+
+        if (quote.Close) {
+            const close = Convenience.round(quote.Close, 2).toString();
+
+            elementsData.CloseRowBox.style_class = "stockDataRow " + additionalRowClass;
+            elementsData.CloseRowValueLabel.text = close;
+            elementsData.QuoteLabel.text = close;
+        }
+
+        if (quote.PreviousClose) {
+            elementsData.PreviousCloseRowValueLabel.text = Convenience.round(quote.PreviousClose, 2).toString();
+        }
+
+        if (rawChangeValue != null) {
+            const formattedChange = (Convenience.round(rawChangeValue, 2)) + " %";
+            elementsData.ChangeRowValueLabel.text = formattedChange;
+            elementsData.ChangeRowBox.style_class = "stockDataRow " + additionalRowClass;
+            elementsData.QuoteLabel.text += " (" + formattedChange + ")";
+        }
+
+        if (quote.Open) {
+            elementsData.OpenRowValueLabel.text = Convenience.round(quote.Open, 2).toString();
+        }
+
+        if (quote.Low) {
+            elementsData.LowRowValueLabel.text = Convenience.round(quote.Low, 2).toString();
+        }
+
+        if (quote.High) {
+            elementsData.HighRowValueLabel.text = Convenience.round(quote.High, 2).toString();
+        }
+
+        if (quote.Volume) {
+            elementsData.VolumeRowValueLabel.text = quote.Volume.toString();
+            elementsData.QuoteInfoLabel.text = quote.Volume + " | " + elementsData.QuoteInfoLabel.text;
+        }
+
+        if (formattedDate) {
+            elementsData.TimestampRowValueLabel.text = formattedDate;
         }
     },
     showTextBox: function (message, classes) {
@@ -635,6 +710,9 @@ const StocksMenuButton = new Lang.Class({
         }));
 
         const section = new PopupMenu.PopupMenuSection();
+        section._setOpenedSubMenu = function () {
+
+        };
         this.menu.addMenuItem(section);
 
         section.actor.add_actor(this.quoteBox.actor);
@@ -709,15 +787,13 @@ const StocksMenuButton = new Lang.Class({
     loadSettings: function () {
         this._settings = Convenience.getSettings(STOCKS_SETTINGS_SCHEMA);
 
-        this._settingsC = this._settings.connect("changed", Lang.bind(this, function () {
-
-            print("WHHAAAT 33");
+        this._settingsC = this._settings.connect("changed", Lang.bind(this, function (settingObject, changedKey) {
             this.checkPositionInPanel();
-            print("WHHAAAT 44");
             this.checkPanelControls();
-            print("WHHAAAT 55");
-            this.quoteBox.renderRows();
-            print("WHHAAAT 66");
+
+            if (changedKey == "symbol-pairs") {
+                this.quoteBox.renderRows();
+            }
         }));
     },
 

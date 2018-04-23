@@ -23,10 +23,6 @@
             <default>false</default>
             <summary>Use alternative theme</summary>
         </key>
-        <key type="s" name="whaaat">
-            <default>''</default>
-            <summary>asd</summary>
-        </key>
         <key type="s" name="symbol-pairs">
             <default>'Xetra Alibaba-§§-ETR:AHLA'</default>
             <summary>A google stock symbol definitions e.g. ETR:AHLA</summary>
