@@ -1,6 +1,6 @@
 const Gtk = imports.gi.Gtk;
 const GObject = imports.gi.GObject;
-const Gettext = imports.gettext.domain('stocks@infinicode.de');
+const Gettext = imports.gettext.domain('gnome-shell-extension-stocks');
 const _ = Gettext.gettext;
 const Soup = imports.gi.Soup;
 
@@ -83,6 +83,30 @@ const PrefsWidget = new GObject.Class({
         if (!this.Settings)
             this.loadConfig();
         this.Settings.set_string(STOCKS_SYMBOL_PAIRS, v);
+    },
+
+    get current_quotes() {
+        if (!this.Settings)
+            this.loadConfig();
+        return this.Settings.get_string(STOCKS_SYMBOL_CURRENT_QUOTES);
+    },
+
+    set current_quotes(v) {
+        if (!this.Settings)
+            this.loadConfig();
+        return this.Settings.set_string(STOCKS_SYMBOL_CURRENT_QUOTES, v);
+    },
+
+    get previous_quotes() {
+        if (!this.Settings)
+            this.loadConfig();
+        return this.Settings.get_string(STOCKS_SYMBOL_PREVIOUS_QUOTES);
+    },
+
+    set previous_quotes(v) {
+        if (!this.Settings)
+            this.loadConfig();
+        return this.Settings.set_string(STOCKS_SYMBOL_PREVIOUS_QUOTES, v);
     },
 
     get splittedSymbolPairs() {
@@ -434,7 +458,7 @@ const PrefsWidget = new GObject.Class({
         }
 
         // show confirm dialog
-        let name = selectedValue.split("-§§-")[0];
+        let [name, symbol] = selectedValue.split("-§§-");
 
         let textDialog = _("Remove %s ?").format(name);
         let dialog = new Gtk.Dialog({
@@ -462,6 +486,15 @@ const PrefsWidget = new GObject.Class({
         dialog_area.pack_start(label, 0, 0, 0);
         dialog.connect("response", Lang.bind(this, function (w, response_id) {
             if (response_id) {
+                const currentQuotes = JSON.parse(this.current_quotes || '{}');
+                const previousQuotes = JSON.parse(this.previous_quotes || '{}');
+
+                delete currentQuotes[symbol];
+                delete previousQuotes[symbol];
+
+                this.current_quotes = JSON.stringify(currentQuotes);
+                this.previous_quotes = JSON.stringify(previousQuotes);
+
                 // remove entry and write to config
                 values.splice(selectionIndex, 1);
                 this.symbolPairs = values.join("-&&-");

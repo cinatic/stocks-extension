@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-23 13:40+0200\n"
+"POT-Creation-Date: 2018-04-24 11:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: extension.js:249 extension.js:511
+#: extension.js:249 extension.js:525
 msgid "H:N:S D.M.Y"
 msgstr ""
 
@@ -25,58 +25,58 @@ msgstr ""
 msgid "n/a"
 msgstr ""
 
-#: extension.js:292
+#: extension.js:291
 msgid "Symbol:"
 msgstr ""
 
-#: extension.js:297
+#: extension.js:295 extension.js:298
 msgid "Close:"
 msgstr ""
 
-#: extension.js:302
+#: extension.js:302 extension.js:304
 msgid "Previous Close:"
 msgstr ""
 
-#: extension.js:307
+#: extension.js:309 extension.js:312
 msgid "Change:"
 msgstr ""
 
-#: extension.js:312
+#: extension.js:316 extension.js:318
 msgid "Open:"
 msgstr ""
 
-#: extension.js:316
+#: extension.js:322 extension.js:324
 msgid "Low:"
 msgstr ""
 
-#: extension.js:320
+#: extension.js:328 extension.js:330
 msgid "High:"
 msgstr ""
 
-#: extension.js:324
+#: extension.js:334 extension.js:337
 msgid "Volume:"
 msgstr ""
 
-#: extension.js:329
+#: extension.js:341 extension.js:343
 msgid "Timestamp:"
 msgstr ""
 
-#: extension.js:430
+#: extension.js:444
 msgid ""
 "No Data to show!\n"
 "\n"
 "Add some symbols via settings."
 msgstr ""
 
-#: extension.js:638
+#: extension.js:653
 msgid "No Data"
 msgstr ""
 
-#: extension.js:643
+#: extension.js:658
 msgid "…"
 msgstr ""
 
-#: settings.ui:47 prefs.js:268
+#: settings.ui:47 prefs.js:292
 msgid "Name"
 msgstr ""
 
@@ -84,7 +84,7 @@ msgstr ""
 msgid "Clear entry"
 msgstr ""
 
-#: settings.ui:79 prefs.js:279
+#: settings.ui:79 prefs.js:303
 msgid "Google Symbol"
 msgstr ""
 
@@ -162,7 +162,7 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: prefs.js:439
+#: prefs.js:463
 #, javascript-format
 msgid "Remove %s ?"
 msgstr ""

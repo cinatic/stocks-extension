@@ -42,7 +42,7 @@ const Pango = imports.gi.Pango;
 const St = imports.gi.St;
 const Util = imports.misc.util;
 
-const Gettext = imports.gettext.domain('stocks@infinicode.de');
+const Gettext = imports.gettext.domain('gnome-shell-extension-stocks');
 const _ = Gettext.gettext;
 const ngettext = Gettext.ngettext;
 
@@ -288,45 +288,59 @@ const ScrollBox = new Lang.Class({
             _quoteInformationLabel.text = formattedDate;
         }
 
-        if (quote.Symbol) {
-            this._appendDataRow(gridMenu, _("Symbol:"), quote.Symbol);
-        }
+        this._appendDataRow(gridMenu, _("Symbol:"), quote.Symbol || "-");
 
         if (quote.Close) {
             const close = Convenience.round(quote.Close, 2).toString();
             [closeRowBox, , closeRowValueLabel] = this._appendDataRow(gridMenu, _("Close:"), close, additionalRowClass);
             _quoteLabel.text = close;
+        } else {
+            [closeRowBox, , closeRowValueLabel] = this._appendDataRow(gridMenu, _("Close:"), "-");
         }
 
         if (quote.PreviousClose) {
             [, , previousCloseRowValueLabel] = this._appendDataRow(gridMenu, _("Previous Close:"), Convenience.round(quote.PreviousClose, 2).toString());
+        } else {
+            [, , previousCloseRowValueLabel] = this._appendDataRow(gridMenu, _("Previous Close:"), "-");
         }
 
         if (rawChangeValue != null) {
             const formattedChange = (Convenience.round(rawChangeValue, 2)) + " %";
             [changeRowBox, , changeRowValueLabel] = this._appendDataRow(gridMenu, _("Change:"), formattedChange, additionalRowClass);
             _quoteLabel.text += " (" + formattedChange + ")";
+        } else {
+            [changeRowBox, , changeRowValueLabel] = this._appendDataRow(gridMenu, _("Change:"), "-");
         }
 
         if (quote.Open) {
             [, , openRowValueLabel] = this._appendDataRow(gridMenu, _("Open:"), Convenience.round(quote.Open, 2).toString());
+        } else {
+            [, , openRowValueLabel] = this._appendDataRow(gridMenu, _("Open:"), "-");
         }
 
         if (quote.Low) {
             [, , lowRowValueLabel] = this._appendDataRow(gridMenu, _("Low:"), Convenience.round(quote.Low, 2).toString());
+        } else {
+            [, , lowRowValueLabel] = this._appendDataRow(gridMenu, _("Low:"), "-");
         }
 
         if (quote.High) {
             [, , highRowValueLabel] = this._appendDataRow(gridMenu, _("High:"), Convenience.round(quote.High, 2).toString());
+        } else {
+            [, , highRowValueLabel] = this._appendDataRow(gridMenu, _("High:"), "-");
         }
 
         if (quote.Volume) {
             [, , volumeRowValueLabel] = this._appendDataRow(gridMenu, _("Volume:"), quote.Volume.toString());
             _quoteInformationLabel.text = quote.Volume + " | " + _quoteInformationLabel.text;
+        } else {
+            [, , volumeRowValueLabel] = this._appendDataRow(gridMenu, _("Volume:"), "-");
         }
 
         if (formattedDate) {
             [, , timestampRowValueLabel] = this._appendDataRow(gridMenu, _("Timestamp:"), formattedDate);
+        } else {
+            [, , timestampRowValueLabel] = this._appendDataRow(gridMenu, _("Timestamp:"), "-");
         }
 
         symbolControlMapping[quote.Symbol] = {
@@ -349,7 +363,6 @@ const ScrollBox = new Lang.Class({
     },
 
     _setOpenedSubMenu: function () {
-
     },
 
     _appendDataRow: function (gridMenu, title, value, classes) {
@@ -418,6 +431,7 @@ const ScrollBox = new Lang.Class({
                 let quote = currentQuotes[symbol] || new financeService.Quote();
 
                 quote.Name = name.toString();
+                quote.Symbol = symbol.toString();
 
                 //TODO: previous close only when timestamp is from today
                 if (previousQuote) {
@@ -431,7 +445,7 @@ const ScrollBox = new Lang.Class({
         }
     },
 
-    reloadTaskData: function (refreshCache, afterReloadCallback) {
+    reloadTaskData: function (refreshCache) {
         let now = new Date().getTime() / 1000;
         if (refreshCache || !_cacheExpirationTime || _cacheExpirationTime < now) {
             _cacheExpirationTime = now + _cacheDurationInSeconds;
@@ -518,6 +532,7 @@ const ScrollBox = new Lang.Class({
         if (quote.Close) {
             const close = Convenience.round(quote.Close, 2).toString();
 
+            elementsData.QuoteBox.style_class = "quoteInformationBox " + additionalRowClass;
             elementsData.CloseRowBox.style_class = "stockDataRow " + additionalRowClass;
             elementsData.CloseRowValueLabel.text = close;
             elementsData.QuoteLabel.text = close;
@@ -629,8 +644,8 @@ const StocksMenuButton = new Lang.Class({
         this.loadSettings();
 
         // reset data
-        // this._symbol_current_quotes = "";
-        // this._symbol_previous_quotes = "";
+        //this._symbol_current_quotes = "";
+        //this._symbol_previous_quotes = "";
 
         // Label
         this.globalStockNameLabel = new St.Label({
@@ -793,6 +808,7 @@ const StocksMenuButton = new Lang.Class({
 
             if (changedKey == "symbol-pairs") {
                 this.quoteBox.renderRows();
+                this.quoteBox.reloadTaskData(true);
             }
         }));
     },
@@ -827,9 +843,10 @@ const StocksMenuButton = new Lang.Class({
         if (this._toggleDisplayTimeout) {
             Mainloop.source_remove(this._toggleDisplayTimeout);
             this._toggleDisplayTimeout = undefined;
+        } else {
+            this.refreshGlobalPanelLabels();
         }
 
-        this.refreshGlobalPanelLabels();
         this._toggleDisplayTimeout = Mainloop.timeout_add_seconds(10, Lang.bind(this, function () {
                 this.refreshGlobalPanelLabels();
 
@@ -898,6 +915,8 @@ const StocksMenuButton = new Lang.Class({
                 this._panelButtonLabelBox.style_class = "globalLabelBox positiv";
             } else if (rawChangeValue < 0) {
                 this._panelButtonLabelBox.style_class = "globalLabelBox negative";
+            } else {
+                this._panelButtonLabelBox.style_class = "globalLabelBox";
             }
         }
     },
