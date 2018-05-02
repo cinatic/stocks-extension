@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schemalist gettext-domain="gnome-shell-extension-stocks">
+<schemalist gettext-domain="stocks@infinicode.de">
     <enum id="org.gnome.shell.extensions.stocks.position">
         <value value="0" nick="center"/>
         <value value="1" nick="right"/>

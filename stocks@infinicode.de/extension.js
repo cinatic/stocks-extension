@@ -42,7 +42,7 @@ const Pango = imports.gi.Pango;
 const St = imports.gi.St;
 const Util = imports.misc.util;
 
-const Gettext = imports.gettext.domain('gnome-shell-extension-stocks');
+const Gettext = imports.gettext.domain('stocks@infinicode.de');
 const _ = Gettext.gettext;
 const ngettext = Gettext.ngettext;
 
@@ -716,6 +716,7 @@ const StocksMenuButton = new Lang.Class({
         this.quoteBox = new ScrollBox(this, "");
         this._renderPanelMenuHeaderBox();
 
+        this.actor.connect('button-press-event', Lang.bind(this, this._showNextStockInPanel));
         this.menu.connect('open-state-changed', Lang.bind(this, function (menu, isOpen) {
             _isOpen = isOpen;
 
@@ -820,6 +821,18 @@ const StocksMenuButton = new Lang.Class({
 
     useGoogleFinanceService: function () {
         this.service = new FinanceService();
+    },
+
+    // show next stock in panel
+    _showNextStockInPanel: function(actor, event) {
+        // left click === 1, middle click === 2, right click === 3
+        const buttonID = event.get_button();
+
+        if (buttonID=== 2 || buttonID === 3) {
+            this.menu.close();
+            this.refreshGlobalPanelLabels();
+            this.setToggleDisplayTimeout();
+        }
     },
 
     setRefreshTaskDataTimeout: function () {
@@ -934,7 +947,7 @@ const StocksMenuButton = new Lang.Class({
 let stocksMenu;
 
 function init(extensionMeta) {
-    Convenience.initTranslations('gnome-shell-extension-stocks');
+    Convenience.initTranslations('stocks@infinicode.de');
     let theme = imports.gi.Gtk.IconTheme.get_default();
     theme.append_search_path(extensionMeta.path + "/icons");
 }
