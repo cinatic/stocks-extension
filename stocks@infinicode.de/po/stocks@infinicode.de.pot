@@ -1,22 +1,21 @@
-# German translations for PACKAGE package
-# German translation for PACKAGE.
-# Copyright (C) 2018 THE PACKAGE'S COPYRIGHT HOLDER
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#  <fh@infinicode.de>, 2018.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-01-15 13:18+0100\n"
-"PO-Revision-Date: 2018-04-23 13:18+0200\n"
-"Last-Translator:  <fh@infinicode.de>\n"
-"Language-Team: German\n"
-"Language: de\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: extension.js:249 extension.js:491
 msgid "H:N:S D.M.Y"
@@ -36,27 +35,27 @@ msgstr ""
 
 #: extension.js:302 extension.js:304
 msgid "Previous Close:"
-msgstr "Vortageskurs:"
+msgstr ""
 
 #: extension.js:309 extension.js:312
 msgid "Change:"
-msgstr "Veränderung:"
+msgstr ""
 
 #: extension.js:316 extension.js:318
 msgid "Open:"
-msgstr "Eröffnung:"
+msgstr ""
 
 #: extension.js:322 extension.js:324
 msgid "Low:"
-msgstr "Tief:"
+msgstr ""
 
 #: extension.js:328 extension.js:330
 msgid "High:"
-msgstr "Hoch:"
+msgstr ""
 
 #: extension.js:334 extension.js:337
 msgid "Volume:"
-msgstr "Volumen:"
+msgstr ""
 
 #: extension.js:341 extension.js:343
 msgid "Timestamp:"
@@ -68,9 +67,6 @@ msgid ""
 "\n"
 "Add some symbols via settings."
 msgstr ""
-"Nichts zum Anzeigen da!\n"
-"\n"
-"Füg über die Einstellungen neue Symbole hinzu."
 
 #: extension.js:619
 msgid "No Data"
@@ -86,52 +82,51 @@ msgstr ""
 
 #: settings.ui:65 settings.ui:95 settings.ui:204 settings.ui:234
 msgid "Clear entry"
-msgstr "Feld leeren"
+msgstr ""
 
 #: settings.ui:79
-#, fuzzy
 msgid "Yahoo Symbol"
-msgstr "Google Symbol editieren"
+msgstr ""
 
 #: settings.ui:125 settings.ui:264
 msgid "Cancel"
-msgstr "Abbrechen"
+msgstr ""
 
 #: settings.ui:143 settings.ui:282
 msgid "Save"
-msgstr "Speichern"
+msgstr ""
 
 #: settings.ui:186
 msgid "Edit name"
-msgstr "Name editieren"
+msgstr ""
 
 #: settings.ui:218
 msgid "Edit Google Symbol"
-msgstr "Google Symbol editieren"
+msgstr ""
 
 #: settings.ui:413
 msgid "Symbols"
-msgstr "Symbole"
+msgstr ""
 
 #: settings.ui:435
 msgid "Position in Panel"
-msgstr "Position im Panel"
+msgstr ""
 
 #: settings.ui:450
 msgid "Center"
-msgstr "Zentriert"
+msgstr ""
 
 #: settings.ui:451
 msgid "Right"
-msgstr "Rechts"
+msgstr ""
 
 #: settings.ui:452
 msgid "Left"
-msgstr "Links"
+msgstr ""
 
 #: settings.ui:467
 msgid "Use alternative Theme"
-msgstr "Alternatives Theme verwenden"
+msgstr ""
 
 #: settings.ui:495
 msgid "Layout"
@@ -166,6 +161,3 @@ msgstr ""
 #: settings.ui:681
 msgid "About"
 msgstr ""
-
-#~ msgid "Remove %s ?"
-#~ msgstr "%s entfernen?"

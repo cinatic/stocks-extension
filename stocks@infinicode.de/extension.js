@@ -29,9 +29,9 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const UiHelper = Me.imports.uiHelper;
-const financeService = Me.imports.financeService;
+const financeService = Me.imports.yahooFinanceService;
 const Prefs = Me.imports.prefs;
-const FinanceService = financeService.FinanceService;
+const FinanceService = financeService.YahooFinanceService;
 
 const Config = imports.misc.config;
 const Clutter = imports.gi.Clutter;
@@ -419,7 +419,6 @@ const ScrollBox = new Lang.Class({
         this._destroyItems();
 
         const currentQuotes = JSON.parse(this.menu._symbol_current_quotes || '{}');
-        const previousQuotes = JSON.parse(this.menu._symbol_previous_quotes || '{}');
 
         // print(JSON.stringify(currentQuotes));
         // print(JSON.stringify(previousQuotes));
@@ -427,16 +426,10 @@ const ScrollBox = new Lang.Class({
         if (this.menu._symbol_pairs) {
             this.menu._symbol_pairs.split("-&&-").forEach(symbolPair => {
                 const [name, symbol] = symbolPair.split("-§§-");
-                const previousQuote = previousQuotes[symbol];
                 let quote = currentQuotes[symbol] || new financeService.Quote();
 
                 quote.Name = name.toString();
                 quote.Symbol = symbol.toString();
-
-                //TODO: previous close only when timestamp is from today
-                if (previousQuote) {
-                    quote.PreviousClose = previousQuote[0];
-                }
 
                 this.addGridItem(quote);
             });
@@ -451,55 +444,28 @@ const ScrollBox = new Lang.Class({
             _cacheExpirationTime = now + _cacheDurationInSeconds;
 
             const currentQuotes = JSON.parse(this.menu._symbol_current_quotes || '{}');
-            const previousQuotes = JSON.parse(this.menu._symbol_previous_quotes || '{}');
 
             // print(JSON.stringify(currentQuotes));
-            // print(JSON.stringify(previousQuotes));
 
             this.menu._symbol_pairs.split("-&&-").forEach(symbolPair => {
                 const [name, symbol] = symbolPair.split("-§§-");
-                const previousQuote = previousQuotes[symbol];
 
-                let refreshPreviousQuote = false;
-
-                if (previousQuote && previousQuote.length === 2) {
-                    let [previousClosePrice, oldTimestamp] = previousQuote;
-                    if (!previousClosePrice || !oldTimestamp) {
-                        refreshPreviousQuote = true;
-                    } else {
-                        const todayStamp = Convenience.getDayTimeStamp();
-                        if (todayStamp > oldTimestamp) {
-                            refreshPreviousQuote = true;
-                        }
-                    }
-                }
-
-                if (!previousQuote || refreshPreviousQuote) {
-                    this.menu.service.loadPreviousCloseFromPriceData(symbol, Lang.bind(this, function (symbol, price) {
-                        previousQuotes[symbol] = [price, Convenience.getDayTimeStamp()];
-                        this.menu._symbol_previous_quotes = JSON.stringify(previousQuotes);
-                        this.setNewQuoteValues(symbol, currentQuotes[symbol], price);
+                Mainloop.timeout_add_seconds(150, Lang.bind(this, function () {
+                    this.menu.service.loadQuoteAsync(symbol, Lang.bind(this, function (quote) {
+                        currentQuotes[symbol] = quote;
+                        this.menu._symbol_current_quotes = JSON.stringify(currentQuotes);
+                        this.setNewQuoteValues(symbol, quote);
                     }));
-                }
-
-                this.menu.service.loadLastQuoteAsync(symbol, Lang.bind(this, function (quote) {
-                    currentQuotes[symbol] = quote;
-                    this.menu._symbol_current_quotes = JSON.stringify(currentQuotes);
-                    this.setNewQuoteValues(symbol, quote, previousQuotes[symbol]);
                 }));
             });
         }
     },
-    setNewQuoteValues: function (symbol, quote, previousQuote) {
+    setNewQuoteValues: function (symbol, quote) {
         if (!quote) {
             return;
         }
 
         const todayStamp = Convenience.getDayTimeStamp();
-
-        if (previousQuote && todayStamp == previousQuote[1]) {
-            quote.PreviousClose = previousQuote[0];
-        }
 
         const elementsData = symbolControlMapping[symbol];
 
@@ -665,8 +631,16 @@ const StocksMenuButton = new Lang.Class({
             vertical: true
         });
 
-        this._panelButtonLabelBox.add(this.globalStockNameLabel, {expand: true, x_fill: true, x_align: St.Align.MIDDLE});
-        this._panelButtonLabelBox.add(this.globalStockDetailsLabel, {expand: true, x_fill: true, x_align: St.Align.MIDDLE});
+        this._panelButtonLabelBox.add(this.globalStockNameLabel, {
+            expand: true,
+            x_fill: true,
+            x_align: St.Align.MIDDLE
+        });
+        this._panelButtonLabelBox.add(this.globalStockDetailsLabel, {
+            expand: true,
+            x_fill: true,
+            x_align: St.Align.MIDDLE
+        });
 
         // Panel menu item - the current class
         let menuAlignment = 0.25;
@@ -816,19 +790,19 @@ const StocksMenuButton = new Lang.Class({
 
     switchProvider: function () {
         // By now only one service can be selected
-        this.useGoogleFinanceService();
+        this.useYahooFinanceService();
     },
 
-    useGoogleFinanceService: function () {
+    useYahooFinanceService: function () {
         this.service = new FinanceService();
     },
 
     // show next stock in panel
-    _showNextStockInPanel: function(actor, event) {
+    _showNextStockInPanel: function (actor, event) {
         // left click === 1, middle click === 2, right click === 3
         const buttonID = event.get_button();
 
-        if (buttonID=== 2 || buttonID === 3) {
+        if (buttonID === 2 || buttonID === 3) {
             this.menu.close();
             this.refreshGlobalPanelLabels();
             this.setToggleDisplayTimeout();
@@ -871,7 +845,6 @@ const StocksMenuButton = new Lang.Class({
 
     refreshGlobalPanelLabels: function () {
         const currentQuotes = JSON.parse(this._symbol_current_quotes || '{}');
-        const previousQuotes = JSON.parse(this._symbol_previous_quotes || '{}');
 
         const symbolData = this._symbol_pairs.split("-&&-");
         currentDisplayIndex++;
@@ -888,24 +861,20 @@ const StocksMenuButton = new Lang.Class({
 
         const [name, symbol] = symbolPair.split("-§§-");
         const currentQuote = currentQuotes[symbol];
-        const previousQuote = previousQuotes[symbol];
 
         let previousPrice = null;
         let currentPrice = null;
         let rawChangeValue = null;
         let formattedChange = null;
 
-        if (previousQuote && previousQuote.length === 2) {
-            const [previousClosePrice, oldTimestamp] = previousQuote;
-            const todayStamp = Convenience.getDayTimeStamp();
-
-            if (oldTimestamp && todayStamp === oldTimestamp) {
-                previousPrice = previousClosePrice;
+        if (currentQuote) {
+            if (currentQuote.Close) {
+                currentPrice = currentQuote.Close;
             }
-        }
 
-        if (currentQuote && currentQuote.Close) {
-            currentPrice = currentQuote.Close;
+            if (currentQuote.PreviousClose) {
+                previousPrice = currentQuote.PreviousClose;
+            }
         }
 
         if (currentPrice && previousPrice) {

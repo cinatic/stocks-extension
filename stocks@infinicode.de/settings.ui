@@ -76,7 +76,7 @@
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="hexpand">True</property>
-                        <property name="label" translatable="yes">Google Symbol</property>
+                        <property name="label" translatable="yes">Yahoo Symbol</property>
                     </object>
                     <packing>
                         <property name="expand">False</property>
