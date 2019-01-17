@@ -134,6 +134,12 @@ function round(number, precision) {
     return shift(Math.round(shift(number, precision, false)), precision, true);
 }
 
+function format_price(number, currency) {
+    const precision = 2;
+
+    return `${round(number, precision)}${currency ? " " + currency : ""}`
+}
+
 function getDayTimeStamp() {
     let dayStamp = Date.now() / 1000;
     const currentDate = new Date();

@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-15 13:18+0100\n"
+"Report-Msgid-Bugs-To: fh@infinicode.de\n"
+"POT-Creation-Date: 2019-01-17 12:56+0100\n"
 "PO-Revision-Date: 2018-04-23 13:18+0200\n"
 "Last-Translator:  <fh@infinicode.de>\n"
 "Language-Team: German\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: extension.js:249 extension.js:491
+#: extension.js:249 extension.js:505
 msgid "H:N:S D.M.Y"
 msgstr ""
 
@@ -30,39 +30,47 @@ msgstr ""
 msgid "Symbol:"
 msgstr ""
 
-#: extension.js:295 extension.js:298
+#: extension.js:294 extension.js:296
+msgid "Name:"
+msgstr ""
+
+#: extension.js:301 extension.js:304
 msgid "Close:"
 msgstr ""
 
-#: extension.js:302 extension.js:304
+#: extension.js:308 extension.js:310
 msgid "Previous Close:"
 msgstr "Vortageskurs:"
 
-#: extension.js:309 extension.js:312
+#: extension.js:315 extension.js:318
 msgid "Change:"
 msgstr "Veränderung:"
 
-#: extension.js:316 extension.js:318
+#: extension.js:322 extension.js:324
 msgid "Open:"
 msgstr "Eröffnung:"
 
-#: extension.js:322 extension.js:324
+#: extension.js:328 extension.js:330
 msgid "Low:"
 msgstr "Tief:"
 
-#: extension.js:328 extension.js:330
+#: extension.js:334 extension.js:336
 msgid "High:"
 msgstr "Hoch:"
 
-#: extension.js:334 extension.js:337
+#: extension.js:340 extension.js:343
+msgid "Exchange:"
+msgstr ""
+
+#: extension.js:347 extension.js:350
 msgid "Volume:"
 msgstr "Volumen:"
 
-#: extension.js:341 extension.js:343
+#: extension.js:354 extension.js:356
 msgid "Timestamp:"
 msgstr ""
 
-#: extension.js:437
+#: extension.js:452
 msgid ""
 "No Data to show!\n"
 "\n"
@@ -72,17 +80,27 @@ msgstr ""
 "\n"
 "Füg über die Einstellungen neue Symbole hinzu."
 
-#: extension.js:619
+#: extension.js:647
 msgid "No Data"
 msgstr ""
 
-#: extension.js:624
+#: extension.js:652
 msgid "…"
 msgstr ""
 
-#: settings.ui:47
+#: prefs.js:292 settings.ui:47
 msgid "Name"
 msgstr ""
+
+#: prefs.js:303
+#, fuzzy
+msgid "Google Symbol"
+msgstr "Yahoo Symbol"
+
+#: prefs.js:463
+#, javascript-format
+msgid "Remove %s ?"
+msgstr "%s entfernen?"
 
 #: settings.ui:65 settings.ui:95 settings.ui:204 settings.ui:234
 msgid "Clear entry"
@@ -91,7 +109,7 @@ msgstr "Feld leeren"
 #: settings.ui:79
 #, fuzzy
 msgid "Yahoo Symbol"
-msgstr "Google Symbol editieren"
+msgstr "Yahoo Symbol"
 
 #: settings.ui:125 settings.ui:264
 msgid "Cancel"
@@ -106,8 +124,9 @@ msgid "Edit name"
 msgstr "Name editieren"
 
 #: settings.ui:218
-msgid "Edit Google Symbol"
-msgstr "Google Symbol editieren"
+#, fuzzy
+msgid "Edit Yahoo Symbol"
+msgstr "Yahoo Symbol editieren"
 
 #: settings.ui:413
 msgid "Symbols"
@@ -166,6 +185,3 @@ msgstr ""
 #: settings.ui:681
 msgid "About"
 msgstr ""
-
-#~ msgid "Remove %s ?"
-#~ msgstr "%s entfernen?"

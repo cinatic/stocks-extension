@@ -39,6 +39,7 @@ const Quote = new Lang.Class({
     _init: function (symbol, quoteData) {
 
         this.Name = null;
+        this.FullName = null;
         this.Symbol = symbol;
         this.Timestamp = null;
         this.PreviousClose = null;
@@ -47,9 +48,11 @@ const Quote = new Lang.Class({
         this.Low = null;
         this.High = null;
         this.Volume = null;
+        this.CurrencySymbol = null;
+        this.ExchangeName = null;
 
         if (quoteData) {
-            this.Name = quoteData.price.longName;
+            this.FullName = quoteData.price.longName;
             this.Timestamp = quoteData.price.regularMarketTime;
             this.PreviousClose = quoteData.price.regularMarketPreviousClose;
             this.Close = quoteData.price.regularMarketPrice;
@@ -57,6 +60,8 @@ const Quote = new Lang.Class({
             this.Low = quoteData.price.regularMarketDayLow;
             this.High = quoteData.price.regularMarketDayHigh;
             this.Volume = quoteData.price.regularMarketVolume;
+            this.CurrencySymbol = quoteData.price.currencySymbol;
+            this.ExchangeName = quoteData.price.exchangeName;
         }
     }
 });
@@ -64,8 +69,8 @@ const Quote = new Lang.Class({
 const YahooFinanceService = new Lang.Class({
     Name: "YahooFinanceService",
     /**
-     * Loads the previous close value from big g
-     * @param symbol googles exchange/symbol pair (e.g. ETR:AHLA, NYSE:DIS, TYO:7974)
+     * Loads the previous close value from jaywho finance
+     * @param symbol yahoo exchange/symbol pair (e.g. AHLA.DE, KU2.DE, 7974.T)
      * @param onComplete what to do when request has been completed
      */
     loadQuoteAsync: function (symbol, onComplete) {

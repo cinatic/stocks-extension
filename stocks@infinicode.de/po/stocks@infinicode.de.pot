@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the gnome-shell-extension-stocks package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-15 13:18+0100\n"
+"Project-Id-Version: gnome-shell-extension-stocks 3\n"
+"Report-Msgid-Bugs-To: fh@infinicode.de\n"
+"POT-Creation-Date: 2019-01-17 12:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: extension.js:249 extension.js:491
+#: extension.js:249 extension.js:505
 msgid "H:N:S D.M.Y"
 msgstr ""
 
@@ -29,55 +29,72 @@ msgstr ""
 msgid "Symbol:"
 msgstr ""
 
-#: extension.js:295 extension.js:298
+#: extension.js:294 extension.js:296
+msgid "Name:"
+msgstr ""
+
+#: extension.js:301 extension.js:304
 msgid "Close:"
 msgstr ""
 
-#: extension.js:302 extension.js:304
+#: extension.js:308 extension.js:310
 msgid "Previous Close:"
 msgstr ""
 
-#: extension.js:309 extension.js:312
+#: extension.js:315 extension.js:318
 msgid "Change:"
 msgstr ""
 
-#: extension.js:316 extension.js:318
+#: extension.js:322 extension.js:324
 msgid "Open:"
 msgstr ""
 
-#: extension.js:322 extension.js:324
+#: extension.js:328 extension.js:330
 msgid "Low:"
 msgstr ""
 
-#: extension.js:328 extension.js:330
+#: extension.js:334 extension.js:336
 msgid "High:"
 msgstr ""
 
-#: extension.js:334 extension.js:337
+#: extension.js:340 extension.js:343
+msgid "Exchange:"
+msgstr ""
+
+#: extension.js:347 extension.js:350
 msgid "Volume:"
 msgstr ""
 
-#: extension.js:341 extension.js:343
+#: extension.js:354 extension.js:356
 msgid "Timestamp:"
 msgstr ""
 
-#: extension.js:437
+#: extension.js:452
 msgid ""
 "No Data to show!\n"
 "\n"
 "Add some symbols via settings."
 msgstr ""
 
-#: extension.js:619
+#: extension.js:647
 msgid "No Data"
 msgstr ""
 
-#: extension.js:624
+#: extension.js:652
 msgid "…"
 msgstr ""
 
-#: settings.ui:47
+#: prefs.js:292 settings.ui:47
 msgid "Name"
+msgstr ""
+
+#: prefs.js:303
+msgid "Google Symbol"
+msgstr ""
+
+#: prefs.js:463
+#, javascript-format
+msgid "Remove %s ?"
 msgstr ""
 
 #: settings.ui:65 settings.ui:95 settings.ui:204 settings.ui:234
@@ -101,7 +118,7 @@ msgid "Edit name"
 msgstr ""
 
 #: settings.ui:218
-msgid "Edit Google Symbol"
+msgid "Edit Yahoo Symbol"
 msgstr ""
 
 #: settings.ui:413
