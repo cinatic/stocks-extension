@@ -545,11 +545,6 @@ const ScrollBox = new Lang.Class({
             elementsData.HighRowValueLabel.text = Convenience.format_price(quote.High, quote.CurrencySymbol);
         }
 
-        if (quote.Volume) {
-            elementsData.VolumeRowValueLabel.text = quote.Volume.toString();
-            elementsData.QuoteInfoLabel.text = quote.Volume + " | " + elementsData.QuoteInfoLabel.text;
-        }
-
         if (quote.ExchangeName) {
             elementsData.ExchangeNameRowValueLabel.text = quote.ExchangeName.toString();
             elementsData.QuoteInfoLabel.text = quote.ExchangeName + " | " + elementsData.QuoteInfoLabel.text;
