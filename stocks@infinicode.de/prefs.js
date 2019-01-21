@@ -300,7 +300,7 @@ const PrefsWidget = new GObject.Class({
         });
 
         column = new Gtk.TreeViewColumn();
-        column.set_title(_("Google Symbol"));
+        column.set_title(_("Symbol (Yahoo)"));
         this.treeview.append_column(column);
 
         column.pack_start(renderer, null);
