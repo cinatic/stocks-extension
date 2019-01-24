@@ -20,7 +20,6 @@ const STOCKS_SHOW_PANEL_LABEL = 'show-task-amount';
 const STOCKS_USE_ALTERNATIVE_THEME = 'use-alternative-theme';
 const STOCKS_SYMBOL_PAIRS = 'symbol-pairs';
 const STOCKS_SYMBOL_CURRENT_QUOTES = 'symbol-current-quotes';
-const STOCKS_SYMBOL_PREVIOUS_QUOTES = 'symbol-previous-quotes';
 // const STOCKS_USE_ALTERNATIVE_THEME = 'use-alternative-theme';
 
 let currentSymbolData = null;
@@ -28,88 +27,107 @@ let inRealize = false;
 let defaultSize = [-1, -1];
 
 const PrefsWidget = new GObject.Class({
-    Name: 'StocksExtension.Prefs.Widget',
+    Name     : 'StocksExtension.Prefs.Widget',
     GTypeName: 'StocksExtensionPrefsWidget',
-    Extends: Gtk.Box,
+    Extends  : Gtk.Box,
 
     configWidgets: [],
-    Window: new Gtk.Builder(),
+    Window       : new Gtk.Builder(),
 
     /********** Properties ******************/
 
     // The names must be equal to the ID in settings.ui!
-    get position_in_panel() {
-        if (!this.Settings)
+    get position_in_panel()
+    {
+        if(!this.Settings)
+        {
             this.loadConfig();
+        }
         return this.Settings.get_enum(STOCKS_POSITION_IN_PANEL_KEY);
     },
 
-    set position_in_panel(v) {
-        if (!this.Settings)
+    set position_in_panel(v)
+    {
+        if(!this.Settings)
+        {
             this.loadConfig();
+        }
 
         this.Settings.set_enum(STOCKS_POSITION_IN_PANEL_KEY, v);
     },
 
-    get show_taskwarrior_icon() {
-        if (!this.Settings)
+    get show_taskwarrior_icon()
+    {
+        if(!this.Settings)
+        {
             this.loadConfig();
+        }
         return this.Settings.get_boolean(STOCKS_SHOW_PANEL_ICON);
     },
-    set show_taskwarrior_icon(v) {
-        if (!this.Settings)
+    set show_taskwarrior_icon(v)
+    {
+        if(!this.Settings)
+        {
             this.loadConfig();
+        }
         this.Settings.set_boolean(STOCKS_SHOW_PANEL_ICON, v);
     },
-    get use_alternative_theme() {
-        if (!this.Settings)
+    get use_alternative_theme()
+    {
+        if(!this.Settings)
+        {
             this.loadConfig();
+        }
         return this.Settings.get_boolean(STOCKS_USE_ALTERNATIVE_THEME);
     },
 
-    set use_alternative_theme(v) {
-        if (!this.Settings)
+    set use_alternative_theme(v)
+    {
+        if(!this.Settings)
+        {
             this.loadConfig();
+        }
         this.Settings.set_boolean(STOCKS_USE_ALTERNATIVE_THEME, v);
     },
 
-    get symbolPairs() {
-        if (!this.Settings)
+    get symbolPairs()
+    {
+        if(!this.Settings)
+        {
             this.loadConfig();
+        }
         return this.Settings.get_string(STOCKS_SYMBOL_PAIRS);
     },
 
-    set symbolPairs(v) {
-        if (!this.Settings)
+    set symbolPairs(v)
+    {
+        if(!this.Settings)
+        {
             this.loadConfig();
+        }
         this.Settings.set_string(STOCKS_SYMBOL_PAIRS, v);
     },
 
-    get current_quotes() {
-        if (!this.Settings)
+    get current_quotes()
+    {
+        if(!this.Settings)
+        {
             this.loadConfig();
+        }
         return this.Settings.get_string(STOCKS_SYMBOL_CURRENT_QUOTES);
     },
 
-    set current_quotes(v) {
-        if (!this.Settings)
+    set current_quotes(v)
+    {
+        if(!this.Settings)
+        {
             this.loadConfig();
+        }
         return this.Settings.set_string(STOCKS_SYMBOL_CURRENT_QUOTES, v);
     },
 
-    get previous_quotes() {
-        if (!this.Settings)
-            this.loadConfig();
-        return this.Settings.get_string(STOCKS_SYMBOL_PREVIOUS_QUOTES);
-    },
-
-    set previous_quotes(v) {
-        if (!this.Settings)
-            this.loadConfig();
-        return this.Settings.set_string(STOCKS_SYMBOL_PREVIOUS_QUOTES, v);
-    },
-
-    get splittedSymbolPairs() {
+    get splittedSymbolPairs()
+    {
         return this.symbolPairs.split("-&&-");
     },
 
@@ -118,7 +136,7 @@ const PrefsWidget = new GObject.Class({
      * @param params
      * @private
      */
-    _init: function (params) {
+    _init: function(params){
         this.parent(params);
 
         this.initWindow();
@@ -136,9 +154,11 @@ const PrefsWidget = new GObject.Class({
 
         this.add(this.MainWidget);
 
-        this.MainWidget.connect('realize', Lang.bind(this, function () {
-            if (inRealize)
+        this.MainWidget.connect('realize', Lang.bind(this, function(){
+            if(inRealize)
+            {
                 return;
+            }
             inRealize = true;
 
             this.MainWidget.get_toplevel().resize(defaultSize[0], defaultSize[1]);
@@ -146,7 +166,7 @@ const PrefsWidget = new GObject.Class({
         }));
     },
 
-    initWindow: function () {
+    initWindow: function(){
         currentSymbolData = null;
 
         this.Window.add_from_file(EXTENSIONDIR + "/settings.ui");
@@ -154,25 +174,36 @@ const PrefsWidget = new GObject.Class({
         this.MainWidget = this.Window.get_object("main-widget");
 
         let theObjects = this.Window.get_objects();
-        for (let i in theObjects) {
+        for(let i in theObjects)
+        {
             let name = theObjects[i].get_name ? theObjects[i].get_name() : 'dummy';
 
-            if (this[name] !== undefined) {
-                if (theObjects[i].class_path()[1].indexOf('GtkEntry') != -1)
+            if(this[name] !== undefined)
+            {
+                if(theObjects[i].class_path()[1].indexOf('GtkEntry') != -1)
+                {
                     this.initEntry(theObjects[i]);
-                else if (theObjects[i].class_path()[1].indexOf('GtkComboBoxText') != -1)
+                }
+                else if(theObjects[i].class_path()[1].indexOf('GtkComboBoxText') != -1)
+                {
                     this.initComboBox(theObjects[i]);
-                else if (theObjects[i].class_path()[1].indexOf('GtkSwitch') != -1)
+                }
+                else if(theObjects[i].class_path()[1].indexOf('GtkSwitch') != -1)
+                {
                     this.initSwitch(theObjects[i]);
-                else if (theObjects[i].class_path()[1].indexOf('GtkScale') != -1)
+                }
+                else if(theObjects[i].class_path()[1].indexOf('GtkScale') != -1)
+                {
                     this.initScale(theObjects[i]);
+                }
 
 
                 this.configWidgets.push([theObjects[i], name]);
             }
         }
 
-        if (Me.metadata.version !== undefined) {
+        if(Me.metadata.version !== undefined)
+        {
             this.Window.get_object('version').set_label(Me.metadata.version.toString());
         }
 
@@ -192,7 +223,7 @@ const PrefsWidget = new GObject.Class({
 
 
         // TreeView / Table Buttons
-        this.Window.get_object("tree-toolbutton-add").connect("clicked", Lang.bind(this, function () {
+        this.Window.get_object("tree-toolbutton-add").connect("clicked", Lang.bind(this, function(){
             this.createWidget.show_all();
         }));
 
@@ -202,13 +233,13 @@ const PrefsWidget = new GObject.Class({
 
         // Create Widget Buttons
         this.Window.get_object("button-create-save").connect("clicked", Lang.bind(this, this.saveSymbol));
-        this.Window.get_object("button-create-cancel").connect("clicked", Lang.bind(this, function () {
+        this.Window.get_object("button-create-cancel").connect("clicked", Lang.bind(this, function(){
             this.createWidget.hide();
         }));
 
         // Edit Widget Buttons
         this.Window.get_object("button-edit-save").connect("clicked", Lang.bind(this, this.updateSymbol));
-        this.Window.get_object("button-edit-cancel").connect("clicked", Lang.bind(this, function () {
+        this.Window.get_object("button-edit-cancel").connect("clicked", Lang.bind(this, function(){
             this.editWidget.hide();
         }));
 
@@ -218,7 +249,7 @@ const PrefsWidget = new GObject.Class({
     /**
      * Load Config Data from file and connect change event
      */
-    loadConfig: function () {
+    loadConfig: function(){
         this.Settings = Convenience.getSettings(STOCKS_SETTINGS_SCHEMA);
         this.Settings.connect("changed", Lang.bind(this, this.evaluateValues));
     },
@@ -227,19 +258,25 @@ const PrefsWidget = new GObject.Class({
      * initialize entry items (input boxes)
      * @param theEntry entry element
      */
-    initEntry: function (theEntry) {
+    initEntry: function(theEntry){
         let name = theEntry.get_name();
         theEntry.text = this[name];
-        if (this[name].length != 32)
+        if(this[name].length != 32)
+        {
             theEntry.set_icon_from_icon_name(Gtk.PositionType.LEFT, 'dialog-warning');
+        }
 
-        theEntry.connect("notify::text", Lang.bind(this, function () {
+        theEntry.connect("notify::text", Lang.bind(this, function(){
             let key = arguments[0].text;
             this[name] = key;
-            if (key.length == 32)
+            if(key.length == 32)
+            {
                 theEntry.set_icon_from_icon_name(Gtk.PositionType.LEFT, '');
+            }
             else
+            {
                 theEntry.set_icon_from_icon_name(Gtk.PositionType.LEFT, 'dialog-warning');
+            }
         }));
     },
 
@@ -247,9 +284,9 @@ const PrefsWidget = new GObject.Class({
      * initialize combo box items
      * @param theComboBox comboBox element
      */
-    initComboBox: function (theComboBox) {
+    initComboBox: function(theComboBox){
         const name = theComboBox.get_name();
-        theComboBox.connect("changed", Lang.bind(this, function () {
+        theComboBox.connect("changed", Lang.bind(this, function(){
             this[name] = arguments[0].active;
         }));
     },
@@ -258,10 +295,10 @@ const PrefsWidget = new GObject.Class({
      * initialize boolean switches
      * @param theSwitch switch element
      */
-    initSwitch: function (theSwitch) {
+    initSwitch: function(theSwitch){
         const name = theSwitch.get_name();
 
-        theSwitch.connect("notify::active", Lang.bind(this, function () {
+        theSwitch.connect("notify::active", Lang.bind(this, function(){
             this[name] = arguments[0].active;
         }));
     },
@@ -270,14 +307,16 @@ const PrefsWidget = new GObject.Class({
      * initialize scale items (range slider?)
      * @param theScale scale element
      */
-    initScale: function (theScale) {
+    initScale: function(theScale){
         let name = theScale.get_name();
         theScale.set_value(this[name]);
         this[name + 'Timeout'] = undefined;
-        theScale.connect("value-changed", Lang.bind(this, function (slider) {
-            if (this[name + 'Timeout'] !== undefined)
+        theScale.connect("value-changed", Lang.bind(this, function(slider){
+            if(this[name + 'Timeout'] !== undefined)
+            {
                 Mainloop.source_remove(this[name + 'Timeout']);
-            this[name + 'Timeout'] = Mainloop.timeout_add(250, Lang.bind(this, function () {
+            }
+            this[name + 'Timeout'] = Mainloop.timeout_add(250, Lang.bind(this, function(){
                 this[name] = slider.get_value();
                 return false;
             }));
@@ -287,7 +326,8 @@ const PrefsWidget = new GObject.Class({
     /**
      * Initialize TreeView (Symbol Table)
      */
-    initTreeView() {
+    initTreeView()
+    {
         let column = new Gtk.TreeViewColumn();
         column.set_title(_("Name"));
         this.treeview.append_column(column);
@@ -295,7 +335,7 @@ const PrefsWidget = new GObject.Class({
         let renderer = new Gtk.CellRendererText();
         column.pack_start(renderer, null);
 
-        column.set_cell_data_func(renderer, function () {
+        column.set_cell_data_func(renderer, function(){
             arguments[1].markup = arguments[2].get_value(arguments[3], 0);
         });
 
@@ -305,7 +345,7 @@ const PrefsWidget = new GObject.Class({
 
         column.pack_start(renderer, null);
 
-        column.set_cell_data_func(renderer, function () {
+        column.set_cell_data_func(renderer, function(){
             arguments[1].markup = arguments[2].get_value(arguments[3], 1);
         });
     },
@@ -315,12 +355,14 @@ const PrefsWidget = new GObject.Class({
      * 1. refresh the settings UI view
      * 2. synchronize config values and settings elements
      */
-    evaluateValues: function () {
+    evaluateValues: function(){
         this.refreshUI();
 
         let config = this.configWidgets;
-        for (let i in config) {
-            if (config[i][0].active != this[config[i][1]]) {
+        for(let i in config)
+        {
+            if(config[i][0].active != this[config[i][1]])
+            {
                 config[i][0].active = this[config[i][1]];
             }
         }
@@ -329,7 +371,7 @@ const PrefsWidget = new GObject.Class({
     /**
      * this recreates the TreeView (Symbol Table)
      */
-    refreshUI: function () {
+    refreshUI: function(){
         this.mainWidget = this.Window.get_object("prefs-notebook");
         this.treeview = this.Window.get_object("tree-treeview");
         this.liststore = this.Window.get_object("tree-liststore");
@@ -337,15 +379,18 @@ const PrefsWidget = new GObject.Class({
         this.Window.get_object("tree-toolbutton-remove").sensitive = Boolean(this.symbolPairs.length);
         this.Window.get_object("tree-toolbutton-edit").sensitive = Boolean(this.symbolPairs.length);
 
-        if (currentSymbolData == this.symbolPairs) {
+        if(currentSymbolData == this.symbolPairs)
+        {
             return;
         }
 
-        if (this.liststore) {
+        if(this.liststore)
+        {
             this.liststore.clear();
         }
 
-        if (this.symbolPairs.length > 0) {
+        if(this.symbolPairs.length > 0)
+        {
             const symbolPairList = String(this.symbolPairs).split("-&&-");
 
             let current = this.liststore.get_iter_first();
@@ -365,18 +410,19 @@ const PrefsWidget = new GObject.Class({
     /**
      * clear a entry input element
      */
-    clearEntry: function () {
+    clearEntry: function(){
         arguments[0].set_text("");
     },
 
     /**
      * show edit symbol widget
      */
-    showEditSymbolWidget: function () {
+    showEditSymbolWidget: function(){
         const selection = this.treeview.get_selection().get_selected_rows();
 
         // check if a row has been selected
-        if (selection === undefined || selection === null) {
+        if(selection === undefined || selection === null)
+        {
             return;
         }
 
@@ -385,7 +431,8 @@ const PrefsWidget = new GObject.Class({
         let values = this.splittedSymbolPairs;
         const selectedValue = values[selectionIndex];
 
-        if (!selectedValue) {
+        if(!selectedValue)
+        {
             return;
         }
 
@@ -400,7 +447,7 @@ const PrefsWidget = new GObject.Class({
     /**
      * Save new symbol
      */
-    saveSymbol: function () {
+    saveSymbol: function(){
         let name = this.newName.get_text();
         let symbol = this.newSymbol.get_text().replace(/ /g, '');
 
@@ -413,11 +460,12 @@ const PrefsWidget = new GObject.Class({
     /**
      * update existing symbol
      */
-    updateSymbol: function () {
+    updateSymbol: function(){
         const selection = this.treeview.get_selection().get_selected_rows();
 
         // check if a row has been selected
-        if (selection === undefined || selection === null) {
+        if(selection === undefined || selection === null)
+        {
             return;
         }
 
@@ -426,7 +474,8 @@ const PrefsWidget = new GObject.Class({
         let values = this.splittedSymbolPairs;
         const selectedValue = values[selectionIndex];
 
-        if (!selectedValue) {
+        if(!selectedValue)
+        {
             return;
         }
 
@@ -440,11 +489,12 @@ const PrefsWidget = new GObject.Class({
     /**
      * Remove existing symbol
      */
-    removeSymbol: function () {
+    removeSymbol: function(){
         const selection = this.treeview.get_selection().get_selected_rows();
 
         // check if a row has been selected
-        if (selection === undefined || selection === null) {
+        if(selection === undefined || selection === null)
+        {
             return;
         }
 
@@ -453,7 +503,8 @@ const PrefsWidget = new GObject.Class({
         let values = this.splittedSymbolPairs;
         const selectedValue = values[selectionIndex];
 
-        if (!selectedValue) {
+        if(!selectedValue)
+        {
             return;
         }
 
@@ -484,16 +535,23 @@ const PrefsWidget = new GObject.Class({
 
         let dialog_area = dialog.get_content_area();
         dialog_area.pack_start(label, 0, 0, 0);
-        dialog.connect("response", Lang.bind(this, function (w, response_id) {
-            if (response_id) {
-                const currentQuotes = JSON.parse(this.current_quotes || '{}');
-                const previousQuotes = JSON.parse(this.previous_quotes || '{}');
+        dialog.connect("response", Lang.bind(this, function(w, response_id){
+            if(response_id)
+            {
+                var currentQuotes = {};
+
+                try
+                {
+                    currentQuotes = JSON.parse(this.current_quotes || '{}');
+                }
+                catch(e)
+                {
+                    log("Could not parse quotes from settings");
+                }
 
                 delete currentQuotes[symbol];
-                delete previousQuotes[symbol];
 
                 this.current_quotes = JSON.stringify(currentQuotes);
-                this.previous_quotes = JSON.stringify(previousQuotes);
 
                 // remove entry and write to config
                 values.splice(selectionIndex, 1);
@@ -507,11 +565,13 @@ const PrefsWidget = new GObject.Class({
     },
 });
 
-function init() {
+function init()
+{
     Convenience.initTranslations('stocks@infinicode.de');
 }
 
-function buildPrefsWidget() {
+function buildPrefsWidget()
+{
     let widget = new PrefsWidget();
     widget.show_all();
     return widget;
