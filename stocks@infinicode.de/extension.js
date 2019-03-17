@@ -728,7 +728,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
         this.quoteBox = new ScrollBox(this, "");
         this._renderPanelMenuHeaderBox();
 
-        this.actor.connect('button-press-event', this._showNextStockInPanel);
+        this.actor.connect('button-press-event', this._showNextStockInPanel.bind(this));
         this.menu.connect('open-state-changed', (menu, isOpen) => {
             _isOpen = isOpen;
 
