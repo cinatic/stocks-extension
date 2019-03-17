@@ -27,7 +27,6 @@
  */
 
 const Gettext = imports.gettext;
-const Lang = imports.lang;
 
 const Gio = imports.gi.Gio;
 

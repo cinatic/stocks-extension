@@ -27,7 +27,6 @@
  */
 
 const Gettext = imports.gettext;
-const Lang = imports.lang;
 
 const St = imports.gi.St;
 
@@ -36,30 +35,33 @@ const MessageTray = imports.ui.messageTray;
 
 
 // extensionMeta is the object obtained from the metadata.json file, plus // the path property which is the path of the extension folder!
-function init(extensionMeta) {
-    let theme = imports.gi.Gtk.IconTheme.get_default(); theme.append_search_path(extensionMeta.path + "/icons");
+function init(extensionMeta)
+{
+    let theme = imports.gi.Gtk.IconTheme.get_default();
+    theme.append_search_path(extensionMeta.path + "/icons");
 }
 
 function createActionButton(iconName, accessibleName, classes, onClick)
 {
     classes = classes || "";
 
-    let icon = new St.Button({
+    const icon = new St.Icon({icon_name: iconName, style_class: 'popup-menu-icon'});
+
+    const iconButton = new St.Button({
         reactive       : true,
         can_focus      : true,
         track_hover    : true,
         accessible_name: accessibleName,
-        style_class    : 'system-menu-action ' + classes
+        style_class    : 'system-menu-action ' + classes,
+        child          : icon
     });
-
-    icon.child = new St.Icon({icon_name: iconName});
 
     if(onClick)
     {
-        icon.connect('clicked', Lang.bind(this, onClick));
+        iconButton.connect('clicked', onClick);
     }
 
-    return icon;
+    return iconButton;
 }
 
 function createButton(text, accessibleName, classes, onClick)
@@ -75,7 +77,7 @@ function createButton(text, accessibleName, classes, onClick)
 
     if(onClick)
     {
-        button.connect('clicked', Lang.bind(this, onClick));
+        button.connect('clicked', onClick);
     }
 
     return button;

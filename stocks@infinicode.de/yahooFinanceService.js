@@ -27,16 +27,15 @@ const Gettext = imports.gettext;
 const _ = Gettext.gettext;
 
 const Soup = imports.gi.Soup;
-const Lang = imports.lang;
 
 const _httpSession = new Soup.Session();
 _httpSession.user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36";
 _httpSession.timeout = 10;
 
 
-const Quote = new Lang.Class({
-    Name: 'Quote',
-    _init: function (symbol, quoteData) {
+var Quote = class Quote {
+    constructor(symbol, quoteData)
+    {
 
         this.Name = null;
         this.FullName = null;
@@ -51,7 +50,8 @@ const Quote = new Lang.Class({
         this.CurrencySymbol = null;
         this.ExchangeName = null;
 
-        if (quoteData) {
+        if(quoteData)
+        {
             this.FullName = quoteData.price.longName;
             this.Timestamp = quoteData.price.regularMarketTime;
             this.PreviousClose = quoteData.price.regularMarketPreviousClose;
@@ -64,32 +64,35 @@ const Quote = new Lang.Class({
             this.ExchangeName = quoteData.price.exchangeName;
         }
     }
-});
+}
 
-const YahooFinanceService = new Lang.Class({
-    Name: "YahooFinanceService",
+var YahooFinanceService = class YahooFinanceService {
     /**
      * Loads the previous close value from jaywho finance
      * @param symbol yahoo exchange/symbol pair (e.g. AHLA.DE, KU2.DE, 7974.T)
      * @param onComplete what to do when request has been completed
      */
-    loadQuoteAsync: function (symbol, onComplete) {
+    loadQuoteAsync(symbol, onComplete)
+    {
         const message = Soup.Message.new('GET', `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${symbol}?formatted=false&lang=en-US&region=US&modules=price%2CsummaryDetail%2CpageViews&corsDomain=finance.yahoo.com`);
 
-        _httpSession.queue_message(message, Lang.bind(this, function (_httpSession, message) {
-            if (!message.response_body.data) {
+        _httpSession.queue_message(message, (_httpSession, message) => {
+            if(!message.response_body.data)
+            {
                 onComplete.call(this, new Quote(symbol));
                 return;
             }
 
-            try {
+            try
+            {
                 const result = JSON.parse(message.response_body.data);
 
                 onComplete.call(this, new Quote(symbol, result.quoteSummary.result[0]));
-            } catch (e) {
+            }catch(e)
+            {
                 log(e);
                 onComplete.call(this, new Quote(symbol));
             }
-        }));
+        });
     }
-});
+}

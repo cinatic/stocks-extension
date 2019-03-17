@@ -19,10 +19,6 @@
             <default>'icon-and-text'</default>
             <summary>Display Type in Panel</summary>
         </key>
-        <key name="use-alternative-theme" type="b">
-            <default>false</default>
-            <summary>Use alternative theme</summary>
-        </key>
         <key type="s" name="symbol-pairs">
             <default>'Xetra Alibaba-§§-AHLA.DE'</default>
             <summary>A yahoo stock symbol definitions e.g. AHLA.DE</summary>

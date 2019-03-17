@@ -33,13 +33,10 @@ const financeService = Me.imports.yahooFinanceService;
 const Prefs = Me.imports.prefs;
 const FinanceService = financeService.YahooFinanceService;
 
+const {Clutter, GObject, Gtk, Pango, St} = imports.gi;
+
 const Config = imports.misc.config;
-const Clutter = imports.gi.Clutter;
-const Gtk = imports.gi.Gtk;
-const Lang = imports.lang;
 const Mainloop = imports.mainloop;
-const Pango = imports.gi.Pango;
-const St = imports.gi.St;
 const Util = imports.misc.util;
 
 const Gettext = imports.gettext.domain('stocks@infinicode.de');
@@ -76,133 +73,68 @@ let currentDisplayIndex = 0;
 let _isOpen = false;
 
 
-const HeaderBar = new Lang.Class({
-    Name   : 'HeaderBar',
-    Extends: PopupMenu.PopupBaseMenuItem,
+var HeaderBar = class extends PopupMenu.PopupBaseMenuItem {
+    constructor(menu)
+    {
+        super();
 
-    _init: function(menu){
+        this._init(menu)
+    }
+
+    _init(menu)
+    {
         this.menu = menu;
         this.actor = new St.BoxLayout({
-            style_class: this.menu._use_alternative_theme ? "headerBar dark" : "headerBar",
+            style_class: "headerBar",
             vertical   : false
         });
 
         this.actor.add(this._createLeftBoxMenu(), {expand: true, x_fill: true, x_align: St.Align.START});
         this.actor.add(this._createMiddleBoxMenu(), {expand: true, x_fill: true, x_align: St.Align.MIDDLE});
         this.actor.add(this._createRightBoxMenu(), {expand: false, x_fill: true, x_align: St.Align.END});
-    },
+    }
 
-    _createLeftBoxMenu: function(){
+    _createLeftBoxMenu()
+    {
         const leftBox = new St.BoxLayout({
             style_class: "leftBox"
         });
 
-        // let activeClass = financeService.SortOrder.DUE == this.menu._sort_order ? "active" : "";
-        // let addIcon = UiHelper.createActionButton("sort_time", "hatt3", activeClass, Lang.bind(this, this._toggleSortIcon));
-        // addIcon.SortID = financeService.SortOrder.DUE;
-        // rightBox.add(addIcon, {expand: false, x_fill: false, x_align: St.Align.END});
-        //
-        // activeClass = financeService.SortOrder.URGENCY == this.menu._sort_order ? "active" : "";
-        // let reloadIcon = UiHelper.createActionButton("sort_priority", "hatt4", "last " + activeClass, Lang.bind(this, this._toggleSortIcon));
-        // reloadIcon.SortID = financeService.SortOrder.URGENCY;
-        // rightBox.add(reloadIcon, {expand: false, x_fill: false, x_align: St.Align.END});
-
-        // leftBox.add(UiHelper.createActionButton("create", "hatt", null, Lang.bind(this.menu, function () {
-        //     this._openTaskCreationDialog();
-        // })));
-
         return leftBox;
-    },
+    }
 
-    _createMiddleBoxMenu: function(){
+    _createMiddleBoxMenu()
+    {
         const middleBox = new St.BoxLayout({
             style_class: "middleBox"
         });
-
-        // let activeClass = financeService.TaskType.ACTIVE == _currentTaskType ? "active" : "";
-        // var activeButton = UiHelper.createActionButton("task_open", "hatt3", "activeButton " + activeClass, Lang.bind(this, this._toggleTaskType));
-        // activeButton.TypeID = financeService.TaskType.ACTIVE;
-        //
-        // activeClass = financeService.TaskType.COMPLETED == _currentTaskType ? "active" : "";
-        // var closedButton = UiHelper.createActionButton("task_done", "hatt3", "completedButton last " + activeClass, Lang.bind(this, this._toggleTaskType));
-        // closedButton.TypeID = financeService.TaskType.COMPLETED;
-        //
-        // middleBox.add(activeButton);
-        // middleBox.add(closedButton);
-
         return middleBox;
-    },
+    }
 
-    _createRightBoxMenu: function(){
+    _createRightBoxMenu()
+    {
         const box = new St.BoxLayout({style_class: "rightBox"});
 
-        box.add(UiHelper.createActionButton("refresh", "hatt2", null, Lang.bind(this.menu, function(){
-            this.quoteBox.reloadQuoteData(true);
-        })));
+        box.add(UiHelper.createActionButton("view-refresh-symbolic", "hatt2", null, () => {
+            this.menu.quoteBox.reloadQuoteData(true);
+        }));
 
-        box.add(UiHelper.createActionButton("settings", "hatt2", "last", Lang.bind(this.menu, function(){
+        box.add(UiHelper.createActionButton("emblem-system-symbolic", "hatt2", "last", () => {
+            this.menu.menu.actor.hide();
             this.menu.actor.hide();
-            this.actor.hide();
-            this.actor.show();
+            this.menu.actor.show();
+
             Util.spawn(["gnome-shell-extension-prefs", "stocks@infinicode.de"]);
-        })));
+        }));
 
         return box;
-    },
+    }
+}
 
-    // _toggleSortIcon: function (button) {
-    //     // skip because it is already active
-    //     if (this.menu._sort_order == button.SortID) {
-    //         return;
-    //     }
-    //
-    //     // first remove active classes then highlight the clicked button
-    //     let tabBox = button.get_parent();
-    //     let tabBoxChildren = tabBox.get_children();
-    //
-    //     for (let i = 0; i < tabBoxChildren.length; i++) {
-    //         let tabButton = tabBoxChildren[i];
-    //         tabButton.remove_style_class_name("active");
-    //     }
-    //
-    //     button.add_style_class_name("active");
-    //     this.menu._sort_order = button.SortID;
-    //
-    //     // clear box and fetch new data
-    //     this.menu.taskBox.reloadQuoteData(true);
-    // },
-    //
-    // _toggleTaskType: function (button) {
-    //     // skip because it is already active
-    //     if (_currentTaskType == button.TypeID) {
-    //         return;
-    //     }
-    //
-    //     // first remove active classes then highlight the clicked button
-    //     let tabBox = button.get_parent();
-    //     let tabBoxChildren = tabBox.get_children();
-    //
-    //     for (let i = 0; i < tabBoxChildren.length; i++) {
-    //         let tabButton = tabBoxChildren[i];
-    //         tabButton.remove_style_class_name("active");
-    //     }
-    //
-    //     button.add_style_class_name("active");
-    //     _currentTaskType = button.TypeID;
-    //
-    //     // reset also currentProjectName
-    //     _currentProjectName = undefined;
-    //
-    //     // clear box and fetch new data
-    //     this.menu.taskBox.reloadQuoteData(true);
-    // }
-});
-
-const ScrollBox = new Lang.Class({
-    Name   : 'ScrollBox',
-    Extends: PopupMenu.PopupMenuBase,
-
-    _init: function(menu, styleClass){
+var ScrollBox = class extends PopupMenu.PopupMenuBase {
+    constructor(menu, styleClass)
+    {
+        super(menu);
         this.menu = menu;
 
         this.box = new St.BoxLayout({
@@ -222,9 +154,10 @@ const ScrollBox = new Lang.Class({
         this.reloadQuoteData(true);
 
         this.renderRows();
-    },
+    }
 
-    addGridItem: function(quote){
+    addGridItem(quote)
+    {
         if(!quote)
         {
             return;
@@ -412,12 +345,14 @@ const ScrollBox = new Lang.Class({
         };
 
         this.addMenuItem(gridMenu);
-    },
+    }
 
-    _setOpenedSubMenu: function(){
-    },
+    _setOpenedSubMenu()
+    {
+    }
 
-    _appendDataRow: function(gridMenu, title, value, classes){
+    _appendDataRow(gridMenu, title, value, classes)
+    {
         const rowMenuItem = new PopupMenu.PopupBaseMenuItem({
             reactive   : false,
             style_class: 'stockRowMenuItem'
@@ -452,18 +387,20 @@ const ScrollBox = new Lang.Class({
         gridMenu.menu.addMenuItem(rowMenuItem);
 
         return [quoteDataRow, titleLabel, valueLabel];
-    },
+    }
 
-    _destroyItems: function(){
+    _destroyItems()
+    {
         const items = this.box.get_children();
         for(let i = 0; i < items.length; i++)
         {
             const boxItem = items[i];
             boxItem.destroy();
         }
-    },
+    }
 
-    renderRows: function(){
+    renderRows()
+    {
         const scrollBar = this.actor.get_vscroll_bar();
         if(scrollBar)
         {
@@ -504,9 +441,10 @@ const ScrollBox = new Lang.Class({
         {
             this.showTextBox(_("No Data to show!\n\nAdd some symbols via settings."), "noTasks");
         }
-    },
+    }
 
-    reloadQuoteData  : function(refreshCache){
+    reloadQuoteData(refreshCache)
+    {
         let now = new Date().getTime() / 1000;
         if(refreshCache || !_cacheExpirationTime || _cacheExpirationTime < now)
         {
@@ -529,17 +467,19 @@ const ScrollBox = new Lang.Class({
                 const [name, symbol] = symbolPair.split("-§§-");
 
                 // delay for ¼ second to avoid hammering api
-                Mainloop.timeout_add_seconds(0.250 * index, Lang.bind(this, function(){
-                    this.menu.service.loadQuoteAsync(symbol, Lang.bind(this, function(quote){
+                Mainloop.timeout_add_seconds(0.250 * index, () => {
+                    this.menu.service.loadQuoteAsync(symbol, (quote) => {
                         currentQuotes[symbol] = quote;
                         this.menu._symbol_current_quotes = JSON.stringify(currentQuotes);
                         this.setNewQuoteValues(symbol, quote);
-                    }));
-                }));
+                    });
+                });
             });
         }
-    },
-    setNewQuoteValues: function(symbol, quote){
+    }
+
+    setNewQuoteValues(symbol, quote)
+    {
         if(!quote)
         {
             return;
@@ -639,8 +579,10 @@ const ScrollBox = new Lang.Class({
         {
             elementsData.TimestampRowValueLabel.text = formattedDate;
         }
-    },
-    showTextBox      : function(message, classes){
+    }
+
+    showTextBox(message, classes)
+    {
         this._destroyItems();
 
         const placeholderLabel = new St.Label({
@@ -660,42 +602,29 @@ const ScrollBox = new Lang.Class({
             x_align: St.Align.MIDDLE
         });
     }
-});
+}
 
-const StocksMenuButton = new Lang.Class({
-    Name: 'StocksMenuButton',
-
-    Extends: PanelMenu.Button,
+let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends PanelMenu.Button {
 
     get _position_in_panel()
     {
         return this.Settings.get_enum(Prefs.STOCKS_POSITION_IN_PANEL_KEY);
-    },
-
-    get _show_panel_label()
-    {
-        return 1;
-    },
-
-    get _use_alternative_theme()
-    {
-        return this.Settings.get_boolean(Prefs.STOCKS_USE_ALTERNATIVE_THEME);
-    },
+    }
 
     get _symbol_pairs()
     {
         return this.Settings.get_string(Prefs.STOCKS_SYMBOL_PAIRS);
-    },
+    }
 
-    get _symbol_current_quotes()
+    get symbol_current_quotes()
     {
         return this.Settings.get_string(Prefs.STOCKS_SYMBOL_CURRENT_QUOTES);
-    },
+    }
 
-    set _symbol_current_quotes(v)
+    set symbol_current_quotes(v)
     {
         return this.Settings.set_string(Prefs.STOCKS_SYMBOL_CURRENT_QUOTES, v);
-    },
+    }
 
     get Settings()
     {
@@ -705,9 +634,10 @@ const StocksMenuButton = new Lang.Class({
         }
 
         return this._settings;
-    },
+    }
 
-    _init: function(){
+    _init()
+    {
         this.switchProvider();
 
         // Load settings
@@ -718,14 +648,14 @@ const StocksMenuButton = new Lang.Class({
 
         // Label
         this.globalStockNameLabel = new St.Label({
-            style_class: 'test2',
+            style_class: 'globalStockNameLabel', // 2
             text       : _('No Data')
         });
 
         // Label
         this.globalStockDetailsLabel = new St.Label({
             text       : _('…'),
-            style_class: 'test1'
+            style_class: 'globalStockDetailsLabel'
         });
 
         this._panelButtonLabelBox = new St.BoxLayout({
@@ -753,7 +683,7 @@ const StocksMenuButton = new Lang.Class({
             menuAlignment = 1.0 - menuAlignment;
         }
 
-        this.parent(menuAlignment);
+        super._init(menuAlignment, _('Stocks'));
 
         // Putting the panel item together
         const topBox = new St.BoxLayout();
@@ -769,6 +699,7 @@ const StocksMenuButton = new Lang.Class({
 
         let children = null;
         this._oldPanelPosition = this._position_in_panel;
+
         switch(this._position_in_panel)
         {
             case MenuPosition.LEFT:
@@ -797,15 +728,15 @@ const StocksMenuButton = new Lang.Class({
         this.quoteBox = new ScrollBox(this, "");
         this._renderPanelMenuHeaderBox();
 
-        this.actor.connect('button-press-event', Lang.bind(this, this._showNextStockInPanel));
-        this.menu.connect('open-state-changed', Lang.bind(this, function(menu, isOpen){
+        this.actor.connect('button-press-event', this._showNextStockInPanel);
+        this.menu.connect('open-state-changed', (menu, isOpen) => {
             _isOpen = isOpen;
 
             if(_isOpen)
             {
                 this.quoteBox.reloadQuoteData();
             }
-        }));
+        });
 
         const section = new PopupMenu.PopupMenuSection();
         section._setOpenedSubMenu = function(){
@@ -822,26 +753,21 @@ const StocksMenuButton = new Lang.Class({
         {
             this._needsColorUpdate = true;
             let context = St.ThemeContext.get_for_stage(global.stage);
-            this._globalThemeChangedId = context.connect('changed', Lang.bind(this, function(){
+            this._globalThemeChangedId = context.connect('changed', () => {
                 this._needsColorUpdate = true;
-            }));
+            });
         }
 
         this.checkPanelControls();
-    },
+    }
 
-    checkPanelControls: function(){
-        // if (this._show_panel_label) {
-        //     this._panelButtonLabel.show();
-        // }
-        // else {
-        //     this._panelButtonLabel.hide();
-        // }
+    checkPanelControls()
+    {
+        // do something when settings has changed
+    }
 
-        this.headerBar.actor.style_class = this._use_alternative_theme ? "headerBar dark" : "headerBar";
-    },
-
-    checkPositionInPanel: function(){
+    checkPositionInPanel()
+    {
         if(this._oldPanelPosition != this._position_in_panel)
         {
             switch(this._oldPanelPosition)
@@ -875,21 +801,22 @@ const StocksMenuButton = new Lang.Class({
             }
             this._oldPanelPosition = this._position_in_panel;
         }
+    }
 
-    },
-
-    _renderPanelMenuHeaderBox: function(){
+    _renderPanelMenuHeaderBox()
+    {
         this.headerBar = new HeaderBar(this);
         const section = new PopupMenu.PopupMenuSection();
         this.menu.addMenuItem(section);
 
         section.actor.add_actor(this.headerBar.actor);
-    },
+    }
 
-    loadSettings: function(){
+    loadSettings()
+    {
         this._settings = Convenience.getSettings(STOCKS_SETTINGS_SCHEMA);
 
-        this._settingsC = this._settings.connect("changed", Lang.bind(this, function(settingObject, changedKey){
+        this._settingsC = this._settings.connect("changed", (settingObject, changedKey) => {
             this.checkPositionInPanel();
             this.checkPanelControls();
 
@@ -898,20 +825,23 @@ const StocksMenuButton = new Lang.Class({
                 this.quoteBox.renderRows();
                 this.quoteBox.reloadQuoteData(true);
             }
-        }));
-    },
+        });
+    }
 
-    switchProvider: function(){
+    switchProvider()
+    {
         // By now only one service can be selected
         this.useYahooFinanceService();
-    },
+    }
 
-    useYahooFinanceService: function(){
+    useYahooFinanceService()
+    {
         this.service = new FinanceService();
-    },
+    }
 
     // show next stock in panel
-    _showNextStockInPanel: function(actor, event){
+    _showNextStockInPanel(actor, event)
+    {
         // left click === 1, middle click === 2, right click === 3
         const buttonID = event.get_button();
 
@@ -921,16 +851,17 @@ const StocksMenuButton = new Lang.Class({
             this.refreshGlobalPanelLabels();
             this.setToggleDisplayTimeout();
         }
-    },
+    }
 
-    setRefreshQuoteDataTimeout: function(){
+    setRefreshQuoteDataTimeout()
+    {
         if(this._refreshQuoteDataTimeoutID)
         {
             Mainloop.source_remove(this._refreshQuoteDataTimeoutID);
             this._refreshQuoteDataTimeoutID = undefined;
         }
 
-        this._refreshQuoteDataTimeoutID = Mainloop.timeout_add_seconds(100, Lang.bind(this, function(){
+        this._refreshQuoteDataTimeoutID = Mainloop.timeout_add_seconds(100, () => {
             // Avoid intervention while user is doing something
             if(!_isOpen)
             {
@@ -939,10 +870,11 @@ const StocksMenuButton = new Lang.Class({
 
             this.setRefreshQuoteDataTimeout();
             return true;
-        }));
-    },
+        });
+    }
 
-    setToggleDisplayTimeout: function(){
+    setToggleDisplayTimeout()
+    {
         if(this._toggleDisplayTimeout)
         {
             Mainloop.source_remove(this._toggleDisplayTimeout);
@@ -953,16 +885,16 @@ const StocksMenuButton = new Lang.Class({
             this.refreshGlobalPanelLabels();
         }
 
-        this._toggleDisplayTimeout = Mainloop.timeout_add_seconds(10, Lang.bind(this, function(){
-                this.refreshGlobalPanelLabels();
+        this._toggleDisplayTimeout = Mainloop.timeout_add_seconds(10, () => {
+            this.refreshGlobalPanelLabels();
 
-                this.setToggleDisplayTimeout();
-                return true;
-            }
-        ));
-    },
+            this.setToggleDisplayTimeout();
+            return true;
+        });
+    }
 
-    refreshGlobalPanelLabels: function(){
+    refreshGlobalPanelLabels()
+    {
         var currentQuotes = {};
 
         try
@@ -1044,9 +976,10 @@ const StocksMenuButton = new Lang.Class({
                 this._panelButtonLabelBox.style_class = "globalLabelBox";
             }
         }
-    },
+    }
 
-    stop: function(){
+    stop()
+    {
         _cacheExpirationTime = undefined;
 
         if(this._refreshQuoteDataTimeoutID)
@@ -1057,13 +990,11 @@ const StocksMenuButton = new Lang.Class({
     }
 });
 
-let stocksMenu;
+var stocksMenu;
 
 function init(extensionMeta)
 {
-    Convenience.initTranslations('stocks@infinicode.de');
-    let theme = imports.gi.Gtk.IconTheme.get_default();
-    theme.append_search_path(extensionMeta.path + "/icons");
+    ExtensionUtils.initTranslations('stocks@infinicode.de');
 }
 
 function enable()

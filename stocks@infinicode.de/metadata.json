@@ -13,7 +13,8 @@
     "3.19", 
     "3.22", 
     "3.24",
-    "3.30"
+    "3.30",
+    "3.32"
   ], 
   "url": "https://github.com/cinatic/stocks-extension", 
   "uuid": "stocks@infinicode.de",
