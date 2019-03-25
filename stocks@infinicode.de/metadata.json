@@ -4,19 +4,9 @@
   "localedir": "/usr/local/share/locale", 
   "name": "Stocks Extension",
   "shell-version": [
-    "3.8", 
-    "3.10", 
-    "3.12", 
-    "3.14", 
-    "3.16", 
-    "3.18", 
-    "3.19", 
-    "3.22", 
-    "3.24",
-    "3.30",
     "3.32"
   ], 
   "url": "https://github.com/cinatic/stocks-extension", 
   "uuid": "stocks@infinicode.de",
-  "version": 4
+  "version": 7
 }
