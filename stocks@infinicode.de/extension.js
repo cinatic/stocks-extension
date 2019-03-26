@@ -873,12 +873,16 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
         });
     }
 
+    clearDisplayTimeout(){
+        Mainloop.source_remove(this._toggleDisplayTimeout);
+        this._toggleDisplayTimeout = undefined;
+    }
+
     setToggleDisplayTimeout()
     {
         if(this._toggleDisplayTimeout)
         {
-            Mainloop.source_remove(this._toggleDisplayTimeout);
-            this._toggleDisplayTimeout = undefined;
+            this.clearDisplayTimeout();
         }
         else
         {
@@ -1005,6 +1009,7 @@ function enable()
 
 function disable()
 {
+    stocksMenu.clearDisplayTimeout();
     stocksMenu.stop();
     stocksMenu.destroy();
 }
