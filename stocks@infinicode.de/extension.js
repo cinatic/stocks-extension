@@ -73,63 +73,57 @@ let currentDisplayIndex = 0;
 let _isOpen = false;
 
 
-var HeaderBar = class extends PopupMenu.PopupBaseMenuItem {
-    constructor(menu)
+var HeaderBar = GObject.registerClass(
     {
-        super();
+        GTypeName: 'HeaderBar'
+    },
+    class HeaderBar extends PopupMenu.PopupBaseMenuItem {
+        _init(menu)
+        {
+            super._init()
+            this.menu = menu;
+            this.actor.add(this._createLeftBoxMenu(), {expand: true, x_fill: true, x_align: St.Align.START});
+            this.actor.add(this._createMiddleBoxMenu(), {expand: true, x_fill: true, x_align: St.Align.MIDDLE});
+            this.actor.add(this._createRightBoxMenu(), {expand: false, x_fill: true, x_align: St.Align.END});
+        }
 
-        this._init(menu)
+        _createLeftBoxMenu()
+        {
+            const leftBox = new St.BoxLayout({
+                style_class: "leftBox"
+            });
+
+            return leftBox;
+        }
+
+        _createMiddleBoxMenu()
+        {
+            const middleBox = new St.BoxLayout({
+                style_class: "middleBox"
+            });
+            return middleBox;
+        }
+
+        _createRightBoxMenu()
+        {
+            const box = new St.BoxLayout({style_class: "rightBox"});
+
+            box.add(UiHelper.createActionButton("view-refresh-symbolic", "hatt2", null, () => {
+                this.menu.quoteBox.reloadQuoteData(true);
+            }));
+
+            box.add(UiHelper.createActionButton("emblem-system-symbolic", "hatt2", "last", () => {
+                this.menu.menu.actor.hide();
+                this.menu.actor.hide();
+                this.menu.actor.show();
+
+                Util.spawn(["gnome-shell-extension-prefs", "stocks@infinicode.de"]);
+            }));
+
+            return box;
+        }
     }
-
-    _init(menu)
-    {
-        this.menu = menu;
-        this.actor = new St.BoxLayout({
-            style_class: "headerBar",
-            vertical   : false
-        });
-
-        this.actor.add(this._createLeftBoxMenu(), {expand: true, x_fill: true, x_align: St.Align.START});
-        this.actor.add(this._createMiddleBoxMenu(), {expand: true, x_fill: true, x_align: St.Align.MIDDLE});
-        this.actor.add(this._createRightBoxMenu(), {expand: false, x_fill: true, x_align: St.Align.END});
-    }
-
-    _createLeftBoxMenu()
-    {
-        const leftBox = new St.BoxLayout({
-            style_class: "leftBox"
-        });
-
-        return leftBox;
-    }
-
-    _createMiddleBoxMenu()
-    {
-        const middleBox = new St.BoxLayout({
-            style_class: "middleBox"
-        });
-        return middleBox;
-    }
-
-    _createRightBoxMenu()
-    {
-        const box = new St.BoxLayout({style_class: "rightBox"});
-
-        box.add(UiHelper.createActionButton("view-refresh-symbolic", "hatt2", null, () => {
-            this.menu.quoteBox.reloadQuoteData(true);
-        }));
-
-        box.add(UiHelper.createActionButton("emblem-system-symbolic", "hatt2", "last", () => {
-            this.menu.menu.actor.hide();
-            this.menu.actor.hide();
-            this.menu.actor.show();
-
-            Util.spawn(["gnome-shell-extension-prefs", "stocks@infinicode.de"]);
-        }));
-
-        return box;
-    }
-}
+)
 
 var ScrollBox = class extends PopupMenu.PopupMenuBase {
     constructor(menu, styleClass)
@@ -691,7 +685,9 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
         this.actor.add_actor(topBox);
 
         const dummyBox = new St.BoxLayout();
-        this.actor.reparent(dummyBox);
+        if (this.actor.reparent) {
+            this.actor.reparent(dummyBox);
+        }
         dummyBox.remove_actor(this.actor);
         dummyBox.destroy();
 
