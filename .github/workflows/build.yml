@@ -1,0 +1,25 @@
+name: Build & Create Package
+
+on:
+  push:
+    branches: ['*']
+    tags-ignore:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install packages
+      run: sudo apt-get update -y && sudo apt-get install -y gettext
+    - name: build extension
+      run: make
+    - name: create zip package
+      run: make package
+    - name: store zip package artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: gitlab-extension.zip
+        path: _build/stocks-extension.zip

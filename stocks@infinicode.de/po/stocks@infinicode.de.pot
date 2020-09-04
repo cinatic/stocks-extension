@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-shell-extension-stocks 3\n"
 "Report-Msgid-Bugs-To: fh@infinicode.de\n"
-"POT-Creation-Date: 2019-01-17 12:56+0100\n"
+"POT-Creation-Date: 2020-09-04 14:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,82 +17,86 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: extension.js:249 extension.js:505
+#: extension.js:167 extension.js:435
 msgid "H:N:S D.M.Y"
 msgstr ""
 
-#: extension.js:261 extension.js:267
+#: extension.js:179 extension.js:185
 msgid "n/a"
 msgstr ""
 
-#: extension.js:291
+#: extension.js:209
 msgid "Symbol:"
 msgstr ""
 
-#: extension.js:294 extension.js:296
+#: extension.js:212 extension.js:214
 msgid "Name:"
 msgstr ""
 
-#: extension.js:301 extension.js:304
+#: extension.js:219 extension.js:222
 msgid "Close:"
 msgstr ""
 
-#: extension.js:308 extension.js:310
+#: extension.js:226 extension.js:228
 msgid "Previous Close:"
 msgstr ""
 
-#: extension.js:315 extension.js:318
+#: extension.js:233 extension.js:236
 msgid "Change:"
 msgstr ""
 
-#: extension.js:322 extension.js:324
+#: extension.js:240 extension.js:242
 msgid "Open:"
 msgstr ""
 
-#: extension.js:328 extension.js:330
+#: extension.js:246 extension.js:248
 msgid "Low:"
 msgstr ""
 
-#: extension.js:334 extension.js:336
+#: extension.js:252 extension.js:254
 msgid "High:"
 msgstr ""
 
-#: extension.js:340 extension.js:343
+#: extension.js:258 extension.js:261
 msgid "Exchange:"
 msgstr ""
 
-#: extension.js:347 extension.js:350
+#: extension.js:265 extension.js:268
 msgid "Volume:"
 msgstr ""
 
-#: extension.js:354 extension.js:356
+#: extension.js:272 extension.js:274
 msgid "Timestamp:"
 msgstr ""
 
-#: extension.js:452
+#: extension.js:375
 msgid ""
 "No Data to show!\n"
 "\n"
 "Add some symbols via settings."
 msgstr ""
 
-#: extension.js:647
+#: extension.js:553
 msgid "No Data"
 msgstr ""
 
-#: extension.js:652
+#: extension.js:558
 msgid "…"
 msgstr ""
 
-#: prefs.js:292 settings.ui:47
+#: extension.js:587
+msgid "Stocks"
+msgstr ""
+
+#: prefs.js:255 settings.ui:47
 msgid "Name"
 msgstr ""
 
-#: prefs.js:303
-msgid "Google Symbol"
+#: prefs.js:268
+msgid "Symbol (Yahoo)"
 msgstr ""
 
-#: prefs.js:463
+#: prefs.js:432
 #, javascript-format
 msgid "Remove %s ?"
 msgstr ""
@@ -141,33 +145,29 @@ msgstr ""
 msgid "Left"
 msgstr ""
 
-#: settings.ui:467
-msgid "Use alternative Theme"
-msgstr ""
-
-#: settings.ui:495
+#: settings.ui:469
 msgid "Layout"
 msgstr ""
 
-#: settings.ui:549
+#: settings.ui:523
 msgid "Version: "
 msgstr ""
 
-#: settings.ui:563
+#: settings.ui:537
 msgid "unknown (self-build ?)"
 msgstr ""
 
-#: settings.ui:583
+#: settings.ui:557
 msgid ""
 "<span>Stocks-Extension is an extension to display and observe Stock quotes "
 "in GNOME Shell Panel</span>"
 msgstr ""
 
-#: settings.ui:606
+#: settings.ui:580
 msgid "Maintained by"
 msgstr ""
 
-#: settings.ui:657
+#: settings.ui:631
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY. See the "
 "<a href=\"https://www.gnu.org/licenses/gpl\">GNU General Public License, "
@@ -175,6 +175,6 @@ msgid ""
 "                                        "
 msgstr ""
 
-#: settings.ui:681
+#: settings.ui:655
 msgid "About"
 msgstr ""
