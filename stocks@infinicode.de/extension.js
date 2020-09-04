@@ -72,23 +72,18 @@ let currentDisplayIndex = 0
 
 let _isOpen = false
 
-var HeaderBar = class extends PopupMenu.PopupBaseMenuItem {
-  constructor (menu) {
-    super()
-
-    this._init(menu)
-  }
-
+var HeaderBar = GObject.registerClass(class HeaderBar extends PopupMenu.PopupBaseMenuItem {
   _init (menu) {
     this.menu = menu
-    this.actor = new St.BoxLayout({
+
+    this.box = new St.BoxLayout({
       style_class: 'headerBar',
       vertical: false
     })
 
-    this.actor.add(this._createLeftBoxMenu(), { expand: true, x_fill: true, x_align: St.Align.START })
-    this.actor.add(this._createMiddleBoxMenu(), { expand: true, x_fill: true, x_align: St.Align.MIDDLE })
-    this.actor.add(this._createRightBoxMenu(), { expand: false, x_fill: true, x_align: St.Align.END })
+    this.box.add(this._createLeftBoxMenu(), { expand: true, x_fill: true, x_align: St.Align.START })
+    this.box.add(this._createMiddleBoxMenu(), { expand: true, x_fill: true, x_align: St.Align.MIDDLE })
+    this.box.add(this._createRightBoxMenu(), { expand: false, x_fill: true, x_align: St.Align.END })
   }
 
   _createLeftBoxMenu () {
@@ -114,16 +109,14 @@ var HeaderBar = class extends PopupMenu.PopupBaseMenuItem {
     }))
 
     box.add(UiHelper.createActionButton('emblem-system-symbolic', 'hatt2', 'last', () => {
-      this.menu.menu.actor.hide()
-      this.menu.actor.hide()
-      this.menu.actor.show()
+      this.menu.menu.close()
 
       Util.spawn(['gnome-shell-extension-prefs', 'stocks@infinicode.de'])
     }))
 
     return box
   }
-}
+})
 
 var ScrollBox = class extends PopupMenu.PopupMenuBase {
   constructor (menu, styleClass) {
@@ -577,6 +570,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
       x_fill: true,
       x_align: St.Align.MIDDLE
     })
+
     this._panelButtonLabelBox.add(this.globalStockDetailsLabel, {
       expand: true,
       x_fill: true,
@@ -597,30 +591,9 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
     topBox.add_actor(this._panelButtonLabelBox)
     this.actor.add_actor(topBox)
 
-    const dummyBox = new St.BoxLayout()
-    this.actor.reparent(dummyBox)
-    dummyBox.remove_actor(this.actor)
-    dummyBox.destroy()
-
     this.actor.add_style_class_name('stocks')
 
-    let children = null
-    this._oldPanelPosition = this._position_in_panel
-
-    switch (this._position_in_panel) {
-      case MenuPosition.LEFT:
-        children = Main.panel._leftBox.get_children()
-        Main.panel._leftBox.insert_child_at_index(this.actor, children.length)
-        break
-      case MenuPosition.CENTER:
-        children = Main.panel._centerBox.get_children()
-        Main.panel._centerBox.insert_child_at_index(this.actor, children.length)
-        break
-      case MenuPosition.RIGHT:
-        children = Main.panel._rightBox.get_children()
-        Main.panel._rightBox.insert_child_at_index(this.actor, 0)
-        break
-    }
+    this.checkPositionInPanel()
 
     if (Main.panel._menus === undefined) {
       Main.panel.menuManager.addMenu(this.menu)
@@ -668,6 +641,8 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
 
   checkPositionInPanel () {
     if (this._oldPanelPosition != this._position_in_panel) {
+      this.actor.get_parent().remove_actor(this.actor)
+
       switch (this._oldPanelPosition) {
         case MenuPosition.LEFT:
           Main.panel._leftBox.remove_actor(this.actor)
@@ -681,6 +656,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
       }
 
       let children = null
+
       switch (this._position_in_panel) {
         case MenuPosition.LEFT:
           children = Main.panel._leftBox.get_children()
@@ -704,7 +680,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
     const section = new PopupMenu.PopupMenuSection()
     this.menu.addMenuItem(section)
 
-    section.actor.add_actor(this.headerBar.actor)
+    section.actor.add_actor(this.headerBar.box)
   }
 
   loadSettings () {
@@ -759,14 +735,10 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
     })
   }
 
-  clearDisplayTimeout () {
-    Mainloop.source_remove(this._toggleDisplayTimeout)
-    this._toggleDisplayTimeout = undefined
-  }
-
   setToggleDisplayTimeout () {
     if (this._toggleDisplayTimeout) {
-      this.clearDisplayTimeout()
+      Mainloop.source_remove(this._toggleDisplayTimeout)
+      this._toggleDisplayTimeout = undefined
     } else {
       this.refreshGlobalPanelLabels()
     }
@@ -867,7 +839,6 @@ function enable () {
 }
 
 function disable () {
-  stocksMenu.clearDisplayTimeout()
   stocksMenu.stop()
   stocksMenu.destroy()
 }
