@@ -26,23 +26,23 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const Gettext = imports.gettext;
+const Gettext = imports.gettext
 
-const Gio = imports.gi.Gio;
+const Gio = imports.gi.Gio
 
-const Config = imports.misc.config;
-const ExtensionUtils = imports.misc.extensionUtils;
+const Config = imports.misc.config
+const ExtensionUtils = imports.misc.extensionUtils
 
-const _MS_PER_MINUTE = 1000 * 60;
-const _MS_PER_HOUR = 1000 * 60 * 60;
-const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+const _MS_PER_MINUTE = 1000 * 60
+const _MS_PER_HOUR = 1000 * 60 * 60
+const _MS_PER_DAY = 1000 * 60 * 60 * 24
 
-const ALPHABET_DICT = {"a": "a", "b": "b", "c": "c", "d": "d", "e": "e", "f": "f", "g": "g", "h": "h", "i": "i", "j": "j", "k": "k", "l": "l", "m": "m", "n": "n", "o": "o", "p": "p", "q": "q", "r": "r", "s": "s", "t": "t", "u": "u", "v": "v", "w": "w", "x": "x", "y": "y", "z": "z"};
+const ALPHABET_DICT = { 'a': 'a', 'b': 'b', 'c': 'c', 'd': 'd', 'e': 'e', 'f': 'f', 'g': 'g', 'h': 'h', 'i': 'i', 'j': 'j', 'k': 'k', 'l': 'l', 'm': 'm', 'n': 'n', 'o': 'o', 'p': 'p', 'q': 'q', 'r': 'r', 's': 's', 't': 't', 'u': 'u', 'v': 'v', 'w': 'w', 'x': 'x', 'y': 'y', 'z': 'z' }
 
 // extensionMeta is the object obtained from the metadata.json file, plus // the path property which is the path of the extension folder!
-function init(extensionMeta) {
-    let theme = imports.gi.Gtk.IconTheme.get_default();
-    theme.append_search_path(extensionMeta.path + "/icons");
+function init (extensionMeta) {
+  let theme = imports.gi.Gtk.IconTheme.get_default()
+  theme.append_search_path(extensionMeta.path + '/icons')
 }
 
 /**
@@ -52,22 +52,21 @@ function init(extensionMeta) {
  * Initialize Gettext to load translations from extensionsdir/locale.
  * If @domain is not provided, it will be taken from metadata['gettext-domain']
  */
-function initTranslations(domain) {
-    let extension = ExtensionUtils.getCurrentExtension();
+function initTranslations (domain) {
+  let extension = ExtensionUtils.getCurrentExtension()
 
-    domain = domain || extension.metadata['gettext-domain'];
+  domain = domain || extension.metadata['gettext-domain']
 
-    // check if this extension was built with "make zip-file", and thus
-    // has the locale files in a subfolder
-    // otherwise assume that extension has been installed in the
-    // same prefix as gnome-shell
-    let localeDir = extension.dir.get_child('locale');
-    if (localeDir.query_exists(null)) {
-        Gettext.bindtextdomain(domain, localeDir.get_path());
-    }
-    else {
-        Gettext.bindtextdomain(domain, Config.LOCALEDIR);
-    }
+  // check if this extension was built with "make zip-file", and thus
+  // has the locale files in a subfolder
+  // otherwise assume that extension has been installed in the
+  // same prefix as gnome-shell
+  let localeDir = extension.dir.get_child('locale')
+  if (localeDir.query_exists(null)) {
+    Gettext.bindtextdomain(domain, localeDir.get_path())
+  } else {
+    Gettext.bindtextdomain(domain, Config.LOCALEDIR)
+  }
 }
 
 /**
@@ -78,114 +77,113 @@ function initTranslations(domain) {
  * in extensionsdir/schemas. If @schema is not provided, it is taken from
  * metadata['settings-schema'].
  */
-function getSettings(schema) {
-    let extension = ExtensionUtils.getCurrentExtension();
+function getSettings (schema) {
+  let extension = ExtensionUtils.getCurrentExtension()
 
-    schema = schema || extension.metadata['settings-schema'];
+  schema = schema || extension.metadata['settings-schema']
 
-    const GioSSS = Gio.SettingsSchemaSource;
+  const GioSSS = Gio.SettingsSchemaSource
 
-    // check if this extension was built with "make zip-file", and thus
-    // has the schema files in a subfolder
-    // otherwise assume that extension has been installed in the
-    // same prefix as gnome-shell (and therefore schemas are available
-    // in the standard folders)
-    let schemaDir = extension.dir.get_child('schemas');
-    let schemaSource;
-    if (schemaDir.query_exists(null)) {
-        schemaSource = GioSSS.new_from_directory(schemaDir.get_path(),
-            GioSSS.get_default(),
-            false);
-    }
-    else {
-        schemaSource = GioSSS.get_default();
-    }
+  // check if this extension was built with "make zip-file", and thus
+  // has the schema files in a subfolder
+  // otherwise assume that extension has been installed in the
+  // same prefix as gnome-shell (and therefore schemas are available
+  // in the standard folders)
+  let schemaDir = extension.dir.get_child('schemas')
+  let schemaSource
+  if (schemaDir.query_exists(null)) {
+    schemaSource = GioSSS.new_from_directory(schemaDir.get_path(),
+        GioSSS.get_default(),
+        false)
+  } else {
+    schemaSource = GioSSS.get_default()
+  }
 
-    let schemaObj = schemaSource.lookup(schema, true);
-    if (!schemaObj) {
-        throw new Error('Schema ' + schema + ' could not be found for extension ' + extension.metadata.uuid + '. Please check your installation.');
-    }
+  let schemaObj = schemaSource.lookup(schema, true)
+  if (!schemaObj) {
+    throw new Error('Schema ' + schema + ' could not be found for extension ' + extension.metadata.uuid + '. Please check your installation.')
+  }
 
-    return new Gio.Settings({
-        settings_schema: schemaObj
-    });
+  return new Gio.Settings({
+    settings_schema: schemaObj
+  })
 }
 
-function isoToDate(input) {
-    if (!input) {
-        return;
+function isoToDate (input) {
+  if (!input) {
+    return
+  }
+
+  let a = Date.parse(input.slice(0, 4) + '-' + input.slice(4, 6) + '-' + input.slice(6, 11) + ':' +
+      input.slice(11, 13) + ':' + input.slice(13, 16))
+
+  return isNaN(a) ? null : new Date(a)
+}
+
+function round (number, precision) {
+  const shift = function (number, precision, reverseShift) {
+    if (reverseShift) {
+      precision = -precision
     }
-
-    let a = Date.parse(input.slice(0, 4) + "-" + input.slice(4, 6) + "-" + input.slice(6, 11) + ":" +
-        input.slice(11, 13) + ":" + input.slice(13, 16));
-
-    return isNaN(a) ? null : new Date(a);
+    numArray = ('' + number).split('e')
+    return +(numArray[0] + 'e' + (numArray[1] ? (+numArray[1] + precision) : precision))
+  }
+  return shift(Math.round(shift(number, precision, false)), precision, true)
 }
 
-function round(number, precision) {
-    const shift = function (number, precision, reverseShift) {
-        if (reverseShift) {
-            precision = -precision;
-        }
-        numArray = ("" + number).split("e");
-        return +(numArray[0] + "e" + (numArray[1] ? (+numArray[1] + precision) : precision));
-    };
-    return shift(Math.round(shift(number, precision, false)), precision, true);
+function format_price (number, currency) {
+  const precision = 2
+
+  return `${round(number, precision)}${currency ? ' ' + currency : ''}`
 }
 
-function format_price(number, currency) {
-    const precision = 2;
-
-    return `${round(number, precision)}${currency ? " " + currency : ""}`
+function getDayTimeStamp () {
+  let dayStamp = Date.now() / 1000
+  const currentDate = new Date()
+  dayStamp -= currentDate.getSeconds()
+  dayStamp -= currentDate.getMinutes() * 60
+  dayStamp -= currentDate.getHours() * 60 * 60
+  return Math.trunc(dayStamp)
 }
 
-function getDayTimeStamp() {
-    let dayStamp = Date.now() / 1000;
-    const currentDate = new Date();
-    dayStamp -= currentDate.getSeconds();
-    dayStamp -= currentDate.getMinutes() * 60;
-    dayStamp -= currentDate.getHours() * 60 * 60;
-    return Math.trunc(dayStamp);
-}
+function formatDate (date, format) {
+  if (!format) {
+    return
+  }
 
-function formatDate(date, format) {
-    if (!format) {
-        return;
+  let stringDateFormat = ''
+
+  for (let i = 0; i < format.length; i++) {
+    let char = format[i]
+
+    switch (char) {
+      case 'H':
+        let hours = date.getHours()
+        stringDateFormat += hours > 9 ? hours : '0' + hours
+        break
+      case 'N':
+        let minutes = date.getMinutes()
+        stringDateFormat += minutes > 9 ? minutes : '0' + minutes
+        break
+      case 'S':
+        let seconds = date.getSeconds()
+        stringDateFormat += seconds > 9 ? seconds : '0' + seconds
+        break
+      case 'D':
+        stringDateFormat += date.getDate()
+        break
+      case 'M':
+        let month = date.getMonth() + 1
+        stringDateFormat += month > 9 ? month : '0' + month
+        break
+      case 'Y':
+        stringDateFormat += date.getFullYear()
+        break
+      default:
+        stringDateFormat += char
+        break
     }
+  }
 
-    let stringDateFormat = "";
-
-    for (let i = 0; i < format.length; i++) {
-        let char = format[i];
-
-        switch (char) {
-            case "H":
-                let hours = date.getHours();
-                stringDateFormat += hours > 9 ? hours : '0' + hours;
-                break;
-            case "N":
-                let minutes = date.getMinutes();
-                stringDateFormat += minutes > 9 ? minutes : '0' + minutes;
-                break;
-            case "S":
-                let seconds = date.getSeconds();
-                stringDateFormat += seconds > 9 ? seconds : '0' + seconds;
-                break;
-            case "D":
-                stringDateFormat += date.getDate();
-                break;
-            case "M":
-                let month = date.getMonth() + 1;
-                stringDateFormat += month > 9 ? month : '0' + month;
-                break;
-            case "Y":
-                stringDateFormat += date.getFullYear();
-                break;
-            default:
-                stringDateFormat += char;
-                break;
-        }
-    }
-
-    return stringDateFormat;
+  return stringDateFormat
 }

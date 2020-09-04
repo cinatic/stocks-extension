@@ -26,67 +26,60 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const Gettext = imports.gettext;
+const Gettext = imports.gettext
 
-const St = imports.gi.St;
+const St = imports.gi.St
 
-const Main = imports.ui.main;
-const MessageTray = imports.ui.messageTray;
-
+const Main = imports.ui.main
+const MessageTray = imports.ui.messageTray
 
 // extensionMeta is the object obtained from the metadata.json file, plus // the path property which is the path of the extension folder!
-function init(extensionMeta)
-{
-    let theme = imports.gi.Gtk.IconTheme.get_default();
-    theme.append_search_path(extensionMeta.path + "/icons");
+function init (extensionMeta) {
+  let theme = imports.gi.Gtk.IconTheme.get_default()
+  theme.append_search_path(extensionMeta.path + '/icons')
 }
 
-function createActionButton(iconName, accessibleName, classes, onClick)
-{
-    classes = classes || "";
+function createActionButton (iconName, accessibleName, classes, onClick) {
+  classes = classes || ''
 
-    const icon = new St.Icon({icon_name: iconName, style_class: 'popup-menu-icon'});
+  const icon = new St.Icon({ icon_name: iconName, style_class: 'popup-menu-icon' })
 
-    const iconButton = new St.Button({
-        reactive       : true,
-        can_focus      : true,
-        track_hover    : true,
-        accessible_name: accessibleName,
-        style_class    : 'system-menu-action ' + classes,
-        child          : icon
-    });
+  const iconButton = new St.Button({
+    reactive: true,
+    can_focus: true,
+    track_hover: true,
+    accessible_name: accessibleName,
+    style_class: 'system-menu-action ' + classes,
+    child: icon
+  })
 
-    if(onClick)
-    {
-        iconButton.connect('clicked', onClick);
-    }
+  if (onClick) {
+    iconButton.connect('clicked', onClick)
+  }
 
-    return iconButton;
+  return iconButton
 }
 
-function createButton(text, accessibleName, classes, onClick)
-{
-    let button = new St.Button({
-        reactive       : true,
-        can_focus      : true,
-        track_hover    : true,
-        label          : text,
-        accessible_name: accessibleName,
-        style_class    : 'popup-menu-item button ' + classes
-    });
+function createButton (text, accessibleName, classes, onClick) {
+  let button = new St.Button({
+    reactive: true,
+    can_focus: true,
+    track_hover: true,
+    label: text,
+    accessible_name: accessibleName,
+    style_class: 'popup-menu-item button ' + classes
+  })
 
-    if(onClick)
-    {
-        button.connect('clicked', onClick);
-    }
+  if (onClick) {
+    button.connect('clicked', onClick)
+  }
 
-    return button;
+  return button
 }
 
-function showNotification(title, message, icon)
-{
-    let source = new MessageTray.Source('TaskWhisperer', icon || "dialog-warning");
-    let notification = new MessageTray.Notification(source, title, message);
-    Main.messageTray.add(source);
-    source.notify(notification);
+function showNotification (title, message, icon) {
+  let source = new MessageTray.Source('TaskWhisperer', icon || 'dialog-warning')
+  let notification = new MessageTray.Notification(source, title, message)
+  Main.messageTray.add(source)
+  source.notify(notification)
 }
