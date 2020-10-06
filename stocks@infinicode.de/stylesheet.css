@@ -187,7 +187,8 @@
 }
 
 .stockDataRow .rowValue {
-    width: 330px;
+    text-align: right;
+    margin-right: 20px;
 }
 
 .stockDataRow.positiv .rowValue {

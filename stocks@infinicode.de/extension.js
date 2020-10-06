@@ -81,9 +81,9 @@ var HeaderBar = GObject.registerClass(class HeaderBar extends PopupMenu.PopupBas
       vertical: false
     })
 
-    this.box.add(this._createLeftBoxMenu(), { expand: true, x_fill: true, x_align: St.Align.START })
-    this.box.add(this._createMiddleBoxMenu(), { expand: true, x_fill: true, x_align: St.Align.MIDDLE })
-    this.box.add(this._createRightBoxMenu(), { expand: false, x_fill: true, x_align: St.Align.END })
+    this.box.add_actor(this._createLeftBoxMenu(), { expand: true, x_fill: true, x_align: St.Align.START })
+    this.box.add_actor(this._createMiddleBoxMenu(), { expand: true, x_fill: true, x_align: St.Align.MIDDLE })
+    this.box.add_actor(this._createRightBoxMenu(), { expand: false, x_fill: true, x_align: St.Align.END })
   }
 
   _createLeftBoxMenu () {
@@ -104,11 +104,11 @@ var HeaderBar = GObject.registerClass(class HeaderBar extends PopupMenu.PopupBas
   _createRightBoxMenu () {
     const box = new St.BoxLayout({ style_class: 'rightBox' })
 
-    box.add(UiHelper.createActionButton('view-refresh-symbolic', 'hatt2', null, () => {
+    box.add_actor(UiHelper.createActionButton('view-refresh-symbolic', 'hatt2', null, () => {
       this.menu.quoteBox.reloadQuoteData(true)
     }))
 
-    box.add(UiHelper.createActionButton('emblem-system-symbolic', 'hatt2', 'last', () => {
+    box.add_actor(UiHelper.createActionButton('emblem-system-symbolic', 'hatt2', 'last', () => {
       this.menu.menu.close()
 
       Util.spawn(['gnome-shell-extension-prefs', 'stocks@infinicode.de'])
@@ -191,8 +191,8 @@ var ScrollBox = class extends PopupMenu.PopupMenuBase {
       vertical: true
     })
 
-    _quoteInformationBox.add(_quoteLabel, { expand: true, x_fill: true, x_align: St.Align.MIDDLE })
-    _quoteInformationBox.add(_quoteInformationLabel, { expand: true, x_fill: true, x_align: St.Align.MIDDLE })
+    _quoteInformationBox.add_actor(_quoteLabel, { expand: true, x_fill: true, x_align: St.Align.MIDDLE })
+    _quoteInformationBox.add_actor(_quoteInformationLabel, { expand: true, x_fill: true, x_align: St.Align.MIDDLE })
 
     gridMenu.actor.insert_child_at_index(_quoteInformationBox, 4)
     gridMenu.actor.add_style_class_name('taskGrid')
@@ -305,21 +305,26 @@ var ScrollBox = class extends PopupMenu.PopupMenuBase {
     })
 
     const quoteDataRow = new St.BoxLayout({
-      style_class: 'stockDataRow ' + (classes || '')
+      style_class: 'stockDataRow ' + (classes || ''),
+      x_expand: true
     })
 
     const titleLabel = new St.Label({
       text: title,
-      style_class: 'rowTitle'
+      style_class: 'rowTitle',
+      x_expand: true,
+      x_align: Clutter.ActorAlign.START
     })
 
     const valueLabel = new St.Label({
       text: value,
-      style_class: 'rowValue'
+      style_class: 'rowValue',
+      x_expand: false,
+      x_align: Clutter.ActorAlign.END
     })
 
-    quoteDataRow.add(titleLabel, { expand: true, x_fill: false, x_align: St.Align.START })
-    quoteDataRow.add(valueLabel, { expand: true, x_fill: false, x_align: St.Align.END })
+    quoteDataRow.add_actor(titleLabel)
+    quoteDataRow.add_actor(valueLabel)
 
     if (ExtensionUtils.versionCheck(['3.8'], Config.PACKAGE_VERSION)) {
       rowMenuItem.add_actor(quoteDataRow)
@@ -502,7 +507,7 @@ var ScrollBox = class extends PopupMenu.PopupMenuBase {
     placeholderLabel.clutter_text.ellipsize = Pango.EllipsizeMode.NONE
     placeholderLabel.clutter_text.line_wrap = true
 
-    this.box.add(placeholderLabel, {
+    this.box.add_actor(placeholderLabel, {
       expand: true,
       x_fill: true,
       y_fill: true,
@@ -565,13 +570,13 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
       vertical: true
     })
 
-    this._panelButtonLabelBox.add(this.globalStockNameLabel, {
+    this._panelButtonLabelBox.add_actor(this.globalStockNameLabel, {
       expand: true,
       x_fill: true,
       x_align: St.Align.MIDDLE
     })
 
-    this._panelButtonLabelBox.add(this.globalStockDetailsLabel, {
+    this._panelButtonLabelBox.add_actor(this.globalStockDetailsLabel, {
       expand: true,
       x_fill: true,
       x_align: St.Align.MIDDLE
