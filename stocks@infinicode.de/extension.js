@@ -748,7 +748,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
       this.refreshGlobalPanelLabels()
     }
 
-    this._toggleDisplayTimeout = Mainloop.timeout_add_seconds(10, () => {
+    this._toggleDisplayTimeout = Mainloop.timeout_add_seconds(70, () => {
       this.refreshGlobalPanelLabels()
 
       this.setToggleDisplayTimeout()
