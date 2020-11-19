@@ -567,7 +567,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
     this._panelButtonLabelBox = new St.BoxLayout({
       style_class: 'globalLabelBox',
       y_align: Clutter.ActorAlign.CENTER,
-      vertical: true
+      vertical: false
     })
 
     this._panelButtonLabelBox.add_actor(this.globalStockNameLabel, {
@@ -748,7 +748,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
       this.refreshGlobalPanelLabels()
     }
 
-    this._toggleDisplayTimeout = Mainloop.timeout_add_seconds(70, () => {
+    this._toggleDisplayTimeout = Mainloop.timeout_add_seconds(99, () => {
       this.refreshGlobalPanelLabels()
 
       this.setToggleDisplayTimeout()
