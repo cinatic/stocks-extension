@@ -1,6 +1,6 @@
 const Gtk = imports.gi.Gtk
 const GObject = imports.gi.GObject
-const Gettext = imports.gettext.domain('stocks@infinicode.de')
+const Gettext = imports.gettext.domain('stocks-qarj@infinicode.de')
 const _ = Gettext.gettext
 
 const Mainloop = imports.mainloop
@@ -480,7 +480,7 @@ var PrefsWidget = GObject.registerClass({
 })
 
 function init () {
-  Convenience.initTranslations('stocks@infinicode.de')
+  Convenience.initTranslations('stocks-qarj@infinicode.de')
 }
 
 function buildPrefsWidget () {

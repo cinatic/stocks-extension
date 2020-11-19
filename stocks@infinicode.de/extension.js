@@ -39,7 +39,7 @@ const Config = imports.misc.config
 const Mainloop = imports.mainloop
 const Util = imports.misc.util
 
-const Gettext = imports.gettext.domain('stocks@infinicode.de')
+const Gettext = imports.gettext.domain('stocks-qarj@infinicode.de')
 const _ = Gettext.gettext
 const ngettext = Gettext.ngettext
 
@@ -111,7 +111,7 @@ var HeaderBar = GObject.registerClass(class HeaderBar extends PopupMenu.PopupBas
     box.add_actor(UiHelper.createActionButton('emblem-system-symbolic', 'hatt2', 'last', () => {
       this.menu.menu.close()
 
-      Util.spawn(['gnome-shell-extension-prefs', 'stocks@infinicode.de'])
+      Util.spawn(['gnome-shell-extension-prefs', 'stocks-qarj@infinicode.de'])
     }))
 
     return box
@@ -835,7 +835,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
 var stocksMenu
 
 function init (extensionMeta) {
-  ExtensionUtils.initTranslations('stocks@infinicode.de')
+  ExtensionUtils.initTranslations('stocks-qarj@infinicode.de')
 }
 
 function enable () {
