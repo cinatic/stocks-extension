@@ -1,5 +1,5 @@
 # [stocks-extension](https://extensions.gnome.org/extension/1422/stocks-extension/)
-A extension to display stock quotes in GNOME Shell Panel
+An extension to display stock quotes in the GNOME Shell Panel.
 
 ![Screenshot](https://github.com/Qarj/stocks-extension/raw/master/images/extension.png)
 
@@ -31,13 +31,13 @@ cd stocks-extension
 ./install.sh
 ```
 
-Restart GNOME Shell (`Alt`+`F2`, `r`, `Enter`)
+Restart GNOME Shell (`Alt`+`F2`, `r`, `Enter`).
 
 Now enable the extension through *gnome-tweak-tool*.
 
 ## Add Stocks
 
-To add stocks you need a yahoo symbol-exchange pair. Search for stocks on yahoo finance and get your symbol
+To add stocks you need a yahoo symbol-exchange pair. Search for stocks on yahoo finance and get your symbol.
 
 1. Open Settings
 2. Click on the + icon on the bottom of the first tab
