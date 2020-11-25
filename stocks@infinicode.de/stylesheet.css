@@ -1,249 +1,108 @@
-.globalLabelBox .globalStockDetailsLabel {
-    font-size: 11px;
-    text-align: right;
+/**** some globals ****/
+.stocks-extension .small-text {
+    font-size: .8em;
+}
+
+.stocks-extension .fwb {
     font-weight: bold;
 }
 
-.globalLabelBox.positiv .globalStockDetailsLabel {
-    color: green;
+.stocks-extension .tar {
+    text-align: right;
 }
 
-.globalLabelBox.negative .globalStockDetailsLabel {
-    color: red;
+.stocks-extension .quote-positive {
+    color: #00873c;
+    font-weight: bolder;
 }
 
-.globalLabelBox .globalStockNameLabel {
-    font-size: 8px;
+.stocks-extension .quote-negative {
+    color: #F44E3F;
+    font-weight: bolder;
 }
 
-.button {
-    border-radius: 2px;
-    padding: 5px;
-}
+/*** main components ***/
 
-.headerBar {
-    padding: 0 5px 5px 5px;
-}
-
-.headerBar .system-menu-action {
-    border: 1px solid #282c2c;
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    border-radius: 0;
-    border-right: 0;
-    padding: 8px;
-}
-
-.headerBar .system-menu-action:focus,
-.headerBar .system-menu-action:hover {
-    background: #07a0c6;
-    padding: 8px;
-    border-right: 0;
-}
-
-.headerBar .system-menu-action.last:focus,
-.headerBar .system-menu-action.last:hover,
-.headerBar .system-menu-action.last {
-    border-right: 1px;
-}
-
-.headerBar .system-menu-action.active:focus,
-.headerBar .system-menu-action.active:hover,
-.headerBar .system-menu-action.active {
-    background-color: #077391;
-    color: white;
-}
-
-.headerBar .system-menu-action.active {
-    background-color: #077391;
-}
-
-.headerBar .button {
-    width: 90px;
-    border-radius: 0;
-}
-
-.headerBar .button.activeButton {
-    border-right: 0;
-}
-
-.headerBar .button.active {
-    background-color: #077391;
-}
-
-.projectScrollBox {
-    width: 300px;
-    margin-left: 20px;
-}
-
-.projectScrollBox .projectButton {
-    width: 50px;
-}
-
-.projectScrollBox .projectButton {
-    border: 1px solid #282c2c;
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    border-radius: 0;
-    border-right: 0;
-    padding: 4px 8px;
-}
-
-.projectScrollBox .projectButton:focus,
-.projectScrollBox .projectButton:hover {
-    background: #07a0c6;
-    padding: 4px 8px;
-    border-right: 0;
-}
-
-.projectScrollBox .projectButton.last:focus,
-.projectScrollBox .projectButton.last:hover,
-.projectScrollBox .projectButton.last {
-    border-right: 1px;
-}
-
-.projectScrollBox .projectButton.active:focus,
-.projectScrollBox .projectButton.active:hover,
-.projectScrollBox .projectButton.active {
-    background-color: #077391;
-    color: white;
-}
-
-.projectScrollBox .projectButton.active {
-    background-color: #077391;
-}
-
-.scrollBox {
-    margin-top: 5px;
-    height: 500px;
+.stocks-extension .screen,
+.stocks-extension .screen-wrapper {
     width: 550px;
+    max-width: 550px;
+    height: 600px;
+    max-height: 600px;
 }
 
-.taskGridInner {
-    margin: 5px 0;
+.stocks-extension .menu-stock-ticker {
+    width: 70px;
 }
 
-.taskGrid .hidden {
-    visibility: hidden;
+.stocks-extension .menu-stock-ticker .ticker-stock-name-label {
+    font-size: .7em;
 }
 
-.taskGrid .minor {
-    color: #00c6ff;
-}
-
-.taskGrid .medium {
-    color: #ffff00;
-}
-
-.taskGrid .warning,
-.taskGrid .urgent {
-    color: #ff5b00;
-}
-
-.taskGrid .completed {
-    color: #13d000;
-}
-
-.activeTask {
-    overflow: hidden;
-    border: 1px solid rgba(255, 128, 0, 0.5);
-    border-top: 0;
-    border-left: 0;
-    border-right: 0;
-    color: orange;
-}
-
-.button-container {
-    padding: 5px 0 0 0;
-}
-
-.stockRowMenuItem {
-    padding: 0;
-    margin: 0 0 0 20px;
-}
-
-.quoteInformationBox.positiv .quoteLabel {
-    color: green;
-}
-
-.quoteInformationBox.negative .quoteLabel {
-    color: red;
-}
-
-.quoteInformationBox .quoteLabel {
-    text-align: right;
-    font-size: 13px;
+.stocks-extension .menu-stock-ticker .ticker-stock-quote-label {
+    font-size: .9em;
+    text-align: left;
     font-weight: bold;
 }
 
-.quoteInformationBox .quoteInformationLabel {
-    font-size: 10px;
+.stocks-extension .search-bar {
+    height: 40px;
+    padding: 5px 10px;
 }
 
-.stockDataRow {
-    padding: 3px;
-    width: 450px;
-    /*height: 20px;*/
+.stocks-extension .search-bar .search-area-box .navigate-back-icon-button {
+    margin-right: 15px;
 }
 
-.stockDataRow .rowValue {
-    text-align: right;
-    margin-right: 20px;
+.stocks-extension .search-bar .search-area-box .search-text-input .search-entry-icon {
+    width: 21px;
+    height: 21px;
 }
 
-.stockDataRow.positiv .rowValue {
-    color: green;
+.stocks-extension .search-bar .button-box {
+    height: 20px;
+    margin-left: 15px;
 }
 
-.stockDataRow.negative .rowValue {
-    color: red;
+.stocks-extension .search-bar .button-box .icon-button {
+    margin: 0 5px;
 }
 
-.buttonBox {
-    width: 480px;
-    margin-bottom: 5px;
+.stocks-extension .card {
+    margin: 10px 15px;
+    padding: 10px 20px;
+    box-shadow: none;
 }
 
-.buttonBox .button {
-    margin: 10px 3px;
+/*** stock details ***/
+.stocks-extension .stock-details {
+    min-width: 480px;
+    margin: 10px 15px;
+    padding: 10px 20px;
 }
 
-.button:hover {
-    color: white;
-    background: rgba(144, 144, 148, 0.21);
+.stocks-extension .stock-details .header-box {
+    margin-bottom: 16px;
 }
 
-.taskModificationDialog .headline {
-    margin-bottom: 10px;
+.stocks-extension .stock-left-details-box {
+    margin-right: 10px;
 }
 
-.taskModificationDialog .modificationInputBox {
-    margin: 7px 0;
+.stocks-extension .stock-right-details-box {
+    margin-left: 10px;
 }
 
-.prompt-dialog-error-label {
+.stocks-extension .detail-item-value, .detail-item-label {
+    font-size: .9em;
+}
+
+.stocks-extension .chart {
+    width: 500px;
+    height: 300px;
+}
+
+.stocks-extension .chart-hover-label {
     margin-top: 10px;
-    color: #ff2f31;
-}
-
-.messageBox {
-    width: 350px;
-    padding: 20px;
-    margin-top: 130px;
-}
-
-.messageBox.noTasks {
     text-align: center;
-    margin-top: 180px;
-}
-
-.rowMenuIconButton {
-    height: 15px;
-    width: 20px;
-    padding: 0;
-    margin: 0;
-}
-
-.headerBar.dark .system-menu-action {
-    background: rgba(0, 33, 115, 0.71);
 }
