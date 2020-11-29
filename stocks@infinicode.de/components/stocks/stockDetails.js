@@ -3,7 +3,7 @@ const { GObject, St } = imports.gi
 const ExtensionUtils = imports.misc.extensionUtils
 
 const Me = ExtensionUtils.getCurrentExtension()
-const { fallbackIfNaN, formatDate, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
+const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
 
 var StockDetails = GObject.registerClass({}, class StockDetails extends St.BoxLayout {
@@ -127,7 +127,7 @@ var StockDetails = GObject.registerClass({}, class StockDetails extends St.BoxLa
 
     leftDetailBox.add(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.TIME),
-        this._createDetailItemValue(formatDate(new Date(quoteSummary.Timestamp), 'H:m:S D.M.Y'))
+        this._createDetailItemValue((new Date(quoteSummary.Timestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME))
     ))
 
     return leftDetailBox
@@ -143,7 +143,7 @@ var StockDetails = GObject.registerClass({}, class StockDetails extends St.BoxLa
 
     rightDetailBox.add(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.EXCHANGE),
-        this._createDetailItemValue(quoteSummary.ExchangeName || 'UNKNOWN')
+        this._createDetailItemValue(quoteSummary.ExchangeName || Translations.UNKNOWN)
     ))
 
     rightDetailBox.add(this._createDetailItem(

@@ -3,7 +3,8 @@ const { GObject, St } = imports.gi
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
-const { fallbackIfNaN, formatDate, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
+const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
+const { Translations } = Me.imports.helpers.translations
 
 var StockCard = GObject.registerClass({
   GTypeName: 'StockExtension.StockCard'
@@ -69,7 +70,7 @@ var StockCard = GObject.registerClass({
     if (this.cardItem.Error) {
       additionalInformationLabel.text = `${this.cardItem.Error}`
     } else {
-      additionalInformationLabel.text = `${this.cardItem.Symbol}  |  ${this.cardItem.ExchangeName || 'UNKNOWN'}`
+      additionalInformationLabel.text = `${this.cardItem.Symbol}  |  ${this.cardItem.ExchangeName || Translations.UNKNOWN}`
     }
 
     stockInformationBox.add_child(additionalInformationLabel)
@@ -118,7 +119,7 @@ var StockCard = GObject.registerClass({
 
       const additionalInformationLabel = new St.Label({
         style_class: 'additional-quote-information-label small-text fwb',
-        text: `  |  ${fallbackIfNaN(Math.round(this.cardItem.Volume / 1000))} k  |  ${formatDate(new Date(this.cardItem.Timestamp), 'H:m:S D.M.Y')}`
+        text: `  |  ${fallbackIfNaN(Math.round(this.cardItem.Volume / 1000))} k  |  ${(new Date(this.cardItem.Timestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)}`
       })
 
       additionalInformationBox.add_child(quoteChangeLabel)

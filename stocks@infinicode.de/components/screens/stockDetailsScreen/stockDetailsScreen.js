@@ -7,7 +7,7 @@ const { Chart } = Me.imports.components.chart.chart
 const { StockDetails } = Me.imports.components.stocks.stockDetails
 const { SearchBar } = Me.imports.components.searchBar.searchBar
 
-const { clearCache, formatDate, roundOrDefault } = Me.imports.helpers.data
+const { clearCache, roundOrDefault } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
 
 const FinanceService = Me.imports.services.financeService
@@ -50,7 +50,7 @@ var StockDetailsScreen = GObject.registerClass({}, class StockDetailsScreen exte
 
     // TODO: figure out how we can determine if chart lost focus
     chart.connect('chart-hover', (item, x, y) => {
-      chartValueLabel.text = `${formatDate(new Date(x), 'H:m:S D.M.Y')} ${roundOrDefault(y)}`
+      chartValueLabel.text = `${(new Date(x)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)} ${roundOrDefault(y)}`
     })
 
     this.add_child(searchBar)

@@ -9,14 +9,10 @@ const { SETTINGS_SCHEMA_DOMAIN } = Me.imports.helpers.settings
 
 var Translations = {
   BACK: _('back'),
-  COMMITS: _('Commits'),
   FILTER_PLACEHOLDER: _('Filter Results'),
-  LAST_UPDATED: _('Updated %s ago'),
   LOADING_DATA: _('Loading Data'),
-  LOADING_DATA_ERROR: _('Error loading data'),
-  LOADING_DATA_ERROR_SPECIFIC: _('Error Loading %s: %s'),
-  PIPELINES: _('Pipelines'),
   NO_SYMBOLS_CONFIGURED_ERROR: _('No Symbols / Tickers configured.'),
+  UNKNOWN: _('UNKNOWN'),
   SETTINGS: {
     QUOTE_NAME: _('Name'),
     SYMBOL: _('Symbol'),
@@ -28,12 +24,15 @@ var Translations = {
     CHANGE: _('Change'),
     VOLUME: _('Volume'),
     EXCHANGE: _('Exchange'),
-    PREVIOUS_CLOSE: _('Prev. Close:'),
+    PREVIOUS_CLOSE: _('Prev. Close'),
     OPEN: _('Open'),
     CLOSE: _('Close'),
     HIGH: _('High'),
     LOW: _('Low'),
     TIME: _('Time')
+  },
+  FORMATS: {
+    DEFAULT_DATE_TIME: _('%H:%M:%S %d.%m.%Y')
   }
 }
 
