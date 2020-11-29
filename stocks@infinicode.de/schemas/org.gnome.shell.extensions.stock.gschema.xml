@@ -27,5 +27,9 @@
             <default>''</default>
             <summary>JSON representation of symbol data</summary>
         </key>
+        <key type="i" name="ticker-interval">
+            <default>10</default>
+            <summary>Stock Panel Ticker Interval in Seconds</summary>
+        </key>
     </schema>
 </schemalist>
