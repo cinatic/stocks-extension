@@ -5,8 +5,8 @@ const Mainloop = imports.mainloop
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
-const { EventHandler } = Me.imports.helpers.eventHandler
-const { formatDate, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
+const { setTimeout, clearTimeout } = Me.imports.helpers.components
+const { roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
 const { Settings } = Me.imports.helpers.settings
 const { Translations } = Me.imports.helpers.translations
 
@@ -42,7 +42,12 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
 
   async _sync () {
     const stockItem = Settings.symbol_pairs.filter(item => item.showInTicker)[this._visibleStockIndex]
+
+    const showLoadingInfoTimeoutId = setTimeout(this._showLoadingIndicator.bind(this), 500)
+
     const quoteSummary = await FinanceService.getQuoteSummary({ symbol: stockItem.symbol, fallbackName: stockItem.name })
+
+    clearTimeout(showLoadingInfoTimeoutId)
 
     this._createMenuTicker({ quoteSummary })
   }
@@ -74,6 +79,17 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
     stockInfoBox.add_child(stockQuoteLabel)
 
     this.add_child(stockInfoBox)
+  }
+
+  _showLoadingIndicator(){
+    this.destroy_all_children()
+
+    const stockQuoteLabel = new St.Label({
+      style_class: `ticker-stock-quote-label`,
+      text: Translations.LOADING_DATA
+    })
+
+    this.add_child(stockQuoteLabel)
   }
 
   _onPress (actor, event) {
