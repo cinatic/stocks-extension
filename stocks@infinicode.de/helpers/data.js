@@ -3,11 +3,6 @@ const { GLib } = imports.gi
 let CACHE = {}
 const CACHE_TIME = 10 * 1000
 
-const _MS_PER_SECONDS = 1000
-const _MS_PER_MINUTE = 1000 * 60
-const _MS_PER_HOUR = 1000 * 60 * 60
-const _MS_PER_DAY = 1000 * 60 * 60 * 24
-
 var isNullOrUndefined = value => typeof value === 'undefined' || value === null
 var isNullOrEmpty = value => isNullOrUndefined(value) || value.length === 0
 var fallbackIfNaN = value => typeof value === 'undefined' || value === null || isNaN(value) ? '--' : value

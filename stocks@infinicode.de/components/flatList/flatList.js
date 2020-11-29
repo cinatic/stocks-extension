@@ -9,7 +9,7 @@ const { Translations } = Me.imports.helpers.translations
 var MESSAGE_ANIMATION_TIME = 100
 
 var FlatList = GObject.registerClass({
-  GTypeName: 'StockExtension.FlatList',
+  GTypeName: 'StockExtension_FlatList',
   Signals: {
     'clicked-item': {
       param_types: [GObject.TYPE_OBJECT]

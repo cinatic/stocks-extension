@@ -6,7 +6,7 @@ const Me = ExtensionUtils.getCurrentExtension()
 const ComponentsHelper = Me.imports.helpers.components
 
 var Icon = GObject.registerClass({
-  GTypeName: 'StockExtension.Icon'
+  GTypeName: 'StockExtension_Icon'
 }, class Icon extends St.Icon {
   _init ({ icon_name, isCustomIcon, ...props }) {
     const iconOptions = {}

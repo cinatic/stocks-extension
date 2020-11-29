@@ -7,7 +7,7 @@ const { StockDetailsScreen } = Me.imports.components.screens.stockDetailsScreen.
 const { EventHandler } = Me.imports.helpers.eventHandler
 
 var ScreenWrapper = GObject.registerClass({
-      GTypeName: 'StockExtension.ScreenWrapper'
+      GTypeName: 'StockExtension_ScreenWrapper'
     },
     class ScreenWrapper extends St.Widget {
       _init () {

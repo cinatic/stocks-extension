@@ -6,7 +6,7 @@ const Me = ExtensionUtils.getCurrentExtension()
 const { closest, isNullOrUndefined, getStockColorStyleClass } = Me.imports.helpers.data
 
 var Chart = GObject.registerClass({
-  GTypeName: 'StockExtension.Chart',
+  GTypeName: 'StockExtension_Chart',
   Signals: {
     'chart-hover': {
       param_types: [GObject.TYPE_DOUBLE, GObject.TYPE_DOUBLE]

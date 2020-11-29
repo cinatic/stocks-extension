@@ -1,7 +1,7 @@
 const { Clutter, GObject } = imports.gi
 
 var ScaleLayout = GObject.registerClass({
-      GTypeName: 'StockExtension.ScaleLayout'
+      GTypeName: 'StockExtension_ScaleLayout'
     }, class ScaleLayout extends Clutter.BinLayout {
       _init (params) {
         this._container = null

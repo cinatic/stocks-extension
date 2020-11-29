@@ -7,7 +7,7 @@ const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.he
 const { Translations } = Me.imports.helpers.translations
 
 var StockCard = GObject.registerClass({
-  GTypeName: 'StockExtension.StockCard'
+  GTypeName: 'StockExtension_StockCard'
 }, class StockCard extends St.Button {
   _init (quoteSummary) {
     super._init({

@@ -10,7 +10,7 @@ const { IconButton } = Me.imports.components.buttons.iconButton
 const { Translations } = Me.imports.helpers.translations
 
 var SearchBar = GObject.registerClass({
-  GTypeName: 'StockExtension.SearchBar',
+  GTypeName: 'StockExtension_SearchBar',
   Signals: {
     'text-change': {
       param_types: [GObject.TYPE_STRING]
