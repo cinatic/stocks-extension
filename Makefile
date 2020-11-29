@@ -18,6 +18,7 @@ LOCALE_DIR := $(SRC_DIR)/locale
 
 JS_FILES := $(wildcard $(SRC_DIR)/*.js)
 UI_FILES := $(wildcard $(SRC_DIR)/*.ui)
+CSS_FILES := $(wildcard $(SRC_DIR)/*.css)
 JS_COMPONENTS := $(SRC_DIR)/components $(SRC_DIR)/helpers $(SRC_DIR)/services
 
 COMPILED_SCHEMAS := $(SCHEMAS_DIR)/gschemas.compiled
@@ -28,7 +29,7 @@ MO_DIR := $(PO_FILES:$(PO_DIR)/%.po=$(LOCALE_DIR)/%/LC_MESSAGES)
 
 POT_FILE := $(PO_DIR)/$(UUID).pot
 TOLOCALIZE := $(JS_FILES:$(SRC_DIR)/%.js=%.js) $(UI_FILES:$(SRC_DIR)/%.ui=%.ui)
-FILES :=  $(JS_FILES) $(JS_COMPONENTS) $(COMPILED_SCHEMAS) $(UI_FILES) $(SRC_DIR)/metadata.json $(MO_FILES) README.md
+FILES :=  $(JS_FILES) $(JS_COMPONENTS) $(COMPILED_SCHEMAS) $(UI_FILES) $(CSS_FILES) $(SRC_DIR)/metadata.json $(MO_FILES) README.md
 
 ifeq ($(strip $(DESTDIR)),)
 	INSTALLBASE := $(HOME)/.local
