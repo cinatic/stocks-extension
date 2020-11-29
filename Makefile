@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-# Copyright (C) 2018 Florijan Hamzic <fh[at]infinicode.de>
+# Copyright (C) 2020 Florijan Hamzic <fh[at]infinicode.de>
 # This file is distributed under the same license as the stocks-extension package.
 
 .PHONY: clean mrproper
@@ -18,8 +18,8 @@ LOCALE_DIR := $(SRC_DIR)/locale
 
 JS_FILES := $(wildcard $(SRC_DIR)/*.js)
 UI_FILES := $(wildcard $(SRC_DIR)/*.ui)
+JS_COMPONENTS := $(SRC_DIR)/components $(SRC_DIR)/helpers $(SRC_DIR)/services
 
-FILES := $(SRC_DIR)/* README.md
 COMPILED_SCHEMAS := $(SCHEMAS_DIR)/gschemas.compiled
 
 PO_FILES := $(wildcard $(PO_DIR)/*.po)
@@ -28,6 +28,7 @@ MO_DIR := $(PO_FILES:$(PO_DIR)/%.po=$(LOCALE_DIR)/%/LC_MESSAGES)
 
 POT_FILE := $(PO_DIR)/$(UUID).pot
 TOLOCALIZE := $(JS_FILES:$(SRC_DIR)/%.js=%.js) $(UI_FILES:$(SRC_DIR)/%.ui=%.ui)
+FILES :=  $(JS_FILES) $(JS_COMPONENTS) $(COMPILED_SCHEMAS) $(UI_FILES) $(SRC_DIR)/metadata.json $(MO_FILES) README.md
 
 ifeq ($(strip $(DESTDIR)),)
 	INSTALLBASE := $(HOME)/.local
@@ -52,20 +53,20 @@ $(LOCALE_DIR)/%/LC_MESSAGES:
 $(PO_DIR):
 	mkdir -p $@
 
-$(PO_DIR)/%.po: $(POT_FILE) $(PO_DIR)
+$(PO_FILES): $(POT_FILE) $(PO_DIR)
 	msgmerge -m -U --backup=none $@ $<
-
-$(LOCALE_DIR)/%/LC_MESSAGES/$(UUID).mo: $(PO_DIR)/%.po $(MO_DIR)
-	msgfmt -c $< -o $@
 
 $(POT_FILE): $(PO_DIR)
 	cd $(SRC_DIR) && xgettext --from-code=UTF-8 --package-name "gnome-shell-extension-$(EXTENSION_NAME)" --msgid-bugs-address=$(AUTHOR_MAIL) -k_ -kN_ -o po/$(UUID).pot $(TOLOCALIZE) && cd -
 
+$(MO_FILES): $(PO_FILES) $(MO_DIR)
+	msgfmt -c $< -o $@
+
 build: $(BUILD_DIR) $(COMPILED_SCHEMAS) $(MO_FILES)
-	cp -r $(FILES) $<
+	cp -r --parents $(FILES) $<
 
 package: $(BUILD_DIR)
-	cd $(BUILD_DIR) && zip -r $(EXTENSION_NAME)-extension.zip *
+	cd $(BUILD_DIR)/${SRC_DIR} && zip -r ../$(EXTENSION_NAME)-extension.zip *
 
 install: build
 	rm -rf $(INSTALL_DIR)
@@ -73,8 +74,7 @@ install: build
 	cp -r $(BUILD_DIR)/* $(INSTALL_DIR)
 
 clean:
-	rm -f $(COMPILED_SCHEMAS) $(POT_FILE)
-	rm -rf $(LOCALE_DIR)
+	rm -f $(COMPILED_SCHEMAS) $(MO_FILES)
 
 mrproper: clean
 	rm -rf $(BUILD_DIR)
