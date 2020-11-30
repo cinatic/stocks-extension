@@ -1,4 +1,7 @@
 # [stocks-extension](https://extensions.gnome.org/extension/1422/stocks-extension/)
+[![Actions Status: Build & Create Package](https://github.com/cinatic/stocks-extension/workflows/Build%20%26%20Create%20Package/badge.svg)](https://github.com/cinatic/stocks-extension/actions?query=workflow%3A"Build+&+Create+Package")
+[![Actions Status: Build Package & Create Release](https://github.com/cinatic/stocks-extension/workflows/Build%20Package%20%26%20Create%20Release/badge.svg)](https://github.com/cinatic/stocks-extension/actions?query=workflow%3A"Build+Package+&+Create+Release")
+
 A extension to display stock quotes in GNOME Shell Panel
 
 <p align="middle">
