@@ -7,6 +7,10 @@
     font-weight: bold;
 }
 
+.stocks-extension .tac {
+    text-align: center;
+}
+
 .stocks-extension .tar {
     text-align: right;
 }

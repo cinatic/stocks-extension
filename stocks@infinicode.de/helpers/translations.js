@@ -12,6 +12,7 @@ var Translations = {
   FILTER_PLACEHOLDER: _('Filter Results'),
   LOADING_DATA: _('Loading Data'),
   NO_SYMBOLS_CONFIGURED_ERROR: _('No Symbols / Tickers configured.'),
+  EMPTY_TICKER_TEXT: _('stocks'),
   UNKNOWN: _('UNKNOWN'),
   SETTINGS: {
     QUOTE_NAME: _('Name'),

@@ -42,9 +42,20 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
   }
 
   async _sync () {
-    const stockItem = Settings.symbol_pairs.filter(item => item.showInTicker)[this._visibleStockIndex]
+    const tickerEnabledItems = Settings.symbol_pairs.filter(item => item.showInTicker)
+    let stockItem = tickerEnabledItems[this._visibleStockIndex]
 
-    const showLoadingInfoTimeoutId = setTimeout(this._showLoadingIndicator.bind(this), 500)
+    if (!stockItem) {
+      this._visibleStockIndex = 0
+      stockItem = tickerEnabledItems[0]
+    }
+
+    if (!stockItem) {
+      this._showInfoMessage(Translations.EMPTY_TICKER_TEXT)
+      return
+    }
+
+    const showLoadingInfoTimeoutId = setTimeout(this._showInfoMessage.bind(this), 500)
 
     const quoteSummary = await FinanceService.getQuoteSummary({ symbol: stockItem.symbol, fallbackName: stockItem.name })
 
@@ -67,7 +78,7 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
 
     const stockNameLabel = new St.Label({
       style_class: 'ticker-stock-name-label',
-      text: quoteSummary.FullName || 'No Config'
+      text: quoteSummary.FullName || Translations.UNKNOWN
     })
 
     stockInfoBox.add_child(stockNameLabel)
@@ -82,15 +93,20 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
     this.add_child(stockInfoBox)
   }
 
-  _showLoadingIndicator () {
+  _showInfoMessage (message) {
     this.destroy_all_children()
 
-    const stockQuoteLabel = new St.Label({
-      style_class: `ticker-stock-quote-label`,
-      text: Translations.LOADING_DATA
+    const infoMessageBin = new St.Bin({
+      style_class: 'info-message-bin',
+      x_expand: true,
+      y_expand: true,
+      child: new St.Label({
+        style_class: `tac`,
+        text: message || Translations.LOADING_DATA
+      })
     })
 
-    this.add_child(stockQuoteLabel)
+    this.add_child(infoMessageBin)
   }
 
   _onPress (actor, event) {
@@ -123,7 +139,7 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
   }
 
   _showNextStock () {
-    this._visibleStockIndex = this._visibleStockIndex + 1 === Settings.symbol_pairs.filter(item => item.showInTicker).length ? 0 : this._visibleStockIndex + 1
+    this._visibleStockIndex = this._visibleStockIndex + 1 >= Settings.symbol_pairs.filter(item => item.showInTicker).length ? 0 : this._visibleStockIndex + 1
     this._sync()
   }
 
@@ -132,7 +148,7 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
       Mainloop.source_remove(this._toggleDisplayTimeout)
     }
 
-    if(this._settingsChangedId){
+    if (this._settingsChangedId) {
       Settings.disconnect(this._settingsChangedId)
     }
   }
