@@ -23,6 +23,8 @@ var StockOverviewScreen = GObject.registerClass({}, class StockOverviewScreen ex
       vertical: true
     })
 
+    this._isRendering = false
+    this._showLoadingInfoTimeoutId = null
     this._autoRefreshTimeoutId = null
 
     const searchBar = new SearchBar()
@@ -40,7 +42,7 @@ var StockOverviewScreen = GObject.registerClass({}, class StockOverviewScreen ex
 
     searchBar.connect('text-change', (sender, searchText) => this._filter_results(searchText))
 
-    Settings.connect('changed', (value, key) => {
+    this._settingsChangedId = Settings.connect('changed', (value, key) => {
       if (key === 'symbol-pairs') {
         this._loadData()
       }
@@ -84,27 +86,39 @@ var StockOverviewScreen = GObject.registerClass({}, class StockOverviewScreen ex
   }
 
   async _loadData () {
+    if (this._showLoadingInfoTimeoutId || this._isRendering) {
+      return
+    }
+
     if (!Settings.symbol_pairs) {
       this._list.show_error_info(Translations.NO_SYMBOLS_CONFIGURED_ERROR)
       return
     }
 
-    const showLoadingInfoTimeoutId = setTimeout(() => this._list.show_loading_info(), 500)
+    this._isRendering = true
+
+    this._showLoadingInfoTimeoutId = setTimeout(() => this._list.show_loading_info(), 500)
 
     const quoteSummaries = await Promise.all(Settings.symbol_pairs.map(symbolData => FinanceService.getQuoteSummary({ symbol: symbolData.symbol, fallbackName: symbolData.name })))
 
-    clearTimeout(showLoadingInfoTimeoutId)
+    this._showLoadingInfoTimeoutId = clearTimeout(this._showLoadingInfoTimeoutId)
 
     this._list.clear_list_items()
 
-    quoteSummaries.forEach((quoteSummary, index) => {
+    quoteSummaries.forEach(quoteSummary => {
       this._list.addItem(new StockCard(quoteSummary))
     })
+
+    this._isRendering = false
   }
 
-  _onDestroy(){
-    if(this._autoRefreshTimeoutId){
+  _onDestroy () {
+    if (this._autoRefreshTimeoutId) {
       Mainloop.source_remove(this._autoRefreshTimeoutId)
+    }
+
+    if(this._settingsChangedId){
+      Settings.disconnect(this._settingsChangedId)
     }
   }
 })

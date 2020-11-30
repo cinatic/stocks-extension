@@ -23,13 +23,14 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
 
     this._visibleStockIndex = 0
     this._toggleDisplayTimeout = null
+    this._settingsChangedId = null
 
     this._sync()
 
     this.connect('destroy', this._onDestroy.bind(this))
     this.connect('button-press-event', this._onPress.bind(this))
 
-    Settings.connect('changed', (value, key) => {
+    this._settingsChangedId = Settings.connect('changed', (value, key) => {
       this._registerTimeout(false)
 
       if (key === 'symbol-pairs') {
@@ -81,7 +82,7 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
     this.add_child(stockInfoBox)
   }
 
-  _showLoadingIndicator(){
+  _showLoadingIndicator () {
     this.destroy_all_children()
 
     const stockQuoteLabel = new St.Label({
@@ -129,6 +130,10 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
   _onDestroy () {
     if (this._toggleDisplayTimeout) {
       Mainloop.source_remove(this._toggleDisplayTimeout)
+    }
+
+    if(this._settingsChangedId){
+      Settings.disconnect(this._settingsChangedId)
     }
   }
 })

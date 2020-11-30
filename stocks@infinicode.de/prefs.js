@@ -6,7 +6,7 @@ const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 const Settings = Me.imports.helpers.settings
 
-const { decodeBase64JsonOrDefault, isNullOrEmpty } = Me.imports.helpers.data
+const { decodeBase64JsonOrDefault, isNullOrEmpty, isNullOrUndefined } = Me.imports.helpers.data
 const { initTranslations, Translations } = Me.imports.helpers.translations
 
 const EXTENSIONDIR = Me.dir.get_path()
@@ -111,6 +111,7 @@ var PrefsWidget = GObject.registerClass({
 
     this.configWidgets = []
     this.componentTimeoutIds = {}
+    this._settingsChangedId = null
     this.Window = new Gtk.Builder()
 
     this.initWindow()
@@ -127,6 +128,8 @@ var PrefsWidget = GObject.registerClass({
     this.evaluateValues()
 
     this.add(this.MainWidget)
+
+    this.connect('destroy', this._onDestroy.bind(this))
 
     this.MainWidget.connect('realize', () => {
       if (inRealize) {
@@ -228,7 +231,7 @@ var PrefsWidget = GObject.registerClass({
    */
   loadConfig () {
     this.Settings = Settings.getSettings()
-    this.Settings.connect('changed', this.evaluateValues.bind(this))
+    this._settingsChangedId = this.Settings.connect('changed', this.evaluateValues.bind(this))
   }
 
   /**
@@ -405,6 +408,12 @@ var PrefsWidget = GObject.registerClass({
     }
   }
 
+  _onDestroy () {
+    if (this._settingsChangedId) {
+      this.Settings.disconnect(this._settingsChangedId)
+    }
+  }
+
   /**
    * clear a entry input element
    */
@@ -419,7 +428,7 @@ var PrefsWidget = GObject.registerClass({
     const selection = this.treeview.get_selection().get_selected_rows()
 
     // check if a row has been selected
-    if (selection === undefined || selection === null) {
+    if (isNullOrEmpty(selection) || isNullOrUndefined(selection[0][0])) {
       return
     }
 
@@ -465,7 +474,7 @@ var PrefsWidget = GObject.registerClass({
     const selection = this.treeview.get_selection().get_selected_rows()
 
     // check if a row has been selected
-    if (selection === undefined || selection === null) {
+    if (isNullOrEmpty(selection) || isNullOrUndefined(selection[0][0])) {
       return
     }
 
@@ -496,7 +505,7 @@ var PrefsWidget = GObject.registerClass({
     const selection = this.treeview.get_selection().get_selected_rows()
 
     // check if a row has been selected
-    if (selection === undefined || selection === null) {
+    if (isNullOrEmpty(selection) || isNullOrUndefined(selection[0][0])) {
       return
     }
 

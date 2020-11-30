@@ -3,7 +3,7 @@ const { Clutter, GObject, St } = imports.gi
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
-const { closest, isNullOrUndefined, getStockColorStyleClass } = Me.imports.helpers.data
+const { closest, isNullOrEmpty, isNullOrUndefined, getStockColorStyleClass } = Me.imports.helpers.data
 
 var Chart = GObject.registerClass({
   GTypeName: 'StockExtension_Chart',
@@ -80,6 +80,10 @@ var Chart = GObject.registerClass({
   }
 
   _transformSeriesData (data, width, height) {
+    if (isNullOrEmpty(data)) {
+      return []
+    }
+
     const [minValueX] = data[0]
 
     // figure out max X value and max Y value
@@ -95,6 +99,10 @@ var Chart = GObject.registerClass({
   }
 
   _onHover (item, event) {
+    if (isNullOrEmpty(this.data)) {
+      return
+    }
+
     // first get position
     // then convert the position data back to original x value (timestamp)
     // find by this timestamp the closest item in series data

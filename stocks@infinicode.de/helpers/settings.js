@@ -115,7 +115,11 @@ const Handler = class {
   }
 
   connect (identifier, onChange) {
-    this._settings.connect(identifier, onChange)
+    return this._settings.connect(identifier, onChange)
+  }
+
+  disconnect (connectId) {
+    this._settings.disconnect(connectId)
   }
 }
 
