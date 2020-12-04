@@ -112,6 +112,7 @@ var PrefsWidget = GObject.registerClass({
     this.configWidgets = []
     this.componentTimeoutIds = {}
     this._settingsChangedId = null
+    this._treeViewItemHasDropped = false
     this.Window = new Gtk.Builder()
 
     this.initWindow()
@@ -141,20 +142,27 @@ var PrefsWidget = GObject.registerClass({
       inRealize = false
     })
 
-    this.treeview.connect('drag-drop', (a, b, c) => {
-      const treeModel = this.treeview.get_model()
+    this.treeview.connect('drag-drop', () => {
+      this._treeViewItemHasDropped = true
+    })
 
-      const newStockModels = []
+    this.liststore.connect('row-deleted', () => {
+      if(this._treeViewItemHasDropped) {
+        this._treeViewItemHasDropped = false
+        const treeModel = this.treeview.get_model()
 
-      treeModel.foreach((model, path, iter) => {
-        newStockModels.push({
-          name: model.get_value(iter, 0),
-          symbol: model.get_value(iter, 1),
-          showInTicker: model.get_value(iter, 2)
+        const newStockModels = []
+
+        treeModel.foreach((model, path, iter) => {
+          newStockModels.push({
+            name: model.get_value(iter, 0),
+            symbol: model.get_value(iter, 1),
+            showInTicker: model.get_value(iter, 2)
+          })
         })
-      })
 
-      this.symbolPairs = newStockModels
+        this.symbolPairs = newStockModels
+      }
     })
   }
 
@@ -440,8 +448,8 @@ var PrefsWidget = GObject.registerClass({
       return
     }
 
-    this.editName.set_text(selectedStock.name)
-    this.editSymbol.set_text(selectedStock.symbol)
+    this.editName.set_text(selectedStock.name || '')
+    this.editSymbol.set_text(selectedStock.symbol || '')
     this.editShowInTicker.set_state(selectedStock.showInTicker)
 
     this.editWidget.show_all()
@@ -451,8 +459,8 @@ var PrefsWidget = GObject.registerClass({
    * Save new symbol
    */
   saveSymbol () {
-    const name = this.newName.get_text()
-    const symbol = this.newSymbol.get_text().replace(/ /g, '')
+    const name = this.newName.get_text().trim()
+    const symbol = this.newSymbol.get_text().trim()
     const showInTicker = this.newShowInTicker.get_state()
 
     const newItem = {
