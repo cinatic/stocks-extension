@@ -20,15 +20,19 @@ const Response = class {
   }
 
   blob () {
-    return this.message.response_body.data
+    return this.message?.response_body?.data
   }
 
   text () {
-    return this.message.response_body.data.toString()
+    return this.message.response_body?.data?.toString()
   }
 
   json () {
-    return JSON.parse(this.text())
+    try {
+      return JSON.parse(this.text())
+    } catch (e) {
+      return null
+    }
   }
 }
 
@@ -46,7 +50,7 @@ const generateQueryString = params => {
   const paramKeyValues = Object.keys(params).filter(paramName => params[paramName]).map(paramName => {
     let paramValue = params[paramName]
 
-    if(typeof paramValue === 'boolean'){
+    if (typeof paramValue === 'boolean') {
       paramValue = paramValue ? 1 : 0
     }
 
