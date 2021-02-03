@@ -38,7 +38,7 @@ var getHistoricalQuotes = async ({ symbol, range = '6mo', interval = '1d', inclu
     ...defaultQueryParameters,
     range,
     interval,
-    includeTimestamps: includeTimestamps ? "true" : "false"
+    includeTimestamps: includeTimestamps ? 'true' : 'false'
   }
 
   const url = `${API_ENDPOINT}/${API_VERSION_CHART}/chart/${symbol}`
