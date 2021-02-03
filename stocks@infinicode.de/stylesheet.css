@@ -109,6 +109,7 @@
 .stocks-extension .chart {
     width: 500px;
     height: 300px;
+    margin: 5px;
 }
 
 .stocks-extension .chart-hover-label {
