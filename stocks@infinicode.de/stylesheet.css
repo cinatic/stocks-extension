@@ -25,6 +25,11 @@
     font-weight: bolder;
 }
 
+.button-group .button.selected {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
 /*** main components ***/
 
 .stocks-extension .screen,
