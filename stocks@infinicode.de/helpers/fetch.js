@@ -1,9 +1,7 @@
 const Soup = imports.gi.Soup
 
-const _httpSession = new Soup.SessionAsync({
-  user_agent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36',
-  timeout: 10
-})
+const DEFAULT_TIME_OUT_IN_SECONDS = 10
+const DEFAULT_CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
 
 const Response = class {
   constructor (message) {
@@ -70,7 +68,12 @@ var fetch = ({ url, method = 'GET', headers, queryParameters }) => {
       appendHeaders(request_message, headers)
     }
 
-    _httpSession.queue_message(request_message, (source, response_message) => {
+    const httpSession = new Soup.SessionAsync({
+      user_agent: DEFAULT_CHROME_USER_AGENT,
+      timeout: DEFAULT_TIME_OUT_IN_SECONDS
+    })
+
+    httpSession.queue_message(request_message, (source, response_message) => {
       const response = new Response(response_message)
 
       resolve(response)
