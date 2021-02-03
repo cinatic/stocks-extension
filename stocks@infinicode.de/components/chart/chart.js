@@ -90,6 +90,7 @@ var Chart = GObject.registerClass({
     const maxValueX = this.x2 || data[data.length - 1][0]
 
     const yValues = [...data.filter(item => item[1] !== null).map(item => item[1])]
+
     const minValueY = Math.min(...yValues)
     const maxValueY = Math.max(...yValues)
 
