@@ -40,8 +40,8 @@
     max-height: 600px;
 }
 
-.stocks-extension .menu-stock-ticker {
-    width: 70px;
+.stocks-extension .menu-stock-ticker .stock-info-box {
+    font-size: 1em;
 }
 
 .stocks-extension .menu-stock-ticker .ticker-stock-name-label {
@@ -88,6 +88,10 @@
     min-width: 480px;
     margin: 10px 15px;
     padding: 10px 20px;
+}
+
+.stocks-extension .stock-details-screen .button-group {
+    margin-bottom: 15px;
 }
 
 .stocks-extension .stock-details .header-box {
