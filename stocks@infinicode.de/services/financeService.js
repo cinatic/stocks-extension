@@ -23,10 +23,10 @@ var getQuoteSummary = async ({ symbol, fallbackName }) => {
   })
 }
 
-var getHistoricalQuotes = async ({ symbol, range = '6mo', interval = '1d', includeTimestamps = true }) => {
-  return cacheOrDefault(`${symbol}_chart_${range}_${interval}`, () => {
+var getHistoricalQuotes = async ({ symbol, range = '1y', includeTimestamps = true }) => {
+  return cacheOrDefault(`${symbol}_chart_${range}`, () => {
     if (symbol) {
-      return yahooService.getHistoricalQuotes({ symbol, range, interval, includeTimestamps })
+      return yahooService.getHistoricalQuotes({ symbol, range, includeTimestamps })
     }
   })
 }

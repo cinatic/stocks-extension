@@ -32,6 +32,18 @@ var Translations = {
     LOW: _('Low'),
     TIME: _('Time')
   },
+  CHART: {
+    RANGES: {
+      INTRADAY: _('1D'),
+      WEEK: _('5D'),
+      MONTH: _('1M'),
+      HALF_YEAR: _('6M'),
+      YEAR_TO_DATE: _('YTD'),
+      YEAR: _('1Y'),
+      FIVE_YEARS: _('5Y'),
+      MAX: _('Max'),
+    }
+  },
   FORMATS: {
     DEFAULT_DATE_TIME: _('%H:%M:%S %d.%m.%Y')
   }
