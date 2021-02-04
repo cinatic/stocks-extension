@@ -31,5 +31,9 @@
             <default>10</default>
             <summary>Stock Panel Ticker Interval in Seconds</summary>
         </key>
+        <key name="show-ticker-off-market-prices" type="b">
+            <default>true</default>
+            <summary>If enabled the ticker will automatically show pre / post market prices if available marked by a * sign.</summary>
+        </key>
     </schema>
 </schemalist>

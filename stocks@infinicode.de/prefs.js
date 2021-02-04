@@ -14,6 +14,7 @@ const EXTENSIONDIR = Me.dir.get_path()
 const POSITION_IN_PANEL_KEY = 'position-in-panel'
 const STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
 const STOCKS_TICKER_INTERVAL = 'ticker-interval'
+const STOCKS_SHOW_OFF_MARKET_TICKER_PRICES = 'show-ticker-off-market-prices'
 
 let inRealize = false
 let defaultSize = [-1, -1]
@@ -103,6 +104,22 @@ var PrefsWidget = GObject.registerClass({
     this.Settings.set_int(STOCKS_TICKER_INTERVAL, v)
   }
 
+  get show_ticker_off_market_prices () {
+    if (!this.Settings) {
+      this.loadConfig()
+    }
+
+    return this.Settings.get_boolean(STOCKS_SHOW_OFF_MARKET_TICKER_PRICES)
+  }
+
+  set show_ticker_off_market_prices (v) {
+    if (!this.Settings) {
+      this.loadConfig()
+    }
+
+    this.Settings.set_boolean(STOCKS_SHOW_OFF_MARKET_TICKER_PRICES, v)
+  }
+
   _init (params = {}) {
     super._init(Object.assign(params, {
       orientation: Gtk.Orientation.VERTICAL,
@@ -168,7 +185,6 @@ var PrefsWidget = GObject.registerClass({
 
   initWindow () {
     this.Window.add_from_file(EXTENSIONDIR + '/settings.ui')
-
     this.MainWidget = this.Window.get_object('main-widget')
 
     let theObjects = this.Window.get_objects()
