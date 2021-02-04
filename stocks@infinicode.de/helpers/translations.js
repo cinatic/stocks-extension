@@ -23,6 +23,8 @@ var Translations = {
   STOCKS: {
     SYMBOL: _('Symbol'),
     CHANGE: _('Change'),
+    CHANGE_PRE_MARKET: _('Pre Market*'),
+    CHANGE_POST_MARKET: _('Post Market*'),
     VOLUME: _('Volume'),
     EXCHANGE: _('Exchange'),
     PREVIOUS_CLOSE: _('Prev. Close'),
@@ -30,7 +32,9 @@ var Translations = {
     CLOSE: _('Close'),
     HIGH: _('High'),
     LOW: _('Low'),
-    TIME: _('Time')
+    TIME: _('Time'),
+    TIME_PRE_MARKET: _('Before Hours*'),
+    TIME_POST_MARKET: _('After Hours*'),
   },
   CHART: {
     RANGES: {
