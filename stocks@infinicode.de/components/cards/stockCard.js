@@ -1,10 +1,11 @@
-const { GObject, St } = imports.gi
+const { Clutter, GObject, St } = imports.gi
 
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
 const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
+const { MARKET_STATES } = Me.imports.services.meta.yahoo
 
 var StockCard = GObject.registerClass({
   GTypeName: 'StockExtension_StockCard'
@@ -79,58 +80,171 @@ var StockCard = GObject.registerClass({
   }
 
   _createQuoteInfo () {
-    let quoteInformationBox = new St.BoxLayout({
-      style_class: 'quote-information-box tar',
-      vertical: true,
-      x_align: St.Align.END,
-      y_align: St.Align.END
+    const quoteInformationBox = new St.BoxLayout({
+      style_class: 'quote-information-box',
+      vertical: true
+    })
+
+    const quoteInformationPriceBox = new St.BoxLayout({
+      style_class: 'quote-information-price-box tar',
+      x_align: Clutter.ActorAlign.END
     })
 
     const quoteColorStyleClass = getStockColorStyleClass(this.cardItem.Change)
 
-    const quoteLabel = new St.Label({
+    const regularQuoteLabel = new St.Label({
       style_class: `quote-label ${quoteColorStyleClass}`,
       text: `${roundOrDefault(this.cardItem.Close)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
     })
 
-    quoteInformationBox.add_child(quoteLabel)
+    quoteInformationPriceBox.add_child(regularQuoteLabel)
+
+    if (this.cardItem.MarketState === MARKET_STATES.PRE) {
+      const preMarketQuoteColorStyleClass = getStockColorStyleClass(this.cardItem.PreMarketChange)
+
+      const preMarketQuoteLabel = new St.Label({
+        style_class: `quote-label pre-market ${preMarketQuoteColorStyleClass}`,
+        text: `${roundOrDefault(this.cardItem.PreMarketPrice)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}*`
+      })
+
+      quoteInformationPriceBox.add_child(new St.Label({ style_class: 'quote-separation tar', text: ' / ' }))
+      quoteInformationPriceBox.add_child(preMarketQuoteLabel)
+    }
+
+    if (this.cardItem.MarketState === MARKET_STATES.POST) {
+      const postMarketQuoteColorStyleClass = getStockColorStyleClass(this.cardItem.PostMarketChange)
+
+      const postMarketQuoteLabel = new St.Label({
+        style_class: `quote-label post-market ${postMarketQuoteColorStyleClass}`,
+        text: `${roundOrDefault(this.cardItem.PostMarketPrice)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}*`
+      })
+
+      quoteInformationPriceBox.add_child(new St.Label({ style_class: 'quote-separation tar', text: ' / ' }))
+      quoteInformationPriceBox.add_child(postMarketQuoteLabel)
+    }
 
     if (!this.cardItem.Error) {
-      const additionalInformationBox = new St.BoxLayout({
-        style_class: 'info-section-box tar',
-        x_align: St.Align.END,
-        y_align: St.Align.END
-      })
+      quoteInformationBox.add_child(quoteInformationPriceBox)
+      quoteInformationBox.add_child(this._createRegularAdditionalInformationBox())
 
-      const quoteChangeLabel = new St.Label({
-        style_class: `small-text fwb ${quoteColorStyleClass}`,
-        text: `${roundOrDefault(this.cardItem.Change)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
-      })
+      if (this.cardItem.MarketState === MARKET_STATES.PRE) {
+        quoteInformationBox.add_child(this._createPreMarketAdditionalInformationBox())
+      }
 
-      const quoteChangePercentLabel = new St.Label({
-        style_class: `small-text fwb ${quoteColorStyleClass}`,
-        text: `${roundOrDefault(this.cardItem.ChangePercent)} %`
-      })
-
-      const placeHolder = new St.Label({
-        style_class: 'small-text fwb',
-        text: '  |  '
-      })
-
-      const additionalInformationLabel = new St.Label({
-        style_class: 'additional-quote-information-label small-text fwb',
-        text: `  |  ${fallbackIfNaN(Math.round(this.cardItem.Volume / 1000))} k  |  ${(new Date(this.cardItem.Timestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)}`
-      })
-
-      additionalInformationBox.add_child(quoteChangeLabel)
-      additionalInformationBox.add_child(placeHolder)
-      additionalInformationBox.add_child(quoteChangePercentLabel)
-      additionalInformationBox.add_child(additionalInformationLabel)
-
-      quoteInformationBox.add_child(additionalInformationBox)
+      if (this.cardItem.MarketState === MARKET_STATES.POST) {
+        quoteInformationBox.add_child(this._createPostMarketAdditionalInformationBox())
+      }
     }
 
     return quoteInformationBox
+  }
+
+  _createRegularAdditionalInformationBox () {
+    const quoteColorStyleClass = getStockColorStyleClass(this.cardItem.Change)
+
+    const additionalInformationBox = new St.BoxLayout({
+      style_class: 'info-section-box tar',
+      x_align: Clutter.ActorAlign.END
+    })
+
+    const quoteChangeLabel = new St.Label({
+      style_class: `small-text fwb ${quoteColorStyleClass}`,
+      text: `${roundOrDefault(this.cardItem.Change)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
+    })
+
+    const quoteChangePercentLabel = new St.Label({
+      style_class: `small-text fwb ${quoteColorStyleClass}`,
+      text: `${roundOrDefault(this.cardItem.ChangePercent)} %`
+    })
+
+    const placeHolder = new St.Label({
+      style_class: 'small-text fwb',
+      text: '  |  '
+    })
+
+    const additionalInformationLabel = new St.Label({
+      style_class: 'additional-quote-information-label small-text fwb',
+      text: `  |  ${fallbackIfNaN(Math.round(this.cardItem.Volume / 1000))} k  |  ${(new Date(this.cardItem.Timestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)}`
+    })
+
+    additionalInformationBox.add_child(quoteChangeLabel)
+    additionalInformationBox.add_child(placeHolder)
+    additionalInformationBox.add_child(quoteChangePercentLabel)
+    additionalInformationBox.add_child(additionalInformationLabel)
+
+    return additionalInformationBox
+  }
+
+  _createPreMarketAdditionalInformationBox () {
+    const quoteColorStyleClass = getStockColorStyleClass(this.cardItem.PreMarketChange)
+
+    const additionalInformationBox = new St.BoxLayout({
+      style_class: 'info-section-box tar',
+      x_align: Clutter.ActorAlign.END
+    })
+
+    const quoteChangeLabel = new St.Label({
+      style_class: `small-text fwb ${quoteColorStyleClass}`,
+      text: `${roundOrDefault(this.cardItem.PreMarketChange)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
+    })
+
+    const quoteChangePercentLabel = new St.Label({
+      style_class: `small-text fwb ${quoteColorStyleClass}`,
+      text: `${roundOrDefault(this.cardItem.PreMarketChangePercent)} %`
+    })
+
+    const placeHolder = new St.Label({
+      style_class: 'small-text fwb',
+      text: '  |  '
+    })
+
+    const additionalInformationLabel = new St.Label({
+      style_class: 'additional-quote-information-label small-text fwb',
+      text: ` |  ${Translations.STOCKS.PRE_MARKET}  |  ${(new Date(this.cardItem.PreMarketTimestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)}`
+    })
+
+    additionalInformationBox.add_child(quoteChangeLabel)
+    additionalInformationBox.add_child(placeHolder)
+    additionalInformationBox.add_child(quoteChangePercentLabel)
+    additionalInformationBox.add_child(additionalInformationLabel)
+
+    return additionalInformationBox
+  }
+
+  _createPostMarketAdditionalInformationBox () {
+    const quoteColorStyleClass = getStockColorStyleClass(this.cardItem.PreMarketChange)
+
+    const additionalInformationBox = new St.BoxLayout({
+      style_class: 'info-section-box tar',
+      x_align: Clutter.ActorAlign.END
+    })
+
+    const quoteChangeLabel = new St.Label({
+      style_class: `small-text fwb ${quoteColorStyleClass}`,
+      text: `${roundOrDefault(this.cardItem.PreMarketChange)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
+    })
+
+    const quoteChangePercentLabel = new St.Label({
+      style_class: `small-text fwb ${quoteColorStyleClass}`,
+      text: `${roundOrDefault(this.cardItem.PreMarketChangePercent)} %`
+    })
+
+    const placeHolder = new St.Label({
+      style_class: 'small-text fwb',
+      text: '  |  '
+    })
+
+    const additionalInformationLabel = new St.Label({
+      style_class: 'additional-quote-information-label small-text fwb',
+      text: `  |  ${Translations.STOCKS.POST_MARKET}  |  ${(new Date(this.cardItem.PostMarketTimestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)}`
+    })
+
+    additionalInformationBox.add_child(quoteChangeLabel)
+    additionalInformationBox.add_child(placeHolder)
+    additionalInformationBox.add_child(quoteChangePercentLabel)
+    additionalInformationBox.add_child(additionalInformationLabel)
+
+    return additionalInformationBox
   }
 
   _sync () {

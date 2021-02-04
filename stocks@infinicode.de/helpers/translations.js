@@ -35,6 +35,8 @@ var Translations = {
     TIME: _('Time'),
     TIME_PRE_MARKET: _('Before Hours*'),
     TIME_POST_MARKET: _('After Hours*'),
+    PRE_MARKET: _('Pre Market*'),
+    POST_MARKET: _('Post Market*'),
   },
   CHART: {
     RANGES: {
