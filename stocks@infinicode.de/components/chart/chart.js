@@ -3,7 +3,7 @@ const { Clutter, GObject, St } = imports.gi
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
-const { closest, isNullOrEmpty, isNullOrUndefined, getStockColorStyleClass } = Me.imports.helpers.data
+const { closest, isNullOrEmpty, isNullOrUndefined } = Me.imports.helpers.data
 
 var Chart = GObject.registerClass({
   GTypeName: 'StockExtension_Chart',
