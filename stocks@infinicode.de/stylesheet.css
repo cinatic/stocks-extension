@@ -7,6 +7,10 @@
     font-weight: bold;
 }
 
+.stocks-extension .tac {
+    text-align: center;
+}
+
 .stocks-extension .tar {
     text-align: right;
 }
@@ -21,18 +25,23 @@
     font-weight: bolder;
 }
 
+.button-group .button.selected {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
 /*** main components ***/
 
 .stocks-extension .screen,
 .stocks-extension .screen-wrapper {
     width: 550px;
     max-width: 550px;
-    height: 600px;
-    max-height: 600px;
+    height: 630px;
+    max-height: 630px;
 }
 
-.stocks-extension .menu-stock-ticker {
-    width: 70px;
+.stocks-extension .menu-stock-ticker .stock-info-box {
+    font-size: 1em;
 }
 
 .stocks-extension .menu-stock-ticker .ticker-stock-name-label {
@@ -42,7 +51,6 @@
 .stocks-extension .menu-stock-ticker .ticker-stock-quote-label {
     font-size: .9em;
     text-align: left;
-    font-weight: bold;
 }
 
 .stocks-extension .search-bar {
@@ -81,6 +89,10 @@
     padding: 10px 20px;
 }
 
+.stocks-extension .stock-details-screen .button-group {
+    margin-bottom: 15px;
+}
+
 .stocks-extension .stock-details .header-box {
     margin-bottom: 16px;
 }
@@ -100,6 +112,7 @@
 .stocks-extension .chart {
     width: 500px;
     height: 300px;
+    margin: 5px;
 }
 
 .stocks-extension .chart-hover-label {

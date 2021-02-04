@@ -1,9 +1,7 @@
 const Soup = imports.gi.Soup
 
-const _httpSession = new Soup.SessionAsync({
-  user_agent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36',
-  timeout: 10
-})
+const DEFAULT_TIME_OUT_IN_SECONDS = 10
+const DEFAULT_CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
 
 const Response = class {
   constructor (message) {
@@ -20,15 +18,19 @@ const Response = class {
   }
 
   blob () {
-    return this.message.response_body.data
+    return this.message?.response_body?.data
   }
 
   text () {
-    return this.message.response_body.data.toString()
+    return this.message.response_body?.data?.toString()
   }
 
   json () {
-    return JSON.parse(this.text())
+    try {
+      return JSON.parse(this.text())
+    } catch (e) {
+      return null
+    }
   }
 }
 
@@ -46,7 +48,7 @@ const generateQueryString = params => {
   const paramKeyValues = Object.keys(params).filter(paramName => params[paramName]).map(paramName => {
     let paramValue = params[paramName]
 
-    if(typeof paramValue === 'boolean'){
+    if (typeof paramValue === 'boolean') {
       paramValue = paramValue ? 1 : 0
     }
 
@@ -66,7 +68,12 @@ var fetch = ({ url, method = 'GET', headers, queryParameters }) => {
       appendHeaders(request_message, headers)
     }
 
-    _httpSession.queue_message(request_message, (source, response_message) => {
+    const httpSession = new Soup.SessionAsync({
+      user_agent: DEFAULT_CHROME_USER_AGENT,
+      timeout: DEFAULT_TIME_OUT_IN_SECONDS
+    })
+
+    httpSession.queue_message(request_message, (source, response_message) => {
       const response = new Response(response_message)
 
       resolve(response)

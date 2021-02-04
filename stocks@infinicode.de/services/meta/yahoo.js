@@ -1,0 +1,27 @@
+var CHART_RANGES = {
+  INTRADAY: '1d',
+  WEEK: '5d',
+  MONTH: '1mo',
+  HALF_YEAR: '6mo',
+  YEAR_TO_DATE: 'ytd',
+  YEAR: '1y',
+  FIVE_YEARS: '5y',
+  MAX: 'max'
+}
+
+var INTERVAL_MAPPINGS = {
+  [CHART_RANGES.INTRADAY]: '1m',
+  [CHART_RANGES.WEEK]: '15m',
+  [CHART_RANGES.MONTH]: '1h',
+  [CHART_RANGES.HALF_YEAR]: '1h',
+  [CHART_RANGES.YEAR_TO_DATE]: '1h',
+  [CHART_RANGES.YEAR]: '1d',
+  [CHART_RANGES.FIVE_YEARS]: '1d',
+  [CHART_RANGES.MAX]: '1d',
+}
+
+var MARKET_STATES = {
+  POST: 'POST',
+  PRE: 'PRE',
+  REGULAR: 'REGULAR',
+}

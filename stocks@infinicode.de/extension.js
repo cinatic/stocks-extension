@@ -51,6 +51,7 @@ const MenuPosition = {
 let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends PanelMenu.Button {
   _init () {
     this._currentPanelPosition = null
+    this._settingsChangedId = null
 
     // Panel menu item - the current class
     let menuAlignment = 0.25
@@ -73,7 +74,12 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
 
     // Bind events
     EventHandler.connect('hide-panel', () => this.menu.close())
-    Settings.connect('changed', (changedValue, changedKey) => this._sync(changedValue, changedKey))
+    this._settingsChangedId = Settings.connect('changed', (changedValue, changedKey) => this._sync(changedValue, changedKey))
+
+    this.menu.connect('destroy', this._onDestroy.bind(this))
+    this.menu.connect('open-state-changed', (menu, isOpen) => {
+      EventHandler.emit('open-state-changed', { isOpen })
+    })
 
     this._sync()
   }
@@ -120,6 +126,12 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
     }
 
     this._currentPanelPosition = newPosition
+  }
+
+  _onDestroy () {
+    if (this._settingsChangedId) {
+      Settings.disconnect(this._settingsChangedId)
+    }
   }
 })
 

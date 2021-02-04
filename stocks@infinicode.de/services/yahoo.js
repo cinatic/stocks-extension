@@ -4,6 +4,7 @@ const Me = ExtensionUtils.getCurrentExtension()
 const { fetch } = Me.imports.helpers.fetch
 const { createQuoteSummaryFromYahooData } = Me.imports.services.dto.quoteSummary
 const { createQuoteHistoricalFromYahooData } = Me.imports.services.dto.quoteHistorical
+const { INTERVAL_MAPPINGS } = Me.imports.services.meta.yahoo
 
 const API_ENDPOINT = 'https://query2.finance.yahoo.com'
 const API_VERSION_SUMMARY = 'v10/finance'
@@ -33,12 +34,13 @@ var getQuoteSummary = async ({ symbol }) => {
   }
 }
 
-var getHistoricalQuotes = async ({ symbol, range = '6mo', interval = '1d', includeTimestamps = true }) => {
+var getHistoricalQuotes = async ({ symbol, range = '1mo', includeTimestamps = true }) => {
   const queryParameters = {
     ...defaultQueryParameters,
     range,
-    interval,
-    includeTimestamps: includeTimestamps ? "true" : "false"
+    includePrePost: false,
+    interval: INTERVAL_MAPPINGS[range],
+    includeTimestamps: includeTimestamps ? 'true' : 'false'
   }
 
   const url = `${API_ENDPOINT}/${API_VERSION_CHART}/chart/${symbol}`

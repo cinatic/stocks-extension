@@ -6,7 +6,7 @@ const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 const Settings = Me.imports.helpers.settings
 
-const { decodeBase64JsonOrDefault, isNullOrEmpty } = Me.imports.helpers.data
+const { decodeBase64JsonOrDefault, isNullOrEmpty, isNullOrUndefined } = Me.imports.helpers.data
 const { initTranslations, Translations } = Me.imports.helpers.translations
 
 const EXTENSIONDIR = Me.dir.get_path()
@@ -14,6 +14,7 @@ const EXTENSIONDIR = Me.dir.get_path()
 const POSITION_IN_PANEL_KEY = 'position-in-panel'
 const STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
 const STOCKS_TICKER_INTERVAL = 'ticker-interval'
+const STOCKS_SHOW_OFF_MARKET_TICKER_PRICES = 'show-ticker-off-market-prices'
 
 let inRealize = false
 let defaultSize = [-1, -1]
@@ -103,6 +104,22 @@ var PrefsWidget = GObject.registerClass({
     this.Settings.set_int(STOCKS_TICKER_INTERVAL, v)
   }
 
+  get show_ticker_off_market_prices () {
+    if (!this.Settings) {
+      this.loadConfig()
+    }
+
+    return this.Settings.get_boolean(STOCKS_SHOW_OFF_MARKET_TICKER_PRICES)
+  }
+
+  set show_ticker_off_market_prices (v) {
+    if (!this.Settings) {
+      this.loadConfig()
+    }
+
+    this.Settings.set_boolean(STOCKS_SHOW_OFF_MARKET_TICKER_PRICES, v)
+  }
+
   _init (params = {}) {
     super._init(Object.assign(params, {
       orientation: Gtk.Orientation.VERTICAL,
@@ -111,6 +128,8 @@ var PrefsWidget = GObject.registerClass({
 
     this.configWidgets = []
     this.componentTimeoutIds = {}
+    this._settingsChangedId = null
+    this._treeViewItemHasDropped = false
     this.Window = new Gtk.Builder()
 
     this.initWindow()
@@ -128,6 +147,8 @@ var PrefsWidget = GObject.registerClass({
 
     this.add(this.MainWidget)
 
+    this.connect('destroy', this._onDestroy.bind(this))
+
     this.MainWidget.connect('realize', () => {
       if (inRealize) {
         return
@@ -138,26 +159,32 @@ var PrefsWidget = GObject.registerClass({
       inRealize = false
     })
 
-    this.treeview.connect('drag-drop', (a, b, c) => {
-      const treeModel = this.treeview.get_model()
+    this.treeview.connect('drag-drop', () => {
+      this._treeViewItemHasDropped = true
+    })
 
-      const newStockModels = []
+    this.liststore.connect('row-deleted', () => {
+      if(this._treeViewItemHasDropped) {
+        this._treeViewItemHasDropped = false
+        const treeModel = this.treeview.get_model()
 
-      treeModel.foreach((model, path, iter) => {
-        newStockModels.push({
-          name: model.get_value(iter, 0),
-          symbol: model.get_value(iter, 1),
-          showInTicker: model.get_value(iter, 2)
+        const newStockModels = []
+
+        treeModel.foreach((model, path, iter) => {
+          newStockModels.push({
+            name: model.get_value(iter, 0),
+            symbol: model.get_value(iter, 1),
+            showInTicker: model.get_value(iter, 2)
+          })
         })
-      })
 
-      this.symbolPairs = newStockModels
+        this.symbolPairs = newStockModels
+      }
     })
   }
 
   initWindow () {
     this.Window.add_from_file(EXTENSIONDIR + '/settings.ui')
-
     this.MainWidget = this.Window.get_object('main-widget')
 
     let theObjects = this.Window.get_objects()
@@ -228,7 +255,7 @@ var PrefsWidget = GObject.registerClass({
    */
   loadConfig () {
     this.Settings = Settings.getSettings()
-    this.Settings.connect('changed', this.evaluateValues.bind(this))
+    this._settingsChangedId = this.Settings.connect('changed', this.evaluateValues.bind(this))
   }
 
   /**
@@ -405,6 +432,12 @@ var PrefsWidget = GObject.registerClass({
     }
   }
 
+  _onDestroy () {
+    if (this._settingsChangedId) {
+      this.Settings.disconnect(this._settingsChangedId)
+    }
+  }
+
   /**
    * clear a entry input element
    */
@@ -419,7 +452,7 @@ var PrefsWidget = GObject.registerClass({
     const selection = this.treeview.get_selection().get_selected_rows()
 
     // check if a row has been selected
-    if (selection === undefined || selection === null) {
+    if (isNullOrEmpty(selection) || isNullOrUndefined(selection[0][0])) {
       return
     }
 
@@ -431,8 +464,8 @@ var PrefsWidget = GObject.registerClass({
       return
     }
 
-    this.editName.set_text(selectedStock.name)
-    this.editSymbol.set_text(selectedStock.symbol)
+    this.editName.set_text(selectedStock.name || '')
+    this.editSymbol.set_text(selectedStock.symbol || '')
     this.editShowInTicker.set_state(selectedStock.showInTicker)
 
     this.editWidget.show_all()
@@ -442,8 +475,8 @@ var PrefsWidget = GObject.registerClass({
    * Save new symbol
    */
   saveSymbol () {
-    const name = this.newName.get_text()
-    const symbol = this.newSymbol.get_text().replace(/ /g, '')
+    const name = this.newName.get_text().trim()
+    const symbol = this.newSymbol.get_text().trim()
     const showInTicker = this.newShowInTicker.get_state()
 
     const newItem = {
@@ -465,7 +498,7 @@ var PrefsWidget = GObject.registerClass({
     const selection = this.treeview.get_selection().get_selected_rows()
 
     // check if a row has been selected
-    if (selection === undefined || selection === null) {
+    if (isNullOrEmpty(selection) || isNullOrUndefined(selection[0][0])) {
       return
     }
 
@@ -496,7 +529,7 @@ var PrefsWidget = GObject.registerClass({
     const selection = this.treeview.get_selection().get_selected_rows()
 
     // check if a row has been selected
-    if (selection === undefined || selection === null) {
+    if (isNullOrEmpty(selection) || isNullOrUndefined(selection[0][0])) {
       return
     }
 

@@ -5,9 +5,10 @@ const Me = ExtensionUtils.getCurrentExtension()
 
 const { decodeBase64JsonOrDefault, isNullOrEmpty } = Me.imports.helpers.data
 
-const POSITION_IN_PANEL_KEY = 'position-in-panel'
-const STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
-const STOCKS_TICKER_INTERVAL = 'ticker-interval'
+var POSITION_IN_PANEL_KEY = 'position-in-panel'
+var STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
+var STOCKS_TICKER_INTERVAL = 'ticker-interval'
+var STOCKS_SHOW_OFF_MARKET_TICKER_PRICES = 'show-ticker-off-market-prices'
 
 var SETTINGS_SCHEMA_DOMAIN = 'org.gnome.shell.extensions.stocks'
 
@@ -114,8 +115,16 @@ const Handler = class {
     return this._settings.get_int(STOCKS_TICKER_INTERVAL)
   }
 
+  get show_ticker_off_market_prices () {
+    return this._settings.get_boolean(STOCKS_SHOW_OFF_MARKET_TICKER_PRICES)
+  }
+
   connect (identifier, onChange) {
-    this._settings.connect(identifier, onChange)
+    return this._settings.connect(identifier, onChange)
+  }
+
+  disconnect (connectId) {
+    this._settings.disconnect(connectId)
   }
 }
 

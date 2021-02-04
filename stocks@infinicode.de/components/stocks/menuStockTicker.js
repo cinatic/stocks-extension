@@ -1,4 +1,4 @@
-const { GObject, St } = imports.gi
+const { Clutter, GObject, St } = imports.gi
 
 const Mainloop = imports.mainloop
 
@@ -7,32 +7,41 @@ const Me = ExtensionUtils.getCurrentExtension()
 
 const { setTimeout, clearTimeout } = Me.imports.helpers.components
 const { roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
-const { Settings } = Me.imports.helpers.settings
+const { Settings, STOCKS_SYMBOL_PAIRS, STOCKS_TICKER_INTERVAL, STOCKS_SHOW_OFF_MARKET_TICKER_PRICES } = Me.imports.helpers.settings
 const { Translations } = Me.imports.helpers.translations
 
+const { MARKET_STATES } = Me.imports.services.meta.yahoo
 const FinanceService = Me.imports.services.financeService
+
+const SETTING_KEYS_TO_REFRESH = [
+  STOCKS_SYMBOL_PAIRS,
+  STOCKS_TICKER_INTERVAL,
+  STOCKS_SHOW_OFF_MARKET_TICKER_PRICES
+]
 
 var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St.BoxLayout {
   _init () {
     super._init({
       style_class: 'menu-stock-ticker',
-      x_expand: false,
-      y_expand: false,
+      x_expand: true,
+      y_expand: true,
+      y_align: Clutter.ActorAlign.CENTER,
       reactive: true
     })
 
     this._visibleStockIndex = 0
     this._toggleDisplayTimeout = null
+    this._settingsChangedId = null
 
     this._sync()
 
     this.connect('destroy', this._onDestroy.bind(this))
     this.connect('button-press-event', this._onPress.bind(this))
 
-    Settings.connect('changed', (value, key) => {
+    this._settingsChangedId = Settings.connect('changed', (value, key) => {
       this._registerTimeout(false)
 
-      if (key === 'symbol-pairs') {
+      if (SETTING_KEYS_TO_REFRESH.includes(key)) {
         this._sync()
       }
     })
@@ -41,9 +50,20 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
   }
 
   async _sync () {
-    const stockItem = Settings.symbol_pairs.filter(item => item.showInTicker)[this._visibleStockIndex]
+    const tickerEnabledItems = Settings.symbol_pairs.filter(item => item.showInTicker)
+    let stockItem = tickerEnabledItems[this._visibleStockIndex]
 
-    const showLoadingInfoTimeoutId = setTimeout(this._showLoadingIndicator.bind(this), 500)
+    if (!stockItem) {
+      this._visibleStockIndex = 0
+      stockItem = tickerEnabledItems[0]
+    }
+
+    if (!stockItem) {
+      this._showInfoMessage(Translations.EMPTY_TICKER_TEXT)
+      return
+    }
+
+    const showLoadingInfoTimeoutId = setTimeout(this._showInfoMessage.bind(this), 500)
 
     const quoteSummary = await FinanceService.getQuoteSummary({ symbol: stockItem.symbol, fallbackName: stockItem.name })
 
@@ -55,41 +75,89 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
   _createMenuTicker ({ quoteSummary }) {
     this.destroy_all_children()
 
-    const quoteColorStyleClass = getStockColorStyleClass(quoteSummary.Change)
+    const stockInfoDetails = {
+      name: quoteSummary.FullName,
+      currencySymbol: quoteSummary.CurrencySymbol,
+      price: quoteSummary.Close,
+      change: quoteSummary.Change,
+      changePercent: quoteSummary.ChangePercent,
+      isOffMarket: false
+    }
+
+    if (Settings.show_ticker_off_market_prices) {
+      if (quoteSummary.MarketState === MARKET_STATES.PRE) {
+        stockInfoDetails.price = quoteSummary.PreMarketPrice
+        stockInfoDetails.change = quoteSummary.PreMarketChange
+        stockInfoDetails.changePercent = quoteSummary.PreMarketChangePercent
+        stockInfoDetails.isOffMarket = true
+      }
+
+      if (quoteSummary.MarketState === MARKET_STATES.POST) {
+        stockInfoDetails.price = quoteSummary.PostMarketPrice
+        stockInfoDetails.change = quoteSummary.PostMarketChange
+        stockInfoDetails.changePercent = quoteSummary.PostMarketChangePercent
+        stockInfoDetails.isOffMarket = true
+      }
+    }
+
+    const stockInfoBox = this._createStockInfoBox(stockInfoDetails)
+
+    this.add_child(stockInfoBox)
+  }
+
+  _createStockInfoBox ({ name, currencySymbol, price, change, changePercent, isOffMarket }) {
+    const quoteColorStyleClass = getStockColorStyleClass(change)
+
+    currencySymbol = currencySymbol || ''
 
     const stockInfoBox = new St.BoxLayout({
       style_class: 'stock-info-box',
-      x_expand: true,
-      y_expand: true,
       vertical: true
     })
 
     const stockNameLabel = new St.Label({
       style_class: 'ticker-stock-name-label',
-      text: quoteSummary.FullName || 'No Config'
+      text: name || Translations.UNKNOWN
     })
 
     stockInfoBox.add_child(stockNameLabel)
 
-    const stockQuoteLabel = new St.Label({
-      style_class: `ticker-stock-quote-label ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(quoteSummary.Close)}${quoteSummary.CurrencySymbol ? ` ${quoteSummary.CurrencySymbol}` : ''}`
+    const stockQuoteBox = new St.BoxLayout({
+      style_class: 'stock-quote-box'
     })
 
-    stockInfoBox.add_child(stockQuoteLabel)
+    const stockQuoteLabel = new St.Label({
+      style_class: `ticker-stock-quote-label fwb ${quoteColorStyleClass}`,
+      text: `${roundOrDefault(price)}${currencySymbol}`
+    })
 
-    this.add_child(stockInfoBox)
+    const stockQuoteChangeLabel = new St.Label({
+      style_class: `ticker-stock-quote-label-change small-text fwb ${quoteColorStyleClass}`,
+      text: `(${roundOrDefault(change)}${currencySymbol} | ${roundOrDefault(changePercent)} %)${isOffMarket ? '*' : ''}`
+    })
+
+    stockQuoteBox.add_child(stockQuoteLabel)
+    stockQuoteBox.add_child(stockQuoteChangeLabel)
+
+    stockInfoBox.add_child(stockQuoteBox)
+
+    return stockInfoBox
   }
 
-  _showLoadingIndicator(){
+  _showInfoMessage (message) {
     this.destroy_all_children()
 
-    const stockQuoteLabel = new St.Label({
-      style_class: `ticker-stock-quote-label`,
-      text: Translations.LOADING_DATA
+    const infoMessageBin = new St.Bin({
+      style_class: 'info-message-bin',
+      x_expand: true,
+      y_expand: true,
+      child: new St.Label({
+        style_class: `tac`,
+        text: message || Translations.LOADING_DATA
+      })
     })
 
-    this.add_child(stockQuoteLabel)
+    this.add_child(infoMessageBin)
   }
 
   _onPress (actor, event) {
@@ -122,13 +190,17 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
   }
 
   _showNextStock () {
-    this._visibleStockIndex = this._visibleStockIndex + 1 === Settings.symbol_pairs.filter(item => item.showInTicker).length ? 0 : this._visibleStockIndex + 1
+    this._visibleStockIndex = this._visibleStockIndex + 1 >= Settings.symbol_pairs.filter(item => item.showInTicker).length ? 0 : this._visibleStockIndex + 1
     this._sync()
   }
 
   _onDestroy () {
     if (this._toggleDisplayTimeout) {
       Mainloop.source_remove(this._toggleDisplayTimeout)
+    }
+
+    if (this._settingsChangedId) {
+      Settings.disconnect(this._settingsChangedId)
     }
   }
 })

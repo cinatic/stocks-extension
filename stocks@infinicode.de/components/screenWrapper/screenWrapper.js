@@ -15,7 +15,9 @@ var ScreenWrapper = GObject.registerClass({
           style_class: 'screen-wrapper'
         })
 
-        EventHandler.connect('show-screen', (sender, { screen, additionalData }) => this.showScreen(screen, additionalData))
+        this._showScreenConnectId = EventHandler.connect('show-screen', (sender, { screen, additionalData }) => this.showScreen(screen, additionalData))
+
+        this.connect('destroy', this._onDestroy.bind(this))
 
         this.showScreen()
       }
@@ -37,6 +39,12 @@ var ScreenWrapper = GObject.registerClass({
         this.destroy_all_children()
 
         this.add_actor(screen)
+      }
+
+      _onDestroy () {
+        if (this._showScreenConnectId) {
+          EventHandler.disconnect(this._showScreenConnectId)
+        }
       }
     }
 )

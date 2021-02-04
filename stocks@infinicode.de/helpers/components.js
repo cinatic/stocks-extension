@@ -14,4 +14,8 @@ var setTimeout = (func, time) => GLib.timeout_add(
       return GLib.SOURCE_REMOVE
     })
 
-var clearTimeout = timerId => GLib.source_remove(timerId)
+var clearTimeout = timerId => {
+  GLib.source_remove(timerId)
+
+  return null
+}

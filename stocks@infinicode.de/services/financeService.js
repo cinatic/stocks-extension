@@ -7,9 +7,15 @@ const yahooService = Me.imports.services.yahoo
 
 var getQuoteSummary = async ({ symbol, fallbackName }) => {
   return cacheOrDefault(`${symbol}_summary`, async () => {
-    const summary = await yahooService.getQuoteSummary({ symbol })
+
+    let summary = {}
+
+    if (symbol) {
+      summary = await yahooService.getQuoteSummary({ symbol })
+    }
 
     if (!summary.FullName) {
+      summary.Symbol = symbol
       summary.FullName = fallbackName
     }
 
@@ -17,8 +23,10 @@ var getQuoteSummary = async ({ symbol, fallbackName }) => {
   })
 }
 
-var getHistoricalQuotes = async ({ symbol, range = '6mo', interval = '1d', includeTimestamps = true }) => {
-  return cacheOrDefault(`${symbol}_chart_${range}_${interval}`, () => {
-    return yahooService.getHistoricalQuotes({ symbol, range, interval, includeTimestamps })
+var getHistoricalQuotes = async ({ symbol, range = '1y', includeTimestamps = true }) => {
+  return cacheOrDefault(`${symbol}_chart_${range}`, () => {
+    if (symbol) {
+      return yahooService.getHistoricalQuotes({ symbol, range, includeTimestamps })
+    }
   })
 }

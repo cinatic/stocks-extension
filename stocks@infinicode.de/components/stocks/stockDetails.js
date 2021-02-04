@@ -5,6 +5,7 @@ const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
+const { MARKET_STATES } = Me.imports.services.meta.yahoo
 
 var StockDetails = GObject.registerClass({}, class StockDetails extends St.BoxLayout {
   _init ({ quoteSummary }) {
@@ -71,15 +72,44 @@ var StockDetails = GObject.registerClass({}, class StockDetails extends St.BoxLa
   _createQuoteInfo ({ quoteSummary }) {
     const quoteColorStyleClass = getStockColorStyleClass(quoteSummary.Change)
 
-    const quoteInformationBox = new St.Bin({
+    const quoteInformationBox = new St.BoxLayout({
       style_class: 'quote-information-box tar',
-      x_expand: true,
-      y_expand: true,
-      child: new St.Label({
-        style_class: `quote-label ${quoteColorStyleClass}`,
-        text: `${roundOrDefault(quoteSummary.Close)}${quoteSummary.CurrencySymbol ? ` ${quoteSummary.CurrencySymbol}` : ''}`
-      })
+      x_expand: false,
+      y_expand: true
     })
+
+    const regularQuoteLabel = new St.Label({
+      style_class: `quote-label ${quoteColorStyleClass}`,
+      text: `${roundOrDefault(quoteSummary.Close)}${quoteSummary.CurrencySymbol ? ` ${quoteSummary.CurrencySymbol}` : ''}`
+    })
+
+    quoteInformationBox.add_child(regularQuoteLabel)
+
+    if (quoteSummary.MarketState === MARKET_STATES.PRE) {
+      const preMarketQuoteColorStyleClass = getStockColorStyleClass(quoteSummary.PreMarketChange)
+
+      quoteInformationBox.add_child(new St.Label({ style_class: 'quote-separation tar', text: ' / ' }))
+
+      const preMarketQuoteLabel = new St.Label({
+        style_class: `quote-label pre-market ${preMarketQuoteColorStyleClass}`,
+        text: `${roundOrDefault(quoteSummary.PreMarketPrice)}${quoteSummary.CurrencySymbol ? ` ${quoteSummary.CurrencySymbol}` : ''}*`
+      })
+
+      quoteInformationBox.add_child(preMarketQuoteLabel)
+    }
+
+    if (quoteSummary.MarketState === MARKET_STATES.POST) {
+      const postMarketQuoteColorStyleClass = getStockColorStyleClass(quoteSummary.PostMarketChange)
+
+      quoteInformationBox.add_child(new St.Label({ style_class: 'quote-separation tar', text: ' / ' }))
+
+      const postMarketQuoteLabel = new St.Label({
+        style_class: `quote-label post-market ${postMarketQuoteColorStyleClass}`,
+        text: `${roundOrDefault(quoteSummary.PostMarketPrice)}${quoteSummary.CurrencySymbol ? ` ${quoteSummary.CurrencySymbol}` : ''}*`
+      })
+
+      quoteInformationBox.add_child(postMarketQuoteLabel)
+    }
 
     return quoteInformationBox
   }
@@ -114,6 +144,20 @@ var StockDetails = GObject.registerClass({}, class StockDetails extends St.BoxLa
         this._createDetailItemLabel(Translations.STOCKS.CHANGE),
         this._createDetailItemValueForChange(quoteSummary.Change, quoteSummary.CurrencySymbol, quoteSummary.ChangePercent)
     ))
+
+    if (quoteSummary.MarketState === MARKET_STATES.PRE) {
+      leftDetailBox.add(this._createDetailItem(
+          this._createDetailItemLabel(Translations.STOCKS.CHANGE_PRE_MARKET),
+          this._createDetailItemValueForChange(quoteSummary.PreMarketChange, quoteSummary.CurrencySymbol, quoteSummary.PreMarketChangePercent)
+      ))
+    }
+
+    if (quoteSummary.MarketState === MARKET_STATES.POST) {
+      leftDetailBox.add(this._createDetailItem(
+          this._createDetailItemLabel(Translations.STOCKS.CHANGE_POST_MARKET),
+          this._createDetailItemValueForChange(quoteSummary.PostMarketChange, quoteSummary.CurrencySymbol, quoteSummary.PostMarketChangePercent)
+      ))
+    }
 
     leftDetailBox.add(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.OPEN),
@@ -150,6 +194,20 @@ var StockDetails = GObject.registerClass({}, class StockDetails extends St.BoxLa
         this._createDetailItemLabel(Translations.STOCKS.PREVIOUS_CLOSE),
         this._createDetailItemValue(roundOrDefault(quoteSummary.PreviousClose))
     ))
+
+    if (quoteSummary.MarketState === MARKET_STATES.PRE) {
+      rightDetailBox.add(this._createDetailItem(
+          this._createDetailItemLabel(Translations.STOCKS.TIME_PRE_MARKET),
+          this._createDetailItemValue((new Date(quoteSummary.PreMarketTimestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME))
+      ))
+    }
+
+    if (quoteSummary.MarketState === MARKET_STATES.POST) {
+      rightDetailBox.add(this._createDetailItem(
+          this._createDetailItemLabel(Translations.STOCKS.TIME_POST_MARKET),
+          this._createDetailItemValue((new Date(quoteSummary.PostMarketTimestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME))
+      ))
+    }
 
     rightDetailBox.add(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.CLOSE),
