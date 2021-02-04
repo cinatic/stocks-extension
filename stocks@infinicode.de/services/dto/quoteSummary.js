@@ -15,6 +15,18 @@ var QuoteSummary = class QuoteSummary {
     this.CurrencySymbol = null
     this.ExchangeName = null
 
+    this.MarketState = null
+
+    this.PreMarketPrice = null
+    this.PreMarketChange = null
+    this.PreMarketChangePercent = null
+    this.PreMarketTimestamp = null
+
+    this.PostMarketPrice = null
+    this.PostMarketChange = null
+    this.PostMarketChangePercent = null
+    this.PostMarketTimestamp = null
+
     this.Error = null
   }
 }
@@ -46,6 +58,24 @@ var createQuoteSummaryFromYahooData = (symbol, quoteData, error) => {
       newObject.Volume = priceData.regularMarketVolume
       newObject.CurrencySymbol = priceData.currencySymbol
       newObject.ExchangeName = priceData.exchangeName
+
+      newObject.MarketState = priceData.marketState
+
+      newObject.PreMarketPrice = priceData.preMarketPrice
+      newObject.PreMarketChange = priceData.preMarketChange
+      newObject.PreMarketChangePercent = priceData.preMarketChangePercent * 100
+
+      if (priceData.preMarketTime) {
+        newObject.PreMarketTimestamp = priceData.preMarketTime * 1000
+      }
+
+      newObject.PostMarketPrice = priceData.postMarketPrice
+      newObject.PostMarketChange = priceData.postMarketChange
+      newObject.PostMarketChangePercent = priceData.postMarketChangePercent * 100
+
+      if (priceData.postMarketTime) {
+        newObject.PostMarketTimestamp = priceData.postMarketTime * 1000
+      }
     }
 
     if (quoteData.quoteSummary.error && quoteData.quoteSummary.error.description) {
