@@ -36,8 +36,8 @@
 .stocks-extension .screen-wrapper {
     width: 550px;
     max-width: 550px;
-    height: 600px;
-    max-height: 600px;
+    height: 630px;
+    max-height: 630px;
 }
 
 .stocks-extension .menu-stock-ticker .stock-info-box {
@@ -51,7 +51,6 @@
 .stocks-extension .menu-stock-ticker .ticker-stock-quote-label {
     font-size: .9em;
     text-align: left;
-    font-weight: bold;
 }
 
 .stocks-extension .search-bar {
