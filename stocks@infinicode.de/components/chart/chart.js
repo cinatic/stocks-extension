@@ -128,8 +128,11 @@ var Chart = GObject.registerClass({
 
     const yValues = [...data.filter(item => item[1] !== null).map(item => item[1])]
 
-    const minValueY = Math.min(...yValues)
+    let minValueY = Math.min(...yValues)
     const maxValueY = Math.max(...yValues)
+
+    // add small buffer to bottom
+    minValueY -= (maxValueY - minValueY) * 0.25
 
     return data.map(([x, y]) => [
       this.encodeValue(x, minValueX, maxValueX, 0, width),
@@ -146,8 +149,8 @@ var Chart = GObject.registerClass({
     // then convert the position data back to original x value (timestamp)
     // find by this timestamp the closest item in series data
 
-    const [coordX] = event.get_coords()
-    const [positionX] = item.get_transformed_position()
+    const [coordX, coordY] = event.get_coords()
+    const [positionX, positionY] = item.get_transformed_position()
 
     const chartX = coordX - positionX
     const chartY = coordY - positionY
