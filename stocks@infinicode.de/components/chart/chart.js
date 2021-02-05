@@ -23,6 +23,9 @@ var Chart = GObject.registerClass({
     this.x1 = x1
     this.x2 = x2
 
+    this._selectedX = null
+    this._selectedY = null
+
     this.connect('repaint', this._draw.bind(this))
     this.connect('motion-event', (item, event) => this._onHover(item, event))
   }
@@ -39,23 +42,40 @@ var Chart = GObject.registerClass({
     this.width = width
     this.height = height
 
+    // get primary color from themes
     const themeNode = this.get_theme_node()
 
+    // FIXME: it would be nice to have some basic color sets in gnome-shell
+    const fgColor = themeNode.get_foreground_color()
+    const newColorString = getComplementaryColor(fgColor.to_string().slice(1, 7), false)
+    const secondaryColor = Clutter.color_from_string(`${newColorString}ff`)[1]
+
+    const baseParams = {
+      cairoContext,
+      width,
+      height,
+      primaryColor: fgColor,
+      secondaryColor: secondaryColor
+    }
+
+    this._draw_line_chart(baseParams)
+    this._draw_crosshair(baseParams)
+
+    // dispose cairo stuff
+    cairoContext.$dispose()
+  }
+
+  _draw_line_chart ({ width, height, cairoContext, primaryColor }) {
     // scale data to width / height of our cairo canvas
     const seriesData = this._transformSeriesData(this.data, width, height)
 
-    // get primary color from themes
-    const fgColor = themeNode.get_foreground_color()
-    Clutter.cairo_set_source_color(cairoContext, fgColor)
+    Clutter.cairo_set_source_color(cairoContext, primaryColor)
 
     // get first data
     const [firstValueX, firstValueY] = [0, 0]
 
     // tell cairo where to start drawing
-    cairoContext.moveTo(
-        firstValueX,
-        height - firstValueY
-    )
+    cairoContext.moveTo(firstValueX, height - firstValueY)
 
     let lastValueX = firstValueX
 
@@ -76,9 +96,26 @@ var Chart = GObject.registerClass({
 
     // render
     cairoContext.fill()
+  }
 
-    // dispose cairo stuff
-    cairoContext.$dispose()
+  _draw_crosshair ({ width, height, cairoContext, secondaryColor }) {
+    if (this._selectedX) {
+      Clutter.cairo_set_source_color(cairoContext, secondaryColor)
+      cairoContext.moveTo(this._selectedX - 1, 0)
+      cairoContext.lineTo(this._selectedX - 1, height)
+      cairoContext.lineTo(this._selectedX, height)
+      cairoContext.lineTo(this._selectedX, 0)
+      cairoContext.fill()
+    }
+
+    if (this._selectedY) {
+      Clutter.cairo_set_source_color(cairoContext, secondaryColor)
+      cairoContext.moveTo(0, this._selectedY - 1)
+      cairoContext.lineTo(width, this._selectedY - 1)
+      cairoContext.lineTo(width, this._selectedY)
+      cairoContext.lineTo(0, this._selectedY)
+      cairoContext.fill()
+    }
   }
 
   _transformSeriesData (data, width, height) {
@@ -113,6 +150,8 @@ var Chart = GObject.registerClass({
     const [positionX] = item.get_transformed_position()
 
     const chartX = coordX - positionX
+    const chartY = coordY - positionY
+
     const minX = this.x1 || this.data[0][0]
     const maxX = this.x2 || this.data[this.data.length - 1][0]
 
@@ -121,6 +160,11 @@ var Chart = GObject.registerClass({
 
     const tsItem = this.data.find(data => data[0] === originalValueX)
     this.emit('chart-hover', tsItem[0], tsItem[1])
+
+    this._selectedX = chartX
+    this._selectedY = chartY
+
+    this.queue_repaint()
   }
 
   // thx: https://stackoverflow.com/a/5732390/3828502
