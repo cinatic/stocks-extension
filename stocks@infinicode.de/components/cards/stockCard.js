@@ -212,7 +212,7 @@ var StockCard = GObject.registerClass({
   }
 
   _createPostMarketAdditionalInformationBox () {
-    const quoteColorStyleClass = getStockColorStyleClass(this.cardItem.PreMarketChange)
+    const quoteColorStyleClass = getStockColorStyleClass(this.cardItem.PostMarketChange)
 
     const additionalInformationBox = new St.BoxLayout({
       style_class: 'info-section-box tar',
