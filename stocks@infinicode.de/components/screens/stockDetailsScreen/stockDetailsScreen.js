@@ -61,7 +61,12 @@ var StockDetailsScreen = GObject.registerClass({}, class StockDetailsScreen exte
       this._sync()
     })
 
-    const chart = new Chart({ data: quoteHistorical.Data, x1: quoteHistorical.MarketStart, x2: quoteHistorical.MarketEnd })
+    const chart = new Chart({
+      data: quoteHistorical.Data,
+      x1: quoteHistorical.MarketStart,
+      x2: quoteHistorical.MarketEnd,
+      barData: quoteHistorical.VolumeData
+    })
 
     const chartValueLabel = new St.Label({ style_class: 'chart-hover-label', text: `` })
 
