@@ -3,7 +3,7 @@ const { Clutter, GObject, St } = imports.gi
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
-const { closest, isNullOrEmpty, isNullOrUndefined } = Me.imports.helpers.data
+const { closest, isNullOrEmpty, isNullOrUndefined, getComplementaryColor } = Me.imports.helpers.data
 
 var Chart = GObject.registerClass({
   GTypeName: 'StockExtension_Chart',
@@ -13,13 +13,15 @@ var Chart = GObject.registerClass({
     }
   }
 }, class Chart extends St.DrawingArea {
-  _init ({ data, x1, x2 }) {
+  _init ({ data, x1, x2, barData }) {
     super._init({
       style_class: 'chart',
       reactive: true
     })
 
     this.data = data
+    this.barData = barData
+
     this.x1 = x1
     this.x2 = x2
 
@@ -59,6 +61,7 @@ var Chart = GObject.registerClass({
     }
 
     this._draw_line_chart(baseParams)
+    this._draw_volume_bars(baseParams)
     this._draw_crosshair(baseParams)
 
     // dispose cairo stuff
@@ -95,6 +98,35 @@ var Chart = GObject.registerClass({
     cairoContext.lineTo(firstValueX, height)
 
     // render
+    cairoContext.fill()
+  }
+
+  _draw_volume_bars ({ width, height, cairoContext, secondaryColor }) {
+    if (isNullOrEmpty(this.barData)) {
+      return
+    }
+
+    const volumeBarsHeight = height * 0.20 // use the 20% space at bottom
+    const seriesData = this._transformSeriesData(this.barData, width, volumeBarsHeight)
+
+    const barWidth = 3
+    const barWidthPerSide = barWidth / 3 // left, middle, right
+
+    Clutter.cairo_set_source_color(cairoContext, secondaryColor)
+
+    cairoContext.moveTo(0, height)
+
+    seriesData.forEach(([valueX, valueY]) => {
+      const x_start = valueX - barWidthPerSide
+      const x_end = valueX + barWidthPerSide
+
+      cairoContext.lineTo(x_start, height)
+      cairoContext.lineTo(x_start, height - valueY)
+      cairoContext.lineTo(x_end, height - valueY)
+      cairoContext.lineTo(x_end, height)
+    })
+
+    cairoContext.lineTo(0, height)
     cairoContext.fill()
   }
 
@@ -154,7 +186,6 @@ var Chart = GObject.registerClass({
 
     const chartX = coordX - positionX
     const chartY = coordY - positionY
-
     const minX = this.x1 || this.data[0][0]
     const maxX = this.x2 || this.data[this.data.length - 1][0]
 
