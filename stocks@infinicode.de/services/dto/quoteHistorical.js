@@ -3,6 +3,7 @@ var QuoteHistorical = class QuoteSummary {
     this.MarketStart = null
     this.MarketEnd = null
     this.Data = []
+    this.VolumeData = []
     this.Error = null
   }
 }
@@ -16,8 +17,15 @@ var createQuoteHistoricalFromYahooData = (responseData, error) => {
     const result = responseData.chart.result[0]
     const timestamps = result.timestamp || []
     const quotes = (result.indicators.quote || [])[0].close || []
+    const volumes = (result.indicators.quote || [])[0].volume || []
 
-    newObject.Data = timestamps.map((timestamp, index) => [timestamp * 1000, quotes[index]])
+    newObject.Data = []
+    newObject.VolumeData = []
+
+    timestamps.forEach((timestamp, index) => {
+      newObject.Data.push([timestamp * 1000, quotes[index]])
+      newObject.VolumeData.push([timestamp * 1000, volumes[index]])
+    })
 
     if (result.meta && result.meta.tradingPeriods) {
       // there can be multiple tradingPeriods and multiple entries inside a tradingPeriod for each time series entry

@@ -1,3 +1,9 @@
+const ExtensionUtils = imports.misc.extensionUtils
+const Me = ExtensionUtils.getCurrentExtension()
+
+const { isNullOrUndefined } = Me.imports.helpers.data
+const { MARKET_STATES } = Me.imports.services.meta.yahoo
+
 var QuoteSummary = class QuoteSummary {
   constructor (symbol) {
     this.Name = null
@@ -75,6 +81,14 @@ var createQuoteSummaryFromYahooData = (symbol, quoteData, error) => {
 
       if (priceData.postMarketTime) {
         newObject.PostMarketTimestamp = priceData.postMarketTime * 1000
+      }
+
+      if(newObject.MarketState === MARKET_STATES.PRE && isNullOrUndefined(newObject.PreMarketPrice)){
+        newObject.MarketState = MARKET_STATES.PRE_WITHOUT_DATA
+      }
+
+      if(newObject.MarketState === MARKET_STATES.POST && isNullOrUndefined(newObject.PostMarketPrice)){
+        newObject.MarketState = MARKET_STATES.POST_WITHOUT_DATA
       }
     }
 
