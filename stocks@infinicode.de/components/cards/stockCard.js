@@ -221,12 +221,12 @@ var StockCard = GObject.registerClass({
 
     const quoteChangeLabel = new St.Label({
       style_class: `small-text fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(this.cardItem.PreMarketChange)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
+      text: `${roundOrDefault(this.cardItem.PostMarketChange)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
     })
 
     const quoteChangePercentLabel = new St.Label({
       style_class: `small-text fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(this.cardItem.PreMarketChangePercent)} %`
+      text: `${roundOrDefault(this.cardItem.PostMarketChangePercent)} %`
     })
 
     const placeHolder = new St.Label({
