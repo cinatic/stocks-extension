@@ -3,7 +3,7 @@ const { Clutter, GObject, St } = imports.gi
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
-const { closest, isNullOrEmpty, isNullOrUndefined, getComplementaryColor } = Me.imports.helpers.data
+const { closest, fallbackIfNaN, isNullOrEmpty, isNullOrUndefined, getComplementaryColor } = Me.imports.helpers.data
 
 var Chart = GObject.registerClass({
   GTypeName: 'StockExtension_Chart',
@@ -83,7 +83,7 @@ var Chart = GObject.registerClass({
     let lastValueX = firstValueX
 
     seriesData.forEach(([valueX, valueY]) => {
-      if (isNullOrUndefined(valueX) || isNullOrUndefined(valueY)) {
+      if (isNullOrUndefined(valueX) || isNullOrUndefined(fallbackIfNaN(valueY, null))) {
         return
       }
 
@@ -117,6 +117,10 @@ var Chart = GObject.registerClass({
     cairoContext.moveTo(0, height)
 
     seriesData.forEach(([valueX, valueY]) => {
+      if (isNullOrUndefined(valueX) || isNullOrUndefined(fallbackIfNaN(valueY, null))) {
+        return
+      }
+
       const x_start = valueX - barWidthPerSide
       const x_end = valueX + barWidthPerSide
 

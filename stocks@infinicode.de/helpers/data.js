@@ -5,7 +5,7 @@ const CACHE_TIME = 10 * 1000
 
 var isNullOrUndefined = value => typeof value === 'undefined' || value === null
 var isNullOrEmpty = value => isNullOrUndefined(value) || value.length === 0
-var fallbackIfNaN = value => typeof value === 'undefined' || value === null || isNaN(value) ? '--' : value
+var fallbackIfNaN = (value, fallback = '--') => typeof value === 'undefined' || value === null || isNaN(value) ? fallback : value
 
 var closest = (array, target) => array.reduce((prev, curr) => Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev)
 
@@ -91,4 +91,3 @@ var getComplementaryColor = (hex, bw = true) => {
 }
 
 var roundOrDefault = (number, defaultValue = '--') => isNullOrUndefined(number) ? defaultValue : (Math.round((number + Number.EPSILON) * 100) / 100).toFixed(2)
-
