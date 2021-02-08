@@ -18,11 +18,13 @@ const Response = class {
   }
 
   blob () {
-    return this.message?.response_body?.data
+    return ((this.message || {}).response_body || {}).data
   }
 
   text () {
-    return this.message.response_body?.data?.toString()
+    const data = ((this.message || {}).response_body || {}).data
+
+    return data ? data.toString() : null
   }
 
   json () {
