@@ -25,7 +25,12 @@ Install via install button -> https://extensions.gnome.org/extension/1422/stocks
 Move files into your locale extension directory (~/.local/share/gnome-shell/extensions/stocks@infinicode.de) and enable the extension via the Tweak Tool, it is **important** to move it to **stocks@infinicode.de** otherwise the extension will not be recognized by GNOME.
 Restart GNOME Shell (`Alt`+`F2`, `r`, `Enter`) and enable the extension through *gnome-tweak-tool*.
 
-### Data Source
+### ArchLinux User Repo (thx [@flortsch](https://github.com/flortsch))
+Install the package (https://aur.archlinux.org/packages/gnome-shell-extension-stocks-extension/) e.g. by using yay:
+
+`yay -S gnome-shell-extension-stocks-extension`
+
+## Data Source
 
 Yahoo is currently the only provider, if you have some ideas for more let me know and i will gladly integrate it.
 It's worth to mention that the data is cached for 10 seconds, click refresh to force a real fresh pull
