@@ -6,7 +6,7 @@ const { cacheOrDefault } = Me.imports.helpers.data
 const yahooService = Me.imports.services.yahoo
 
 var getQuoteSummary = async ({ symbol, fallbackName }) => {
-  return cacheOrDefault(`${symbol}_summary`, async () => {
+  return cacheOrDefault(`summary_${symbol}`, async () => {
 
     let summary = {}
 
@@ -24,7 +24,7 @@ var getQuoteSummary = async ({ symbol, fallbackName }) => {
 }
 
 var getHistoricalQuotes = async ({ symbol, range = '1y', includeTimestamps = true }) => {
-  return cacheOrDefault(`${symbol}_chart_${range}`, () => {
+  return cacheOrDefault(`chart_${symbol}_${range}`, () => {
     if (symbol) {
       return yahooService.getHistoricalQuotes({ symbol, range, includeTimestamps })
     }

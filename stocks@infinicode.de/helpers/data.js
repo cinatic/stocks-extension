@@ -28,6 +28,16 @@ var clearCache = () => {
   CACHE = {}
 }
 
+var removeCache = (keyToDelete, startsWith = true) => {
+  let keys = [keyToDelete]
+
+  if (startsWith) {
+    keys = Object.keys(CACHE).filter(key => key.startsWith(keyToDelete))
+  }
+
+  keys.forEach(key => delete CACHE[key])
+}
+
 var cacheOrDefault = async (cacheKey, evaluator, cacheDuration = CACHE_TIME) => {
   const [timestamp, data] = CACHE[cacheKey] || []
 
