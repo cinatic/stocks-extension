@@ -10,7 +10,7 @@ const { FlatList } = Me.imports.components.flatList.flatList
 const { StockCard } = Me.imports.components.cards.stockCard
 const { SearchBar } = Me.imports.components.searchBar.searchBar
 const { setTimeout, clearTimeout } = Me.imports.helpers.components
-const { clearCache } = Me.imports.helpers.data
+const { removeCache } = Me.imports.helpers.data
 const { Settings } = Me.imports.helpers.settings
 const { Translations } = Me.imports.helpers.translations
 
@@ -36,7 +36,7 @@ var StockOverviewScreen = GObject.registerClass({}, class StockOverviewScreen ex
     this.connect('destroy', this._onDestroy.bind(this))
 
     searchBar.connect('refresh', () => {
-      clearCache()
+      removeCache('summary_')
       this._loadData()
     })
 
