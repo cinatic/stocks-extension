@@ -66,6 +66,10 @@ $(MO_FILES): $(PO_FILES) $(MO_DIR)
 build: $(BUILD_DIR) $(COMPILED_SCHEMAS) $(MO_FILES)
 	cp -r --parents $(FILES) $<
 
+buildAndReplaceLocal: build
+	rm -fR ~/.local/share/gnome-shell/extensions/$(UUID)
+	cp -r $(BUILD_DIR)/${SRC_DIR} ~/.local/share/gnome-shell/extensions/$(UUID)/
+
 package: $(BUILD_DIR)
 	cd $(BUILD_DIR)/${SRC_DIR} && zip -r ../$(EXTENSION_NAME)-extension.zip *
 
