@@ -100,4 +100,14 @@ var getComplementaryColor = (hex, bw = true) => {
   return '#' + padZero(r) + padZero(g) + padZero(b)
 }
 
+var moveDecimal = (value, decimalPlaces) => {
+  if (!value) {
+    return value
+  }
+
+  const l = value.toString().length - decimalPlaces
+
+  return value / Math.pow(10, l)
+}
+
 var roundOrDefault = (number, defaultValue = '--') => isNullOrUndefined(number) ? defaultValue : (Math.round((number + Number.EPSILON) * 100) / 100).toFixed(2)
