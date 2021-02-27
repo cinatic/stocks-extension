@@ -44,12 +44,13 @@
     font-size: 1em;
 }
 
-.stocks-extension .menu-stock-ticker .ticker-stock-name-label {
+.stocks-extension .menu-stock-ticker .ticker-stock-name-label,
+.stocks-extension .menu-stock-ticker .ticker-stock-quote-label-change {
     font-size: .7em;
 }
 
 .stocks-extension .menu-stock-ticker .ticker-stock-quote-label {
-    font-size: .9em;
+    font-size: .7em;
     text-align: left;
 }
 
@@ -80,6 +81,11 @@
     margin: 10px 15px;
     padding: 10px 20px;
     box-shadow: none;
+}
+
+.stocks-extension .card.stock-card .quote-information-price-box,
+.stocks-extension .card.stock-card .stock-full-name {
+    min-height: 20px;
 }
 
 /*** stock details ***/
