@@ -105,9 +105,7 @@ var moveDecimal = (value, decimalPlaces) => {
     return value
   }
 
-  const l = value.toString().length - decimalPlaces
-
-  return value / Math.pow(10, l)
+  return value / Math.pow(10, decimalPlaces)
 }
 
 var roundOrDefault = (number, defaultValue = '--') => isNullOrUndefined(number) ? defaultValue : (Math.round((number + Number.EPSILON) * 100) / 100).toFixed(2)
