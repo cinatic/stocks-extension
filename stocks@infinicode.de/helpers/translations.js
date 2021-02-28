@@ -18,6 +18,7 @@ var Translations = {
     QUOTE_NAME: _('Name'),
     SYMBOL: _('Symbol'),
     SHOW_IN_TICKER: _('Show in Ticker'),
+    PROVIDER: _('Provider'),
     REMOVE_CONFIRMATION_TEXT: _('Remove %s?')
   },
   STOCKS: {

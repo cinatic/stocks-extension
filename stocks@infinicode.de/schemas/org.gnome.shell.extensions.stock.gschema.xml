@@ -10,6 +10,10 @@
         <value value="1" nick="icon-only"/>
         <value value="2" nick="text-only"/>
     </enum>
+    <enum id="org.gnome.shell.extensions.stocks.provider">
+        <value value="0" nick="yahoo"/>
+        <value value="1" nick="eastmoney"/>
+    </enum>
     <schema path="/org/gnome/shell/extensions/stocks/" id="org.gnome.shell.extensions.stocks">
         <key name="position-in-panel" enum="org.gnome.shell.extensions.stocks.position">
             <default>'center'</default>
@@ -21,7 +25,7 @@
         </key>
         <key type="s" name="symbol-pairs">
             <default>'Xetra Alibaba-§§-AHLA.DE'</default>
-            <summary>A yahoo stock symbol definitions e.g. AHLA.DE</summary>
+            <summary>old version stock symbol definition (do not use anymore, but keep for migration))</summary>
         </key>
         <key type="s" name="symbol-current-quotes">
             <default>''</default>

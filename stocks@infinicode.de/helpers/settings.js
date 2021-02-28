@@ -4,6 +4,7 @@ const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
 const { decodeBase64JsonOrDefault, isNullOrEmpty } = Me.imports.helpers.data
+const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
 
 var POSITION_IN_PANEL_KEY = 'position-in-panel'
 var STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
@@ -16,7 +17,8 @@ var DEFAULT_SYMBOL_DATA = [
   {
     symbol: 'BABA',
     name: 'Alibaba (NY)',
-    showInTicker: true
+    showInTicker: true,
+    provider: FINANCE_PROVIDER.YAHOO
   }
 ]
 
@@ -66,7 +68,8 @@ var getSettings = () => {
 var convertOldSettingsFormat = rawString => rawString.split('-&&-').map(symbolPairString => ({
   name: symbolPairString.split('-§§-')[0],
   symbol: symbolPairString.split('-§§-')[1],
-  showInTicker: true
+  showInTicker: true,
+  provider: FINANCE_PROVIDER.YAHOO
 }))
 
 const Handler = class {

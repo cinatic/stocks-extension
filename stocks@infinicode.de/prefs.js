@@ -8,6 +8,7 @@ const Settings = Me.imports.helpers.settings
 
 const { decodeBase64JsonOrDefault, isNullOrEmpty, isNullOrUndefined } = Me.imports.helpers.data
 const { initTranslations, Translations } = Me.imports.helpers.translations
+const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
 
 const EXTENSIONDIR = Me.dir.get_path()
 
@@ -164,7 +165,7 @@ var PrefsWidget = GObject.registerClass({
     })
 
     this.liststore.connect('row-deleted', () => {
-      if(this._treeViewItemHasDropped) {
+      if (this._treeViewItemHasDropped) {
         this._treeViewItemHasDropped = false
         const treeModel = this.treeview.get_model()
 
@@ -174,7 +175,8 @@ var PrefsWidget = GObject.registerClass({
           newStockModels.push({
             name: model.get_value(iter, 0),
             symbol: model.get_value(iter, 1),
-            showInTicker: model.get_value(iter, 2)
+            provider: model.get_value(iter, 2),
+            showInTicker: model.get_value(iter, 3)
           })
         })
 
@@ -221,11 +223,13 @@ var PrefsWidget = GObject.registerClass({
     this.newName = this.Window.get_object('new-name')
     this.newSymbol = this.Window.get_object('new-symbol')
     this.newShowInTicker = this.Window.get_object('new-show-in-ticker')
+    this.newProvider = this.Window.get_object('new-provider')
 
     this.editWidget = this.Window.get_object('edit-symbol-widget')
     this.editName = this.Window.get_object('edit-name')
     this.editSymbol = this.Window.get_object('edit-symbol')
     this.editShowInTicker = this.Window.get_object('edit-show-in-ticker')
+    this.editProvider = this.Window.get_object('edit-provider')
 
     // TreeView / Table Buttons
     this.Window.get_object('tree-toolbutton-add').connect('clicked', () => {
@@ -375,6 +379,17 @@ var PrefsWidget = GObject.registerClass({
       cell.markup = model.get_value(iter, 1)
     })
 
+    /**** provider cell ****/
+    const providerCell = new Gtk.TreeViewColumn()
+    providerCell.set_title(Translations.SETTINGS.PROVIDER)
+    this.treeview.append_column(providerCell)
+
+    providerCell.pack_start(renderer, null)
+
+    providerCell.set_cell_data_func(renderer, function (tree, cell, model, iter) {
+      cell.markup = model.get_value(iter, 2).toString()
+    })
+
     /**** ticker cell ****/
     const showInTicker = new Gtk.TreeViewColumn()
     showInTicker.set_title(Translations.SETTINGS.SHOW_IN_TICKER)
@@ -383,7 +398,11 @@ var PrefsWidget = GObject.registerClass({
     showInTicker.pack_start(renderer, null)
 
     showInTicker.set_cell_data_func(renderer, function (tree, cell, model, iter) {
-      cell.markup = model.get_value(iter, 2).toString()
+      const value = model.get_value(iter, 3)
+
+      if (!isNullOrUndefined(value)) {
+        cell.markup = value.toString()
+      }
     })
   }
 
@@ -427,7 +446,8 @@ var PrefsWidget = GObject.registerClass({
         current = this.liststore.append()
         this.liststore.set_value(current, 0, stockItem.name)
         this.liststore.set_value(current, 1, stockItem.symbol)
-        this.liststore.set_value(current, 2, stockItem.showInTicker)
+        this.liststore.set_value(current, 2, stockItem.provider)
+        this.liststore.set_value(current, 3, stockItem.showInTicker)
       })
     }
   }
@@ -467,6 +487,7 @@ var PrefsWidget = GObject.registerClass({
     this.editName.set_text(selectedStock.name || '')
     this.editSymbol.set_text(selectedStock.symbol || '')
     this.editShowInTicker.set_state(selectedStock.showInTicker)
+    this.editProvider.set_active(Object.values(FINANCE_PROVIDER).indexOf(selectedStock.provider))
 
     this.editWidget.show_all()
   }
@@ -478,11 +499,13 @@ var PrefsWidget = GObject.registerClass({
     const name = this.newName.get_text().trim()
     const symbol = this.newSymbol.get_text().trim()
     const showInTicker = this.newShowInTicker.get_state()
+    const provider = Object.values(FINANCE_PROVIDER)[this.newProvider.get_active()]
 
     const newItem = {
       name,
       symbol,
-      showInTicker
+      showInTicker,
+      provider
     }
 
     // append new item and write it to config
@@ -513,7 +536,8 @@ var PrefsWidget = GObject.registerClass({
     const newStockItem = {
       name: this.editName.get_text().trim(),
       symbol: this.editSymbol.get_text().trim(),
-      showInTicker: this.editShowInTicker.get_state()
+      showInTicker: this.editShowInTicker.get_state(),
+      provider: Object.values(FINANCE_PROVIDER)[this.editProvider.get_active()]
     }
 
     stockItems[selectionIndex] = newStockItem
