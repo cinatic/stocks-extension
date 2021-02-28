@@ -3,15 +3,28 @@ const Me = ExtensionUtils.getCurrentExtension()
 
 const { cacheOrDefault } = Me.imports.helpers.data
 
-const yahooService = Me.imports.services.yahoo
+const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
 
-var getQuoteSummary = async ({ symbol, fallbackName }) => {
-  return cacheOrDefault(`summary_${symbol}`, async () => {
+const yahooService = Me.imports.services.yahooService
+const eastMoneyService = Me.imports.services.eastMoneyService
+
+const services = {
+  [FINANCE_PROVIDER.YAHOO]: yahooService,
+  [FINANCE_PROVIDER.EAST_MONEY]: eastMoneyService
+}
+
+var getQuoteSummary = async ({ symbol, provider, fallbackName }) => {
+  return cacheOrDefault(`summary_${symbol}_${provider}`, async () => {
+    const service = services[provider]
+
+    if (!service) {
+      return new QuoteSummary(symbol, provider, fallbackName, 'Invalid Provider')
+    }
 
     let summary = {}
 
     if (symbol) {
-      summary = await yahooService.getQuoteSummary({ symbol })
+      summary = await service.getQuoteSummary({ symbol })
     }
 
     if (!summary.FullName) {
@@ -23,10 +36,12 @@ var getQuoteSummary = async ({ symbol, fallbackName }) => {
   })
 }
 
-var getHistoricalQuotes = async ({ symbol, range = '1y', includeTimestamps = true }) => {
-  return cacheOrDefault(`chart_${symbol}_${range}`, () => {
-    if (symbol) {
-      return yahooService.getHistoricalQuotes({ symbol, range, includeTimestamps })
+var getHistoricalQuotes = async ({ symbol, provider, range = '1y', includeTimestamps = true }) => {
+  return cacheOrDefault(`chart_${symbol}_${provider}_${range}`, () => {
+    const service = services[provider]
+
+    if (symbol && service) {
+      return service.getHistoricalQuotes({ symbol, range, includeTimestamps })
     }
   })
 }
