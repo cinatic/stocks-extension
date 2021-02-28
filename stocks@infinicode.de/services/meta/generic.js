@@ -1,0 +1,34 @@
+var CHART_RANGES = {
+  INTRADAY: '1d',
+  WEEK: '5d',
+  MONTH: '1mo',
+  HALF_YEAR: '6mo',
+  YEAR_TO_DATE: 'ytd',
+  YEAR: '1y',
+  FIVE_YEARS: '5y',
+  MAX: 'max'
+}
+
+var FINANCE_PROVIDER = {
+  YAHOO: 'yahoo',
+  EAST_MONEY: 'eastmoney'
+}
+
+var MARKET_STATES = {
+  PRE: 'PRE',
+  PRE_WITHOUT_DATA: 'POST_WITHOUT_DATA',
+  POST: 'POST',
+  POST_WITHOUT_DATA: 'POST_WITHOUT_DATA',
+  REGULAR: 'REGULAR'
+}
+
+var CHART_RANGES_IN_DAYS = {
+  INTRADAY: 1,
+  WEEK: 7,
+  MONTH: 30,
+  HALF_YEAR: 6 * 30,
+  YEAR_TO_DATE: 'ytd',
+  YEAR: 365,
+  FIVE_YEARS: 5 * 365,
+  MAX: 10 * 365
+}
