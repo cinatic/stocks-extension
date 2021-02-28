@@ -10,7 +10,7 @@ const { roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
 const { Settings, STOCKS_SYMBOL_PAIRS, STOCKS_TICKER_INTERVAL, STOCKS_SHOW_OFF_MARKET_TICKER_PRICES } = Me.imports.helpers.settings
 const { Translations } = Me.imports.helpers.translations
 
-const { MARKET_STATES } = Me.imports.services.meta.yahoo
+const { MARKET_STATES } = Me.imports.services.meta.generic
 const FinanceService = Me.imports.services.financeService
 
 const SETTING_KEYS_TO_REFRESH = [
@@ -24,7 +24,6 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
     super._init({
       style_class: 'menu-stock-ticker',
       x_expand: true,
-      y_expand: true,
       y_align: Clutter.ActorAlign.CENTER,
       reactive: true
     })
@@ -65,7 +64,10 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
 
     const showLoadingInfoTimeoutId = setTimeout(this._showInfoMessage.bind(this), 500)
 
-    const quoteSummary = await FinanceService.getQuoteSummary({ symbol: stockItem.symbol, fallbackName: stockItem.name })
+    const quoteSummary = await FinanceService.getQuoteSummary({
+      ...stockItem,
+      fallbackName: stockItem.name
+    })
 
     clearTimeout(showLoadingInfoTimeoutId)
 
@@ -112,7 +114,8 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
 
     const stockInfoBox = new St.BoxLayout({
       style_class: 'stock-info-box',
-      vertical: true
+      vertical: true,
+      y_align: Clutter.ActorAlign.END
     })
 
     const stockNameLabel = new St.Label({
@@ -123,7 +126,8 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
     stockInfoBox.add_child(stockNameLabel)
 
     const stockQuoteBox = new St.BoxLayout({
-      style_class: 'stock-quote-box'
+      style_class: 'stock-quote-box',
+      y_align: Clutter.ActorAlign.START
     })
 
     const stockQuoteLabel = new St.Label({
@@ -132,7 +136,7 @@ var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St
     })
 
     const stockQuoteChangeLabel = new St.Label({
-      style_class: `ticker-stock-quote-label-change small-text fwb ${quoteColorStyleClass}`,
+      style_class: `ticker-stock-quote-label-change fwb ${quoteColorStyleClass}`,
       text: `(${roundOrDefault(change)}${currencySymbol} | ${roundOrDefault(changePercent)} %)${isOffMarket ? '*' : ''}`
     })
 

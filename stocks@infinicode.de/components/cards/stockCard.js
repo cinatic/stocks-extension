@@ -5,7 +5,7 @@ const Me = ExtensionUtils.getCurrentExtension()
 
 const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
-const { MARKET_STATES } = Me.imports.services.meta.yahoo
+const { MARKET_STATES } = Me.imports.services.meta.generic
 
 var StockCard = GObject.registerClass({
   GTypeName: 'StockExtension_StockCard'

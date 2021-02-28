@@ -99,7 +99,12 @@ var StockOverviewScreen = GObject.registerClass({}, class StockOverviewScreen ex
 
     this._showLoadingInfoTimeoutId = setTimeout(() => this._list.show_loading_info(), 500)
 
-    const quoteSummaries = await Promise.all(Settings.symbol_pairs.map(symbolData => FinanceService.getQuoteSummary({ symbol: symbolData.symbol, fallbackName: symbolData.name })))
+    const quoteSummaries = await Promise.all(
+        Settings.symbol_pairs.map(symbolData => FinanceService.getQuoteSummary({
+          ...symbolData,
+          fallbackName: symbolData.name
+        }))
+    )
 
     this._showLoadingInfoTimeoutId = clearTimeout(this._showLoadingInfoTimeoutId)
 
@@ -117,7 +122,7 @@ var StockOverviewScreen = GObject.registerClass({}, class StockOverviewScreen ex
       Mainloop.source_remove(this._autoRefreshTimeoutId)
     }
 
-    if(this._settingsChangedId){
+    if (this._settingsChangedId) {
       Settings.disconnect(this._settingsChangedId)
     }
   }

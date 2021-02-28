@@ -11,7 +11,7 @@ const { SearchBar } = Me.imports.components.searchBar.searchBar
 const { clearCache, roundOrDefault } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
 
-const { CHART_RANGES } = Me.imports.services.meta.yahoo
+const { CHART_RANGES } = Me.imports.services.meta.generic
 const FinanceService = Me.imports.services.financeService
 
 var StockDetailsScreen = GObject.registerClass({}, class StockDetailsScreen extends St.BoxLayout {
@@ -21,8 +21,7 @@ var StockDetailsScreen = GObject.registerClass({}, class StockDetailsScreen exte
       vertical: true
     })
 
-    this.symbol = quoteSummary.Symbol
-    this.fallbackName = quoteSummary.FullName
+    this._passedQuoteSummary = quoteSummary
     this._selectedChartRange = CHART_RANGES.INTRADAY
     this._quoteSummary = null
 
@@ -31,8 +30,16 @@ var StockDetailsScreen = GObject.registerClass({}, class StockDetailsScreen exte
 
   async _sync () {
     const [quoteSummary, quoteHistorical] = await Promise.all([
-      FinanceService.getQuoteSummary({ symbol: this.symbol, fallbackName: this.fallbackName }),
-      FinanceService.getHistoricalQuotes({ symbol: this.symbol, range: this._selectedChartRange })
+      FinanceService.getQuoteSummary({
+        symbol: this._passedQuoteSummary.Symbol,
+        provider: this._passedQuoteSummary.Provider,
+        fallbackName: this._passedQuoteSummary.FullName
+      }),
+      FinanceService.getHistoricalQuotes({
+        symbol: this._passedQuoteSummary.Symbol,
+        provider: this._passedQuoteSummary.Provider,
+        range: this._selectedChartRange
+      })
     ])
 
     this._isIntrayDayChart = CHART_RANGES.INTRADAY === this._selectedChartRange
