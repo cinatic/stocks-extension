@@ -5,8 +5,8 @@
 A extension to display stock quotes in GNOME Shell Panel
 
 <p align="middle">
-    <img alt="projects" src="https://github.com/cinatic/stocks-extension/raw/master/images/overview.png" width="350">
-    <img alt="commits" src="https://github.com/cinatic/stocks-extension/raw/master/images/details.png" width="350">
+    <img alt="projects" src="images/overview.png" width="350">
+    <img alt="commits" src="images/details.png" width="350">
 </p>
 
 
@@ -25,17 +25,20 @@ Install via install button -> https://extensions.gnome.org/extension/1422/stocks
 Move files into your locale extension directory (~/.local/share/gnome-shell/extensions/stocks@infinicode.de) and enable the extension via the Tweak Tool, it is **important** to move it to **stocks@infinicode.de** otherwise the extension will not be recognized by GNOME.
 Restart GNOME Shell (`Alt`+`F2`, `r`, `Enter`) and enable the extension through *gnome-tweak-tool*.
 
-### Data Source
+## Data Provider
 
-Yahoo is currently the only provider, if you have some ideas for more let me know and i will gladly integrate it.
-It's worth to mention that the data is cached for 10 seconds, click refresh to force a real fresh pull
+Data is cached for 10 seconds and will reload automatically, click refresh to force a fresh pull immediately. 
+Currently, two provider are supported:
+
+ - [Yahoo Finance](https://finance.yahoo.com/)
+ - [eastmony](https://www.eastmoney.com/)
 
 ## Add Stocks
 
-To add stocks you need a yahoo symbol-exchange pair. Search for stocks on yahoo finance and get your symbol
+To add stocks you need the provider related symbol / identifier. You should be able to get them from yahoo finance or eastmony.com pages.
 
 1. Open Settings
 2. Click on the + icon on the bottom of the first tab
-3. Enter Symbol (yahoo ticker e.g. AHLA.DE) and give it a name
+3. Enter Symbol (**yahoo** e.g. *AHLA.DE*, **eastmoney** e.g. *1.000001*) and give it a name
 
-![Screenshot](https://github.com/cinatic/stocks-extension/raw/master/images/settings.png)
+![Screenshot](images/settings.png)
