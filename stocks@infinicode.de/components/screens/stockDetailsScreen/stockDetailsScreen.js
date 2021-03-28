@@ -14,7 +14,9 @@ const { Translations } = Me.imports.helpers.translations
 const { CHART_RANGES } = Me.imports.services.meta.generic
 const FinanceService = Me.imports.services.financeService
 
-var StockDetailsScreen = GObject.registerClass({}, class StockDetailsScreen extends St.BoxLayout {
+var StockDetailsScreen = GObject.registerClass({
+  GTypeName: 'StockExtension_StockDetailsScreen'
+}, class StockDetailsScreen extends St.BoxLayout {
   _init ({ quoteSummary }) {
     super._init({
       style_class: 'screen stock-details-screen',

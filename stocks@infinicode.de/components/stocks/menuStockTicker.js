@@ -19,7 +19,9 @@ const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SHOW_OFF_MARKET_TICKER_PRICES
 ]
 
-var MenuStockTicker = GObject.registerClass({}, class MenuStockTicker extends St.BoxLayout {
+var MenuStockTicker = GObject.registerClass({
+  GTypeName: 'StockExtension_MenuStockTicker'
+}, class MenuStockTicker extends St.BoxLayout {
   _init () {
     super._init({
       style_class: 'menu-stock-ticker',

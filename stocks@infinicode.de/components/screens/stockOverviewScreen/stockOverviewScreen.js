@@ -16,7 +16,9 @@ const { Translations } = Me.imports.helpers.translations
 
 const FinanceService = Me.imports.services.financeService
 
-var StockOverviewScreen = GObject.registerClass({}, class StockOverviewScreen extends St.BoxLayout {
+var StockOverviewScreen = GObject.registerClass({
+  GTypeName: 'StockExtension_StockOverviewScreen'
+}, class StockOverviewScreen extends St.BoxLayout {
   _init () {
     super._init({
       style_class: 'screen stock-overview-screen',

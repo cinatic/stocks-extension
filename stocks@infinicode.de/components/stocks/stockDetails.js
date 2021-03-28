@@ -7,7 +7,9 @@ const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.he
 const { Translations } = Me.imports.helpers.translations
 const { MARKET_STATES } = Me.imports.services.meta.generic
 
-var StockDetails = GObject.registerClass({}, class StockDetails extends St.BoxLayout {
+var StockDetails = GObject.registerClass({
+  GTypeName: 'StockExtension_StockDetails'
+}, class StockDetails extends St.BoxLayout {
   _init ({ quoteSummary }) {
     super._init({
       style_class: 'stock-details',
