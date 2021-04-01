@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: fh@infinicode.de\n"
-"POT-Creation-Date: 2021-04-01 13:05+0200\n"
+"POT-Creation-Date: 2021-04-01 15:16+0200\n"
 "PO-Revision-Date: 2020-11-30 14:42+0100\n"
 "Last-Translator: fh@infinicode.de\n"
 "Language-Team: German\n"
@@ -39,124 +39,153 @@ msgid "Symbol"
 msgstr ""
 
 #: stocks@infinicode.de/settings_40.ui:67
-#: stocks@infinicode.de/settings_40.ui:229 stocks@infinicode.de/settings.ui:89
-#: stocks@infinicode.de/settings.ui:290
+#: stocks@infinicode.de/settings_40.ui:236 stocks@infinicode.de/settings.ui:89
+#: stocks@infinicode.de/settings.ui:297
 msgid "Show in Ticker?"
 msgstr "Im Ticker anzeigen?"
 
 #: stocks@infinicode.de/settings_40.ui:76
-#: stocks@infinicode.de/settings_40.ui:238 stocks@infinicode.de/settings.ui:100
-#: stocks@infinicode.de/settings.ui:301
+#: stocks@infinicode.de/settings_40.ui:245 stocks@infinicode.de/settings.ui:100
+#: stocks@infinicode.de/settings.ui:308
 msgid "If disabled this stock will not be shown in the panel ticker"
 msgstr "Entscheide ob diese Aktie im Panelticker angezeigt werden soll"
 
 #: stocks@infinicode.de/settings_40.ui:89
-#: stocks@infinicode.de/settings_40.ui:250 stocks@infinicode.de/settings.ui:114
-#: stocks@infinicode.de/settings.ui:314
+#: stocks@infinicode.de/settings_40.ui:257 stocks@infinicode.de/settings.ui:114
+#: stocks@infinicode.de/settings.ui:321
 #: stocks@infinicode.de/helpers/translations.js:21
 msgid "Provider"
 msgstr ""
 
 #: stocks@infinicode.de/settings_40.ui:100
-#: stocks@infinicode.de/settings_40.ui:260 stocks@infinicode.de/settings.ui:127
-#: stocks@infinicode.de/settings.ui:326
+#: stocks@infinicode.de/settings_40.ui:267 stocks@infinicode.de/settings.ui:127
+#: stocks@infinicode.de/settings.ui:333
 msgid "Select provider to fetch stock data from"
 msgstr ""
 
 #: stocks@infinicode.de/settings_40.ui:102
-#: stocks@infinicode.de/settings_40.ui:262 stocks@infinicode.de/settings.ui:129
-#: stocks@infinicode.de/settings.ui:328
+#: stocks@infinicode.de/settings_40.ui:269 stocks@infinicode.de/settings.ui:129
+#: stocks@infinicode.de/settings.ui:335
 msgid "yahoo"
 msgstr ""
 
 #: stocks@infinicode.de/settings_40.ui:103
-#: stocks@infinicode.de/settings_40.ui:263 stocks@infinicode.de/settings.ui:130
-#: stocks@infinicode.de/settings.ui:329
+#: stocks@infinicode.de/settings_40.ui:270 stocks@infinicode.de/settings.ui:130
+#: stocks@infinicode.de/settings.ui:336
 msgid "eastmoney"
 msgstr ""
 
 #: stocks@infinicode.de/settings_40.ui:131
-#: stocks@infinicode.de/settings_40.ui:291 stocks@infinicode.de/settings.ui:159
-#: stocks@infinicode.de/settings.ui:358
+#: stocks@infinicode.de/settings_40.ui:298 stocks@infinicode.de/settings.ui:159
+#: stocks@infinicode.de/settings.ui:365
 msgid "Cancel"
 msgstr "Abbrechen"
 
 #: stocks@infinicode.de/settings_40.ui:143
-#: stocks@infinicode.de/settings_40.ui:303 stocks@infinicode.de/settings.ui:177
-#: stocks@infinicode.de/settings.ui:376
+#: stocks@infinicode.de/settings_40.ui:310 stocks@infinicode.de/settings.ui:177
+#: stocks@infinicode.de/settings.ui:383
 msgid "Save"
 msgstr "Speichern"
 
-#: stocks@infinicode.de/settings_40.ui:167 stocks@infinicode.de/settings.ui:208
+#: stocks@infinicode.de/settings_40.ui:174 stocks@infinicode.de/settings.ui:215
 msgid "Edit Stock Item"
 msgstr "Bearbeite Eintrag"
 
-#: stocks@infinicode.de/settings_40.ui:182 stocks@infinicode.de/settings.ui:229
+#: stocks@infinicode.de/settings_40.ui:189 stocks@infinicode.de/settings.ui:236
 msgid "Edit name"
 msgstr "Name editieren"
 
-#: stocks@infinicode.de/settings_40.ui:207 stocks@infinicode.de/settings.ui:261
+#: stocks@infinicode.de/settings_40.ui:214 stocks@infinicode.de/settings.ui:268
 msgid "Edit Symbol"
 msgstr "Symbol editieren"
 
-#: stocks@infinicode.de/settings_40.ui:405 stocks@infinicode.de/settings.ui:524
+#: stocks@infinicode.de/settings_40.ui:412 stocks@infinicode.de/settings.ui:531
 msgid "Symbols"
 msgstr "Symbole"
 
-#: stocks@infinicode.de/settings_40.ui:429 stocks@infinicode.de/settings.ui:546
+#: stocks@infinicode.de/settings_40.ui:436 stocks@infinicode.de/settings.ui:553
 msgid "Position in Panel"
 msgstr "Position im Panel"
 
-#: stocks@infinicode.de/settings_40.ui:441 stocks@infinicode.de/settings.ui:559
+#: stocks@infinicode.de/settings_40.ui:448 stocks@infinicode.de/settings.ui:566
 msgid "Center"
 msgstr "Zentriert"
 
-#: stocks@infinicode.de/settings_40.ui:442 stocks@infinicode.de/settings.ui:560
+#: stocks@infinicode.de/settings_40.ui:449 stocks@infinicode.de/settings.ui:567
 msgid "Right"
 msgstr "Rechts"
 
-#: stocks@infinicode.de/settings_40.ui:443 stocks@infinicode.de/settings.ui:561
+#: stocks@infinicode.de/settings_40.ui:450 stocks@infinicode.de/settings.ui:568
 msgid "Left"
 msgstr "Links"
 
-#: stocks@infinicode.de/settings_40.ui:456 stocks@infinicode.de/settings.ui:575
+#: stocks@infinicode.de/settings_40.ui:463 stocks@infinicode.de/settings.ui:582
+msgid "Ticker Item Display Variation"
+msgstr ""
+
+#: stocks@infinicode.de/settings_40.ui:475 stocks@infinicode.de/settings.ui:595
+msgid "Compact"
+msgstr ""
+
+#: stocks@infinicode.de/settings_40.ui:476 stocks@infinicode.de/settings.ui:596
+msgid "Regular"
+msgstr ""
+
+#: stocks@infinicode.de/settings_40.ui:477 stocks@infinicode.de/settings.ui:597
+msgid "Tremendous"
+msgstr ""
+
+#: stocks@infinicode.de/settings_40.ui:490 stocks@infinicode.de/settings.ui:611
+#, fuzzy
+msgid "Items to show in ticker"
+msgstr "Im Ticker anzeigen?"
+
+#: stocks@infinicode.de/settings_40.ui:514 stocks@infinicode.de/settings.ui:639
 msgid "Stock Panel Ticker Interval in Seconds"
 msgstr "Wechseninterval des Tickers in Sekunden"
 
-#: stocks@infinicode.de/settings_40.ui:483 stocks@infinicode.de/settings.ui:603
+#: stocks@infinicode.de/settings_40.ui:538 stocks@infinicode.de/settings.ui:667
 #, fuzzy
 msgid "Show off-market prices in Ticker"
 msgstr "Im Ticker anzeigen?"
 
-#: stocks@infinicode.de/settings_40.ui:493 stocks@infinicode.de/settings.ui:616
+#: stocks@infinicode.de/settings_40.ui:548 stocks@infinicode.de/settings.ui:680
 msgid ""
 "If enabled the ticker will automatically show pre / post market prices if "
 "available marked by a * sign."
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:507 stocks@infinicode.de/settings.ui:634
+#: stocks@infinicode.de/settings_40.ui:562 stocks@infinicode.de/settings.ui:696
+msgid "Use instrument names from provider"
+msgstr ""
+
+#: stocks@infinicode.de/settings_40.ui:572 stocks@infinicode.de/settings.ui:709
+msgid "If enabled the names for instruments will be taken from provider data."
+msgstr ""
+
+#: stocks@infinicode.de/settings_40.ui:586 stocks@infinicode.de/settings.ui:727
 msgid "General"
 msgstr "Allgemein"
 
-#: stocks@infinicode.de/settings_40.ui:542 stocks@infinicode.de/settings.ui:673
+#: stocks@infinicode.de/settings_40.ui:621 stocks@infinicode.de/settings.ui:766
 msgid "Version: "
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:549 stocks@infinicode.de/settings.ui:687
+#: stocks@infinicode.de/settings_40.ui:628 stocks@infinicode.de/settings.ui:780
 msgid "unknown (self-build ?)"
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:558 stocks@infinicode.de/settings.ui:707
+#: stocks@infinicode.de/settings_40.ui:637 stocks@infinicode.de/settings.ui:800
 msgid ""
 "<span>Stocks-Extension is an extension to display and observe Stock quotes "
 "in GNOME Shell Panel</span>"
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:574 stocks@infinicode.de/settings.ui:730
+#: stocks@infinicode.de/settings_40.ui:653 stocks@infinicode.de/settings.ui:823
 msgid "Maintained by"
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:598 stocks@infinicode.de/settings.ui:781
+#: stocks@infinicode.de/settings_40.ui:677 stocks@infinicode.de/settings.ui:874
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY. See the "
 "<a href=\"https://www.gnu.org/licenses/gpl\">GNU General Public License, "
@@ -164,12 +193,12 @@ msgid ""
 "                                        "
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:612 stocks@infinicode.de/settings.ui:804
+#: stocks@infinicode.de/settings_40.ui:691 stocks@infinicode.de/settings.ui:897
 msgid "About"
 msgstr ""
 
 #: stocks@infinicode.de/settings.ui:46 stocks@infinicode.de/settings.ui:76
-#: stocks@infinicode.de/settings.ui:247 stocks@infinicode.de/settings.ui:277
+#: stocks@infinicode.de/settings.ui:254 stocks@infinicode.de/settings.ui:284
 msgid "Clear entry"
 msgstr "Feld leeren"
 
