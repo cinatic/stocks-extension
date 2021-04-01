@@ -1,14 +1,17 @@
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
-const { isNullOrUndefined } = Me.imports.helpers.data
-const { MARKET_STATES } = Me.imports.services.meta.yahoo
+const { isNullOrUndefined, moveDecimal } = Me.imports.helpers.data
+const { MARKETS } = Me.imports.services.meta.eastMoney
+const { FINANCE_PROVIDER, MARKET_STATES } = Me.imports.services.meta.generic
+const { Translations } = Me.imports.helpers.translations
 
 var QuoteSummary = class QuoteSummary {
-  constructor (symbol) {
-    this.Name = null
+  constructor (symbol, provider, name, error) {
+    this.Name = name
     this.FullName = null
     this.Symbol = symbol
+    this.Provider = provider
     this.Timestamp = null
     this.Change = null
     this.ChangePercent = null
@@ -33,12 +36,46 @@ var QuoteSummary = class QuoteSummary {
     this.PostMarketChangePercent = null
     this.PostMarketTimestamp = null
 
-    this.Error = null
+    this.Error = error
   }
 }
 
-var createQuoteSummaryFromYahooData = (symbol, quoteData, error) => {
-  const newObject = new QuoteSummary(symbol)
+var createQuoteSummaryFromEastMoneyData = ({ symbol, quoteData, error }) => {
+  const newObject = new QuoteSummary(symbol, FINANCE_PROVIDER.EAST_MONEY)
+  newObject.Error = error
+
+  const data = (quoteData || {}).data
+
+  if (data) {
+    const decimalPlace = data.f59
+
+    newObject.FullName = data.f58
+    if (data.f86) {
+      newObject.Timestamp = data.f86 * 1000
+    }
+
+    newObject.ChangePercent = moveDecimal(data.f170, decimalPlace)
+    newObject.Change = moveDecimal(data.f169, decimalPlace)
+
+    newObject.PreviousClose = moveDecimal(data.f60, decimalPlace)
+    newObject.Close = moveDecimal(data.f43, decimalPlace)
+    newObject.Open = moveDecimal(data.f46, decimalPlace)
+    newObject.Low = moveDecimal(data.f45, decimalPlace)
+    newObject.High = moveDecimal(data.f44, decimalPlace)
+
+    newObject.Volume = data.f47
+    // newObject.CurrencySymbol = data.f111 !== 2 ? '元' : null // 2 are shares, 0,5,1 are markets or indices
+    newObject.CurrencySymbol = '元' // don't really know let's assume it's always renminbi, f111 seems not to be the instrument type
+    newObject.ExchangeName = MARKETS[data.f107] || Translations.UNKNOWN
+
+    newObject.MarketState = MARKET_STATES.REGULAR
+  }
+
+  return newObject
+}
+
+var createQuoteSummaryFromYahooData = ({ symbol, quoteData, error }) => {
+  const newObject = new QuoteSummary(symbol, FINANCE_PROVIDER.YAHOO)
   newObject.Error = error
 
   if (quoteData && quoteData.quoteSummary) {
@@ -83,11 +120,11 @@ var createQuoteSummaryFromYahooData = (symbol, quoteData, error) => {
         newObject.PostMarketTimestamp = priceData.postMarketTime * 1000
       }
 
-      if(newObject.MarketState === MARKET_STATES.PRE && isNullOrUndefined(newObject.PreMarketPrice)){
+      if (newObject.MarketState === MARKET_STATES.PRE && isNullOrUndefined(newObject.PreMarketPrice)) {
         newObject.MarketState = MARKET_STATES.PRE_WITHOUT_DATA
       }
 
-      if(newObject.MarketState === MARKET_STATES.POST && isNullOrUndefined(newObject.PostMarketPrice)){
+      if (newObject.MarketState === MARKET_STATES.POST && isNullOrUndefined(newObject.PostMarketPrice)) {
         newObject.MarketState = MARKET_STATES.POST_WITHOUT_DATA
       }
     }

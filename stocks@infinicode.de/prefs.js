@@ -1,46 +1,23 @@
-const { GLib, GObject, Gtk } = imports.gi
+const { Gio, GLib, GObject, Gtk } = imports.gi
 
-const Mainloop = imports.mainloop
-
+const Config = imports.misc.config
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 const Settings = Me.imports.helpers.settings
 
 const { decodeBase64JsonOrDefault, isNullOrEmpty, isNullOrUndefined } = Me.imports.helpers.data
 const { initTranslations, Translations } = Me.imports.helpers.translations
+const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
 
 const EXTENSIONDIR = Me.dir.get_path()
 
-const POSITION_IN_PANEL_KEY = 'position-in-panel'
 const STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
-const STOCKS_TICKER_INTERVAL = 'ticker-interval'
-const STOCKS_SHOW_OFF_MARKET_TICKER_PRICES = 'show-ticker-off-market-prices'
-
-let inRealize = false
-let defaultSize = [-1, -1]
 
 var PrefsWidget = GObject.registerClass({
-  GTypeName: 'StocksExtensionPrefsWidget'
+  GTypeName: 'StocksExtension_PrefsWidget'
 }, class Widget extends Gtk.Box {
 
   /********** Properties ******************/
-
-  // The names must be equal to the ID in settings.ui!
-  get position_in_panel () {
-    if (!this.Settings) {
-      this.loadConfig()
-    }
-
-    return this.Settings.get_enum(POSITION_IN_PANEL_KEY)
-  }
-
-  set position_in_panel (v) {
-    if (!this.Settings) {
-      this.loadConfig()
-    }
-
-    this.Settings.set_enum(POSITION_IN_PANEL_KEY, v)
-  }
 
   get symbolPairs () {
     if (!this.Settings) {
@@ -88,83 +65,36 @@ var PrefsWidget = GObject.registerClass({
     this.Settings.set_string(STOCKS_SYMBOL_PAIRS, GLib.base64_encode(JSON.stringify(v)))
   }
 
-  get ticker_interval () {
-    if (!this.Settings) {
-      this.loadConfig()
-    }
-
-    return this.Settings.get_int(STOCKS_TICKER_INTERVAL)
-  }
-
-  set ticker_interval (v) {
-    if (!this.Settings) {
-      this.loadConfig()
-    }
-
-    this.Settings.set_int(STOCKS_TICKER_INTERVAL, v)
-  }
-
-  get show_ticker_off_market_prices () {
-    if (!this.Settings) {
-      this.loadConfig()
-    }
-
-    return this.Settings.get_boolean(STOCKS_SHOW_OFF_MARKET_TICKER_PRICES)
-  }
-
-  set show_ticker_off_market_prices (v) {
-    if (!this.Settings) {
-      this.loadConfig()
-    }
-
-    this.Settings.set_boolean(STOCKS_SHOW_OFF_MARKET_TICKER_PRICES, v)
-  }
-
   _init (params = {}) {
     super._init(Object.assign(params, {
       orientation: Gtk.Orientation.VERTICAL,
       spacing: 0
     }))
 
-    this.configWidgets = []
-    this.componentTimeoutIds = {}
     this._settingsChangedId = null
     this._treeViewItemHasDropped = false
+
     this.Window = new Gtk.Builder()
 
+    this.loadConfig()
     this.initWindow()
 
-    defaultSize = this.MainWidget.get_size_request()
-    let borderWidth = this.MainWidget.get_border_width()
+    if (isGnome4()) {
+      this.append(this.MainWidget)
+    } else {
+      this.add(this.MainWidget)
+    }
 
-    defaultSize[0] += 2 * borderWidth
-    defaultSize[1] += 2 * borderWidth
-
-    this.MainWidget.set_size_request(-1, -1)
-    this.MainWidget.set_border_width(0)
-
-    this.evaluateValues()
-
-    this.add(this.MainWidget)
-
-    this.connect('destroy', this._onDestroy.bind(this))
-
-    this.MainWidget.connect('realize', () => {
-      if (inRealize) {
-        return
-      }
-      inRealize = true
-
-      this.MainWidget.get_toplevel().resize(defaultSize[0], defaultSize[1])
-      inRealize = false
-    })
-
-    this.treeview.connect('drag-drop', () => {
-      this._treeViewItemHasDropped = true
-    })
+    if (isGnome4()) {
+      // FIXME: what happened with drag & drop on treeview???
+    } else {
+      this.treeview.connect('drag-drop', () => {
+        this._treeViewItemHasDropped = true
+      })
+    }
 
     this.liststore.connect('row-deleted', () => {
-      if(this._treeViewItemHasDropped) {
+      if (this._treeViewItemHasDropped) {
         this._treeViewItemHasDropped = false
         const treeModel = this.treeview.get_model()
 
@@ -174,7 +104,8 @@ var PrefsWidget = GObject.registerClass({
           newStockModels.push({
             name: model.get_value(iter, 0),
             symbol: model.get_value(iter, 1),
-            showInTicker: model.get_value(iter, 2)
+            provider: model.get_value(iter, 2),
+            showInTicker: model.get_value(iter, 3)
           })
         })
 
@@ -184,31 +115,39 @@ var PrefsWidget = GObject.registerClass({
   }
 
   initWindow () {
-    this.Window.add_from_file(EXTENSIONDIR + '/settings.ui')
+    let uiFile = EXTENSIONDIR + '/settings.ui'
+
+    if (isGnome4()) {
+      uiFile = EXTENSIONDIR + '/settings_40.ui'
+    }
+
+    this.Window.add_from_file(uiFile)
     this.MainWidget = this.Window.get_object('main-widget')
 
     let theObjects = this.Window.get_objects()
-    for (let i in theObjects) {
-      const name = theObjects[i].get_name ? theObjects[i].get_name() : 'dummy'
 
-      if (this[name] !== undefined) {
-        const classPath = theObjects[i].class_path()[1]
+    theObjects.forEach(gtkWidget => {
+      const gtkUiIdentifier = getWidgetUiIdentifier(gtkWidget)
+      const widgetType = getWidgetType(gtkWidget)
 
-        if (classPath.indexOf('GtkEntry') != -1) {
-          this.initEntry(theObjects[i])
-        } else if (classPath.indexOf('GtkComboBoxText') != -1) {
-          this.initComboBox(theObjects[i])
-        } else if (classPath.indexOf('GtkSwitch') != -1) {
-          this.initSwitch(theObjects[i])
-        } else if (classPath.indexOf('GtkScale') != -1) {
-          this.initScale(theObjects[i])
-        } else if (classPath.indexOf('GtkSpinButton') != -1) {
-          this.initSpinner(theObjects[i])
-        }
-
-        this.configWidgets.push([theObjects[i], name])
+      if (gtkUiIdentifier && (gtkUiIdentifier.startsWith('new-') || gtkUiIdentifier.startsWith('edit-'))) {
+        return
       }
-    }
+
+      switch (widgetType) {
+        case 'GtkComboBoxText':
+          this.initComboBox(gtkWidget, gtkUiIdentifier)
+          break
+
+        case 'GtkSwitch':
+          this.initSwitch(gtkWidget, gtkUiIdentifier)
+          break
+
+        case 'GtkSpinButton':
+          this.initSpinner(gtkWidget, gtkUiIdentifier)
+          break
+      }
+    })
 
     if (Me.metadata.version !== undefined) {
       this.Window.get_object('version').set_label(Me.metadata.version.toString())
@@ -221,15 +160,17 @@ var PrefsWidget = GObject.registerClass({
     this.newName = this.Window.get_object('new-name')
     this.newSymbol = this.Window.get_object('new-symbol')
     this.newShowInTicker = this.Window.get_object('new-show-in-ticker')
+    this.newProvider = this.Window.get_object('new-provider')
 
     this.editWidget = this.Window.get_object('edit-symbol-widget')
     this.editName = this.Window.get_object('edit-name')
     this.editSymbol = this.Window.get_object('edit-symbol')
     this.editShowInTicker = this.Window.get_object('edit-show-in-ticker')
+    this.editProvider = this.Window.get_object('edit-provider')
 
     // TreeView / Table Buttons
     this.Window.get_object('tree-toolbutton-add').connect('clicked', () => {
-      this.createWidget.show_all()
+      this.createWidget.show()
     })
 
     this.Window.get_object('tree-toolbutton-remove').connect('clicked', this.removeSymbol.bind(this))
@@ -248,6 +189,8 @@ var PrefsWidget = GObject.registerClass({
     })
 
     this.initTreeView()
+
+    this.refreshTreeView()
   }
 
   /**
@@ -255,97 +198,18 @@ var PrefsWidget = GObject.registerClass({
    */
   loadConfig () {
     this.Settings = Settings.getSettings()
-    this._settingsChangedId = this.Settings.connect('changed', this.evaluateValues.bind(this))
   }
 
-  /**
-   * initialize entry items (input boxes)
-   * @param theEntry entry element
-   */
-  initEntry (theEntry) {
-    let name = theEntry.get_name()
-    theEntry.text = this[name]
-    if (this[name].length != 32) {
-      theEntry.set_icon_from_icon_name(Gtk.PositionType.LEFT, 'dialog-warning')
-    }
-
-    theEntry.connect('notify::text', () => {
-      let key = arguments[0].text
-      this[name] = key
-      if (key.length == 32) {
-        theEntry.set_icon_from_icon_name(Gtk.PositionType.LEFT, '')
-      } else {
-        theEntry.set_icon_from_icon_name(Gtk.PositionType.LEFT, 'dialog-warning')
-      }
-    })
+  initSpinner (gtkWidget, identifier) {
+    this.Settings.bind(identifier, gtkWidget, 'value', Gio.SettingsBindFlags.DEFAULT)
   }
 
-  /**
-   * initialize entry items (input boxes)
-   * @param theEntry entry element
-   */
-  initSpinner (theEntry) {
-    const name = theEntry.get_name()
-
-    theEntry.set_value(this[name])
-
-    // prevent from continously updating the value
-    delete this.componentTimeoutIds[name]
-
-    theEntry.connect('value-changed', (button) => {
-      const timeoutId = this.componentTimeoutIds[name]
-
-      if (timeoutId) {
-        Mainloop.source_remove(timeoutId)
-      }
-
-      this.componentTimeoutIds[name] = Mainloop.timeout_add(250, () => {
-        this[name] = button.get_value()
-        return false
-      })
-    })
+  initComboBox (gtkWidget, identifier) {
+    this.Settings.bind(identifier, gtkWidget, 'active-id', Gio.SettingsBindFlags.DEFAULT)
   }
 
-  /**
-   * initialize combo box items
-   * @param theComboBox comboBox element
-   */
-  initComboBox (theComboBox) {
-    const name = theComboBox.get_name()
-    theComboBox.connect('changed', () => {
-      this[name] = arguments[0].active
-    })
-  }
-
-  /**
-   * initialize boolean switches
-   * @param theSwitch switch element
-   */
-  initSwitch (theSwitch) {
-    const name = theSwitch.get_name()
-
-    theSwitch.connect('notify::active', () => {
-      this[name] = arguments[0].active
-    })
-  }
-
-  /**
-   * initialize scale items (range slider?)
-   * @param theScale scale element
-   */
-  initScale (theScale) {
-    let name = theScale.get_name()
-    theScale.set_value(this[name])
-    this[name + 'Timeout'] = undefined
-    theScale.connect('value-changed', (slider) => {
-      if (this[name + 'Timeout'] !== undefined) {
-        Mainloop.source_remove(this[name + 'Timeout'])
-      }
-      this[name + 'Timeout'] = Mainloop.timeout_add(250, () => {
-        this[name] = slider.get_value()
-        return false
-      })
-    })
+  initSwitch (gtkWidget, identifier) {
+    this.Settings.bind(identifier, gtkWidget, 'active', Gio.SettingsBindFlags.DEFAULT)
   }
 
   /**
@@ -375,6 +239,17 @@ var PrefsWidget = GObject.registerClass({
       cell.markup = model.get_value(iter, 1)
     })
 
+    /**** provider cell ****/
+    const providerCell = new Gtk.TreeViewColumn()
+    providerCell.set_title(Translations.SETTINGS.PROVIDER)
+    this.treeview.append_column(providerCell)
+
+    providerCell.pack_start(renderer, null)
+
+    providerCell.set_cell_data_func(renderer, function (tree, cell, model, iter) {
+      cell.markup = model.get_value(iter, 2).toString()
+    })
+
     /**** ticker cell ****/
     const showInTicker = new Gtk.TreeViewColumn()
     showInTicker.set_title(Translations.SETTINGS.SHOW_IN_TICKER)
@@ -383,31 +258,18 @@ var PrefsWidget = GObject.registerClass({
     showInTicker.pack_start(renderer, null)
 
     showInTicker.set_cell_data_func(renderer, function (tree, cell, model, iter) {
-      cell.markup = model.get_value(iter, 2).toString()
-    })
-  }
+      const value = model.get_value(iter, 3)
 
-  /**
-   * This is triggered when config has changed
-   * 1. refresh the settings UI view
-   * 2. synchronize config values and settings elements
-   */
-  evaluateValues () {
-    this.refreshUI()
-
-    let config = this.configWidgets
-
-    for (let i in config) {
-      if (config[i][0].active != this[config[i][1]]) {
-        config[i][0].active = this[config[i][1]]
+      if (!isNullOrUndefined(value)) {
+        cell.markup = value.toString()
       }
-    }
+    })
   }
 
   /**
    * this recreates the TreeView (Symbol Table)
    */
-  refreshUI () {
+  refreshTreeView () {
     const stockItems = this.symbolPairs
     this.treeview = this.Window.get_object('tree-treeview')
     this.liststore = this.Window.get_object('tree-liststore')
@@ -427,22 +289,10 @@ var PrefsWidget = GObject.registerClass({
         current = this.liststore.append()
         this.liststore.set_value(current, 0, stockItem.name)
         this.liststore.set_value(current, 1, stockItem.symbol)
-        this.liststore.set_value(current, 2, stockItem.showInTicker)
+        this.liststore.set_value(current, 2, stockItem.provider)
+        this.liststore.set_value(current, 3, stockItem.showInTicker)
       })
     }
-  }
-
-  _onDestroy () {
-    if (this._settingsChangedId) {
-      this.Settings.disconnect(this._settingsChangedId)
-    }
-  }
-
-  /**
-   * clear a entry input element
-   */
-  clearEntry () {
-    arguments[0].set_text('')
   }
 
   /**
@@ -467,8 +317,9 @@ var PrefsWidget = GObject.registerClass({
     this.editName.set_text(selectedStock.name || '')
     this.editSymbol.set_text(selectedStock.symbol || '')
     this.editShowInTicker.set_state(selectedStock.showInTicker)
+    this.editProvider.set_active(Object.values(FINANCE_PROVIDER).indexOf(selectedStock.provider))
 
-    this.editWidget.show_all()
+    this.editWidget.show()
   }
 
   /**
@@ -478,15 +329,19 @@ var PrefsWidget = GObject.registerClass({
     const name = this.newName.get_text().trim()
     const symbol = this.newSymbol.get_text().trim()
     const showInTicker = this.newShowInTicker.get_state()
+    const provider = Object.values(FINANCE_PROVIDER)[this.newProvider.get_active()]
 
     const newItem = {
       name,
       symbol,
-      showInTicker
+      showInTicker,
+      provider
     }
 
     // append new item and write it to config
     this.symbolPairs = [...this.symbolPairs, newItem]
+
+    this.refreshTreeView()
 
     this.createWidget.hide()
   }
@@ -513,11 +368,14 @@ var PrefsWidget = GObject.registerClass({
     const newStockItem = {
       name: this.editName.get_text().trim(),
       symbol: this.editSymbol.get_text().trim(),
-      showInTicker: this.editShowInTicker.get_state()
+      showInTicker: this.editShowInTicker.get_state(),
+      provider: Object.values(FINANCE_PROVIDER)[this.editProvider.get_active()]
     }
 
     stockItems[selectionIndex] = newStockItem
     this.symbolPairs = stockItems
+
+    this.refreshTreeView()
 
     this.editWidget.hide()
   }
@@ -544,8 +402,36 @@ var PrefsWidget = GObject.registerClass({
     stockItems.splice(selectionIndex, 1)
 
     this.symbolPairs = stockItems
+
+    this.refreshTreeView()
   }
 })
+
+const getWidgetUiIdentifier = gtkWidget => {
+  if (isGnome4()) {
+    return gtkWidget.get_buildable_id ? gtkWidget.get_buildable_id() : null
+  }
+
+  return gtkWidget.get_name ? gtkWidget.get_name() : null
+}
+
+const getWidgetType = gtkWidget => {
+  if (isGnome4()) {
+    return gtkWidget.get_name ? gtkWidget.get_name() : null
+  }
+
+  const classPaths = gtkWidget.class_path ? gtkWidget.class_path()[1] : []
+
+  if (classPaths.indexOf('GtkSwitch') !== -1) {
+    return 'GtkSwitch'
+  } else if (classPaths.indexOf('GtkComboBoxText') !== -1) {
+    return 'GtkComboBoxText'
+  } else if (classPaths.indexOf('GtkSpinButton') !== -1) {
+    return 'GtkSpinButton'
+  }
+}
+
+const isGnome4 = () => Config.PACKAGE_VERSION.startsWith('4')
 
 // this is called when settings has been opened
 var init = () => {
@@ -553,7 +439,7 @@ var init = () => {
 }
 
 function buildPrefsWidget () {
-  let widget = new PrefsWidget()
-  widget.show_all()
+  const widget = new PrefsWidget()
+  widget.show()
   return widget
 }

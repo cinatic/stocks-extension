@@ -129,6 +129,8 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
   }
 
   _onDestroy () {
+    super._onDestroy()
+
     if (this._settingsChangedId) {
       Settings.disconnect(this._settingsChangedId)
     }

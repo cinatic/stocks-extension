@@ -57,7 +57,7 @@
             <property name="can-focus">False</property>
             <property name="halign">start</property>
             <property name="hexpand">True</property>
-            <property name="label" translatable="yes">Yahoo Symbol</property>
+            <property name="label" translatable="yes">Symbol</property>
           </object>
           <packing>
             <property name="left-attach">0</property>
@@ -107,6 +107,48 @@
           </packing>
         </child>
         <child>
+          <object class="GtkLabel" id="label-new-provider">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="halign">start</property>
+            <property name="label" translatable="yes">Provider</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">5</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkComboBoxText" id="new-provider">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="halign">end</property>
+            <property name="active">0</property>
+            <property name="tooltip-text" translatable="yes">Select provider to fetch stock data from</property>
+            <items>
+              <item translatable="yes">yahoo</item>
+              <item translatable="yes">eastmoney</item>
+            </items>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">5</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator" id="separator1">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="margin-top">5</property>
+            <property name="margin-bottom">5</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">6</property>
+            <property name="width">2</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkBox" id="box1">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
@@ -147,20 +189,7 @@
           </object>
           <packing>
             <property name="left-attach">0</property>
-            <property name="top-attach">6</property>
-            <property name="width">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSeparator" id="separator1">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="margin-top">5</property>
-            <property name="margin-bottom">5</property>
-          </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">5</property>
+            <property name="top-attach">7</property>
             <property name="width">2</property>
           </packing>
         </child>
@@ -171,6 +200,13 @@
     <property name="lower">1</property>
     <property name="upper">1200</property>
     <property name="value">10</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="stock-amount-adjustment">
+    <property name="lower">1</property>
+    <property name="upper">500</property>
+    <property name="value">1</property>
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
@@ -229,7 +265,7 @@
             <property name="can-focus">False</property>
             <property name="halign">start</property>
             <property name="hexpand">True</property>
-            <property name="label" translatable="yes">Edit Yahoo Symbol</property>
+            <property name="label" translatable="yes">Edit Symbol</property>
           </object>
           <packing>
             <property name="left-attach">0</property>
@@ -278,6 +314,34 @@
           </packing>
         </child>
         <child>
+          <object class="GtkLabel" id="label-provider">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="halign">start</property>
+            <property name="label" translatable="yes">Provider</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">5</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkComboBoxText" id="edit-provider">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="halign">end</property>
+            <property name="tooltip-text" translatable="yes">Select provider to fetch stock data from</property>
+            <items>
+              <item translatable="yes">yahoo</item>
+              <item translatable="yes">eastmoney</item>
+            </items>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">5</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkSeparator" id="separator2">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
@@ -286,7 +350,7 @@
           </object>
           <packing>
             <property name="left-attach">0</property>
-            <property name="top-attach">5</property>
+            <property name="top-attach">6</property>
             <property name="width">2</property>
           </packing>
         </child>
@@ -331,7 +395,7 @@
           </object>
           <packing>
             <property name="left-attach">0</property>
-            <property name="top-attach">6</property>
+            <property name="top-attach">7</property>
             <property name="width">2</property>
           </packing>
         </child>
@@ -340,18 +404,21 @@
   </object>
   <object class="GtkListStore" id="tree-liststore">
     <columns>
-      <!-- column-name internal -->
+      <!-- column-name name -->
       <column type="gchararray"/>
-      <!-- column-name stock -->
+      <!-- column-name symbol -->
       <column type="gchararray"/>
-      <!-- column-name stock1 -->
+      <!-- column-name provider -->
+      <column type="gchararray"/>
+      <!-- column-name showInTicker -->
       <column type="gboolean"/>
     </columns>
     <data>
       <row>
         <col id="0">Alibaba (NY)</col>
         <col id="1">BABA</col>
-        <col id="2">True</col>
+        <col id="2">yahoo</col>
+        <col id="3">True</col>
       </row>
     </data>
   </object>
@@ -360,7 +427,7 @@
     <property name="height-request">480</property>
     <property name="visible">True</property>
     <property name="can-focus">True</property>
-    <property name="border-width">20</property>
+    <property name="border-width">0</property>
     <child>
       <object class="GtkViewport" id="scrolled-viewport">
         <property name="visible">True</property>
@@ -491,19 +558,76 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBoxText" id="position_in_panel">
+                  <object class="GtkComboBoxText" id="position-in-panel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
                     <items>
-                      <item translatable="yes">Center</item>
-                      <item translatable="yes">Right</item>
-                      <item translatable="yes">Left</item>
+                        <item id="center" translatable="yes">Center</item>
+                        <item id="right" translatable="yes">Right</item>
+                        <item id="left" translatable="yes">Left</item>
                     </items>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
                     <property name="top-attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="label-ticker-display-variation">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="hexpand">True</property>
+                    <property name="label" translatable="yes">Ticker Item Display Variation</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBoxText" id="ticker-display-variation">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">end</property>
+                    <items>
+                        <item id="compact" translatable="yes">Compact</item>
+                        <item id="regular" translatable="yes">Regular</item>
+                        <item id="tremendous" translatable="yes">Tremendous</item>
+                    </items>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="label-ticker-stock-amount">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="hexpand">True</property>
+                    <property name="label" translatable="yes">Items to show in ticker</property>
+                    <property name="ellipsize">end</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSpinButton" id="ticker-stock-amount">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="input-purpose">number</property>
+                    <property name="adjustment">stock-amount-adjustment</property>
+                    <property name="numeric">True</property>
+                    <property name="value">10</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">2</property>
                   </packing>
                 </child>
                 <child>
@@ -517,23 +641,21 @@
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
-                    <property name="top-attach">1</property>
+                    <property name="top-attach">3</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="ticker_interval">
+                  <object class="GtkSpinButton" id="ticker-interval">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="input-purpose">number</property>
                     <property name="adjustment">stock-interval-adjustment</property>
-                    <property name="climb-rate">5</property>
                     <property name="numeric">True</property>
-                    <property name="update-policy">if-valid</property>
                     <property name="value">10</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">1</property>
+                    <property name="top-attach">3</property>
                   </packing>
                 </child>
                 <child>
@@ -547,12 +669,12 @@
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
-                    <property name="top-attach">2</property>
+                    <property name="top-attach">4</property>
                   </packing>
                 </child>
 
                 <child>
-                  <object class="GtkSwitch" id="show_ticker_off_market_prices">
+                  <object class="GtkSwitch" id="show-ticker-off-market-prices">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">If enabled the ticker will automatically show pre / post market prices if available marked by a * sign.</property>
@@ -561,7 +683,36 @@
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">2</property>
+                    <property name="top-attach">4</property>
+                  </packing>
+                </child>
+
+                <child>
+                  <object class="GtkLabel" id="label-use-provider-instrument-names">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="hexpand">True</property>
+                    <property name="label" translatable="yes">Use instrument names from provider</property>
+                    <property name="ellipsize">end</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">5</property>
+                  </packing>
+                </child>
+
+                <child>
+                  <object class="GtkSwitch" id="use-provider-instrument-names">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="tooltip-text" translatable="yes">If enabled the names for instruments will be taken from provider data.</property>
+                    <property name="halign">end</property>
+                    <property name="active">True</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">5</property>
                   </packing>
                 </child>
               </object>

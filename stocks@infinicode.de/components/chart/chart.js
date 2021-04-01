@@ -13,7 +13,7 @@ var Chart = GObject.registerClass({
     }
   }
 }, class Chart extends St.DrawingArea {
-  _init ({ data, x1, x2, barData }) {
+  _init ({ data, x1, x2, barData, onDraw, additionalYData }) {
     super._init({
       style_class: 'chart',
       reactive: true
@@ -27,14 +27,17 @@ var Chart = GObject.registerClass({
 
     this._selectedX = null
     this._selectedY = null
+    this._onDraw = onDraw
+    this._additionalYData = additionalYData || []
 
     this.connect('repaint', this._draw.bind(this))
-    this.connect('motion-event', (item, event) => this._onHover(item, event))
+    this.connect('motion-event', this._onHover.bind(this))
+    this.connect('leave-event', this._onLeave.bind(this))
   }
 
   _draw () {
-    if (!this.data || !this.data.length) {
-      // TODO: show error
+    if (isNullOrEmpty(this.data)) {
+      // TODO: show empty content hint
       return
     }
 
@@ -49,6 +52,7 @@ var Chart = GObject.registerClass({
 
     // FIXME: it would be nice to have some basic color sets in gnome-shell
     const fgColor = themeNode.get_foreground_color()
+
     const newColorString = getComplementaryColor(fgColor.to_string().slice(1, 7), false)
     const secondaryColor = Clutter.color_from_string(`${newColorString}ff`)[1]
 
@@ -63,6 +67,10 @@ var Chart = GObject.registerClass({
     this._draw_line_chart(baseParams)
     this._draw_volume_bars(baseParams)
     this._draw_crosshair(baseParams)
+
+    if (this._onDraw) {
+      this._onDraw(baseParams)
+    }
 
     // dispose cairo stuff
     cairoContext.$dispose()
@@ -136,22 +144,40 @@ var Chart = GObject.registerClass({
 
   _draw_crosshair ({ width, height, cairoContext, secondaryColor }) {
     if (this._selectedX) {
-      Clutter.cairo_set_source_color(cairoContext, secondaryColor)
-      cairoContext.moveTo(this._selectedX - 1, 0)
-      cairoContext.lineTo(this._selectedX - 1, height)
-      cairoContext.lineTo(this._selectedX, height)
-      cairoContext.lineTo(this._selectedX, 0)
-      cairoContext.fill()
+      this.draw_line({
+        y1: 0,
+        y2: height,
+        x1: this._selectedX,
+        x2: this._selectedX,
+        cairoContext,
+        color: secondaryColor
+      })
     }
 
     if (this._selectedY) {
-      Clutter.cairo_set_source_color(cairoContext, secondaryColor)
-      cairoContext.moveTo(0, this._selectedY - 1)
-      cairoContext.lineTo(width, this._selectedY - 1)
-      cairoContext.lineTo(width, this._selectedY)
-      cairoContext.lineTo(0, this._selectedY)
-      cairoContext.fill()
+      this.draw_line({
+        x1: 0,
+        x2: width,
+        y1: this._selectedY,
+        y2: this._selectedY,
+        cairoContext,
+        color: secondaryColor
+      })
     }
+  }
+
+  draw_line ({ x1, x2, y1, y2, cairoContext, color, dashed, lineWidth = 0.5 }) {
+    Clutter.cairo_set_source_color(cairoContext, color)
+
+    cairoContext.setLineWidth(lineWidth)
+
+    if (dashed) {
+      cairoContext.setDash([10, 5], 0)
+    }
+
+    cairoContext.moveTo(x1, y1)
+    cairoContext.lineTo(x2, y2)
+    cairoContext.stroke()
   }
 
   _transformSeriesData (data, width, height) {
@@ -159,16 +185,8 @@ var Chart = GObject.registerClass({
       return []
     }
 
-    const minValueX = this.x1 || data[0][0]
-    const maxValueX = this.x2 || data[data.length - 1][0]
-
-    const yValues = [...data.filter(item => item[1] !== null).map(item => item[1])]
-
-    let minValueY = Math.min(...yValues)
-    const maxValueY = Math.max(...yValues)
-
-    // add small buffer to bottom
-    minValueY -= (maxValueY - minValueY) * 0.25
+    const [minValueX, maxValueX] = this.getXRange(data)
+    const [minValueY, maxValueY] = this.getYRange(data)
 
     return data.map(([x, y]) => [
       this.encodeValue(x, minValueX, maxValueX, 0, width),
@@ -190,10 +208,10 @@ var Chart = GObject.registerClass({
 
     const chartX = coordX - positionX
     const chartY = coordY - positionY
-    const minX = this.x1 || this.data[0][0]
-    const maxX = this.x2 || this.data[this.data.length - 1][0]
 
-    const hoveredValueX = this.decodeValue(chartX, minX, maxX, 0, this.width)
+    const [minValueX, maxValueX] = this.getXRange()
+
+    const hoveredValueX = this.decodeValue(chartX, minValueX, maxValueX, 0, this.width)
     const originalValueX = closest(this.data.filter(data => data[1] !== null).map(data => data[0]), hoveredValueX)
 
     const tsItem = this.data.find(data => data[0] === originalValueX)
@@ -203,6 +221,50 @@ var Chart = GObject.registerClass({
     this._selectedY = chartY
 
     this.queue_repaint()
+  }
+
+  _onLeave () {
+    this._selectedX = null
+    this._selectedY = null
+
+    this.emit('chart-hover', null, null)
+
+    this.queue_repaint()
+  }
+
+  getXRange (data) {
+    data = data || this.data
+
+    if (!data) {
+      return
+    }
+
+    const minValueX = this.x1 || data[0][0]
+    const maxValueX = this.x2 || data[data.length - 1][0]
+
+    return [minValueX, maxValueX]
+  }
+
+  getYRange (data) {
+    data = data || this.data
+
+    if (!data) {
+      return
+    }
+
+    const yValues = [...this._additionalYData, ...data.map(item => item[1])]
+        .filter(item => !isNullOrUndefined(item))
+        .map(item => item)
+
+    let minValueY = Math.min(...yValues)
+    let maxValueY = Math.max(...yValues)
+
+    // add small buffer
+    const buffer = (maxValueY - minValueY) * 0.125
+    minValueY -= buffer
+    maxValueY += buffer
+
+    return [minValueY, maxValueY]
   }
 
   // thx: https://stackoverflow.com/a/5732390/3828502

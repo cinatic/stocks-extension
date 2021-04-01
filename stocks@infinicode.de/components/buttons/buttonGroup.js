@@ -1,6 +1,7 @@
 const { GObject, St, Clutter } = imports.gi
 
 var ButtonGroup = GObject.registerClass({
+  GTypeName: 'StockExtension_ButtonGroup',
   Signals: {
     'clicked': {
       param_types: [GObject.TYPE_OBJECT]

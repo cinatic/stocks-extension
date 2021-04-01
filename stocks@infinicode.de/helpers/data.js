@@ -1,3 +1,4 @@
+const ByteArray = imports.byteArray;
 const { GLib } = imports.gi
 
 let CACHE = {}
@@ -11,7 +12,7 @@ var closest = (array, target) => array.reduce((prev, curr) => Math.abs(curr - ta
 
 var decodeBase64JsonOrDefault = (encodedJson, defaultValue) => {
   try {
-    const value = JSON.parse(GLib.base64_decode(encodedJson))
+    const value = JSON.parse(ByteArray.toString(GLib.base64_decode(encodedJson)))
 
     if (!value) {
       return defaultValue
@@ -26,6 +27,16 @@ var decodeBase64JsonOrDefault = (encodedJson, defaultValue) => {
 
 var clearCache = () => {
   CACHE = {}
+}
+
+var removeCache = (keyToDelete, startsWith = true) => {
+  let keys = [keyToDelete]
+
+  if (startsWith) {
+    keys = Object.keys(CACHE).filter(key => key.startsWith(keyToDelete))
+  }
+
+  keys.forEach(key => delete CACHE[key])
 }
 
 var cacheOrDefault = async (cacheKey, evaluator, cacheDuration = CACHE_TIME) => {
@@ -88,6 +99,14 @@ var getComplementaryColor = (hex, bw = true) => {
   b = (255 - b).toString(16)
   // pad each with zeros and return
   return '#' + padZero(r) + padZero(g) + padZero(b)
+}
+
+var moveDecimal = (value, decimalPlaces) => {
+  if (!value) {
+    return value
+  }
+
+  return value / Math.pow(10, decimalPlaces)
 }
 
 var roundOrDefault = (number, defaultValue = '--') => isNullOrUndefined(number) ? defaultValue : (Math.round((number + Number.EPSILON) * 100) / 100).toFixed(2)

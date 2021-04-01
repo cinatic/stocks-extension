@@ -10,13 +10,27 @@ const { FlatList } = Me.imports.components.flatList.flatList
 const { StockCard } = Me.imports.components.cards.stockCard
 const { SearchBar } = Me.imports.components.searchBar.searchBar
 const { setTimeout, clearTimeout } = Me.imports.helpers.components
-const { clearCache } = Me.imports.helpers.data
-const { Settings } = Me.imports.helpers.settings
+const { removeCache } = Me.imports.helpers.data
+
+const {
+  Settings,
+  STOCKS_SYMBOL_PAIRS,
+  STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
+} = Me.imports.helpers.settings
+
 const { Translations } = Me.imports.helpers.translations
 
 const FinanceService = Me.imports.services.financeService
 
-var StockOverviewScreen = GObject.registerClass({}, class StockOverviewScreen extends St.BoxLayout {
+
+const SETTING_KEYS_TO_REFRESH = [
+  STOCKS_SYMBOL_PAIRS,
+  STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
+]
+
+var StockOverviewScreen = GObject.registerClass({
+  GTypeName: 'StockExtension_StockOverviewScreen'
+}, class StockOverviewScreen extends St.BoxLayout {
   _init () {
     super._init({
       style_class: 'screen stock-overview-screen',
@@ -36,14 +50,14 @@ var StockOverviewScreen = GObject.registerClass({}, class StockOverviewScreen ex
     this.connect('destroy', this._onDestroy.bind(this))
 
     searchBar.connect('refresh', () => {
-      clearCache()
+      removeCache('summary_')
       this._loadData()
     })
 
     searchBar.connect('text-change', (sender, searchText) => this._filter_results(searchText))
 
     this._settingsChangedId = Settings.connect('changed', (value, key) => {
-      if (key === 'symbol-pairs') {
+      if (SETTING_KEYS_TO_REFRESH.includes(key)) {
         this._loadData()
       }
     })
@@ -99,7 +113,12 @@ var StockOverviewScreen = GObject.registerClass({}, class StockOverviewScreen ex
 
     this._showLoadingInfoTimeoutId = setTimeout(() => this._list.show_loading_info(), 500)
 
-    const quoteSummaries = await Promise.all(Settings.symbol_pairs.map(symbolData => FinanceService.getQuoteSummary({ symbol: symbolData.symbol, fallbackName: symbolData.name })))
+    const quoteSummaries = await Promise.all(
+        Settings.symbol_pairs.map(symbolData => FinanceService.getQuoteSummary({
+          ...symbolData,
+          fallbackName: symbolData.name
+        }))
+    )
 
     this._showLoadingInfoTimeoutId = clearTimeout(this._showLoadingInfoTimeoutId)
 
@@ -117,7 +136,7 @@ var StockOverviewScreen = GObject.registerClass({}, class StockOverviewScreen ex
       Mainloop.source_remove(this._autoRefreshTimeoutId)
     }
 
-    if(this._settingsChangedId){
+    if (this._settingsChangedId) {
       Settings.disconnect(this._settingsChangedId)
     }
   }

@@ -4,11 +4,15 @@ const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
 const { decodeBase64JsonOrDefault, isNullOrEmpty } = Me.imports.helpers.data
+const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
 
 var POSITION_IN_PANEL_KEY = 'position-in-panel'
 var STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
 var STOCKS_TICKER_INTERVAL = 'ticker-interval'
 var STOCKS_SHOW_OFF_MARKET_TICKER_PRICES = 'show-ticker-off-market-prices'
+var STOCKS_TICKER_STOCK_AMOUNT = 'ticker-stock-amount'
+var STOCKS_TICKER_DISPLAY_VARIATION = 'ticker-display-variation'
+var STOCKS_USE_PROVIDER_INSTRUMENT_NAMES = 'use-provider-instrument-names'
 
 var SETTINGS_SCHEMA_DOMAIN = 'org.gnome.shell.extensions.stocks'
 
@@ -16,7 +20,8 @@ var DEFAULT_SYMBOL_DATA = [
   {
     symbol: 'BABA',
     name: 'Alibaba (NY)',
-    showInTicker: true
+    showInTicker: true,
+    provider: FINANCE_PROVIDER.YAHOO
   }
 ]
 
@@ -66,7 +71,8 @@ var getSettings = () => {
 var convertOldSettingsFormat = rawString => rawString.split('-&&-').map(symbolPairString => ({
   name: symbolPairString.split('-§§-')[0],
   symbol: symbolPairString.split('-§§-')[1],
-  showInTicker: true
+  showInTicker: true,
+  provider: FINANCE_PROVIDER.YAHOO
 }))
 
 const Handler = class {
@@ -115,8 +121,20 @@ const Handler = class {
     return this._settings.get_int(STOCKS_TICKER_INTERVAL)
   }
 
+  get ticker_stock_amount () {
+    return this._settings.get_int(STOCKS_TICKER_STOCK_AMOUNT)
+  }
+
+  get ticker_display_variation () {
+    return this._settings.get_enum(STOCKS_TICKER_DISPLAY_VARIATION)
+  }
+
   get show_ticker_off_market_prices () {
     return this._settings.get_boolean(STOCKS_SHOW_OFF_MARKET_TICKER_PRICES)
+  }
+
+  get use_provider_instrument_names () {
+    return this._settings.get_boolean(STOCKS_USE_PROVIDER_INSTRUMENT_NAMES)
   }
 
   connect (identifier, onChange) {

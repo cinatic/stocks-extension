@@ -1,4 +1,4 @@
-const { GObject, St } = imports.gi
+const { Clutter, GObject, St } = imports.gi
 
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
@@ -11,28 +11,42 @@ const { SearchBar } = Me.imports.components.searchBar.searchBar
 const { clearCache, roundOrDefault } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
 
-const { CHART_RANGES } = Me.imports.services.meta.yahoo
+const { CHART_RANGES } = Me.imports.services.meta.generic
 const FinanceService = Me.imports.services.financeService
 
-var StockDetailsScreen = GObject.registerClass({}, class StockDetailsScreen extends St.BoxLayout {
+var StockDetailsScreen = GObject.registerClass({
+  GTypeName: 'StockExtension_StockDetailsScreen'
+}, class StockDetailsScreen extends St.BoxLayout {
   _init ({ quoteSummary }) {
     super._init({
       style_class: 'screen stock-details-screen',
       vertical: true
     })
 
-    this.symbol = quoteSummary.Symbol
-    this.fallbackName = quoteSummary.FullName
+    this._passedQuoteSummary = quoteSummary
     this._selectedChartRange = CHART_RANGES.INTRADAY
+    this._quoteSummary = null
 
     this._sync()
   }
 
   async _sync () {
     const [quoteSummary, quoteHistorical] = await Promise.all([
-      FinanceService.getQuoteSummary({ symbol: this.symbol, fallbackName: this.fallbackName }),
-      FinanceService.getHistoricalQuotes({ symbol: this.symbol, range: this._selectedChartRange })
+      FinanceService.getQuoteSummary({
+        symbol: this._passedQuoteSummary.Symbol,
+        provider: this._passedQuoteSummary.Provider,
+        fallbackName: this._passedQuoteSummary.FullName
+      }),
+      FinanceService.getHistoricalQuotes({
+        symbol: this._passedQuoteSummary.Symbol,
+        provider: this._passedQuoteSummary.Provider,
+        range: this._selectedChartRange
+      })
     ])
+
+    this._isIntrayDayChart = CHART_RANGES.INTRADAY === this._selectedChartRange
+
+    this._quoteSummary = quoteSummary
 
     this.destroy_all_children()
 
@@ -61,17 +75,24 @@ var StockDetailsScreen = GObject.registerClass({}, class StockDetailsScreen exte
       this._sync()
     })
 
-    const chart = new Chart({
+    this._chart = new Chart({
       data: quoteHistorical.Data,
       x1: quoteHistorical.MarketStart,
       x2: quoteHistorical.MarketEnd,
-      barData: quoteHistorical.VolumeData
+      barData: quoteHistorical.VolumeData,
+      additionalYData: this._isIntrayDayChart ? [this._quoteSummary.PreviousClose] : [],
+      onDraw: this._onChartDraw.bind(this)
     })
 
     const chartValueLabel = new St.Label({ style_class: 'chart-hover-label', text: `` })
 
     // TODO: figure out how we can determine if chart lost focus
-    chart.connect('chart-hover', (item, x, y) => {
+    this._chart.connect('chart-hover', (item, x, y) => {
+      if (!x) {
+        chartValueLabel.text = ''
+        return
+      }
+
       chartValueLabel.text = `${(new Date(x)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)} ${roundOrDefault(y)}`
     })
 
@@ -80,7 +101,26 @@ var StockDetailsScreen = GObject.registerClass({}, class StockDetailsScreen exte
 
     // FIXME: adding chart throws a lot of "Can't update stage views actor", no clue what is going on here
     this.add_child(chartRangeButtonGroup)
-    this.add_child(chart)
+    this.add_child(this._chart)
     this.add_child(chartValueLabel)
+  }
+
+  _onChartDraw ({ width, height, cairoContext, secondaryColor }) {
+    if (this._isIntrayDayChart && this._quoteSummary && this._quoteSummary.PreviousClose) {
+      const [minValueY, maxValueY] = this._chart.getYRange()
+
+      const convertedValue = this._chart.encodeValue(this._quoteSummary.PreviousClose, minValueY, maxValueY, 0, height)
+
+      this._chart.draw_line({
+        x1: 0,
+        x2: width,
+        y1: height - convertedValue,
+        y2: height - convertedValue,
+        color: secondaryColor,
+        lineWidth: 1,
+        dashed: true,
+        cairoContext
+      })
+    }
   }
 })

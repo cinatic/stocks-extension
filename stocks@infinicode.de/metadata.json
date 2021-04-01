@@ -7,9 +7,10 @@
     "3.32",
     "3.34",
     "3.36",
-    "3.38"
+    "3.38",
+    "40.0"
   ],
   "url": "https://github.com/cinatic/stocks-extension",
   "uuid": "stocks@infinicode.de",
-  "version": 15
+  "version": 16
 }

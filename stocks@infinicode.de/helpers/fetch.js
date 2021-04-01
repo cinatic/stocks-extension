@@ -64,6 +64,8 @@ var fetch = ({ url, method = 'GET', headers, queryParameters }) => {
   return new Promise(resolve => {
     url = url + generateQueryString(queryParameters)
 
+    // log(`Fetching url: ${url}`)
+
     const request_message = Soup.Message.new(method, url)
 
     if (headers) {

@@ -18,6 +18,7 @@ var Translations = {
     QUOTE_NAME: _('Name'),
     SYMBOL: _('Symbol'),
     SHOW_IN_TICKER: _('Show in Ticker'),
+    PROVIDER: _('Provider'),
     REMOVE_CONFIRMATION_TEXT: _('Remove %s?')
   },
   STOCKS: {
@@ -63,7 +64,7 @@ var Translations = {
  * If @domain is not provided, it will be taken from metadata['gettext-domain']
  */
 var initTranslations = domain => {
-  if (ExtensionUtils.versionCheck(['3.32'], Config.PACKAGE_VERSION)) {
+  if (Config.PACKAGE_VERSION.startsWith('3.32')) {
     ExtensionUtils.initTranslations(domain)
   } else {
     const extension = ExtensionUtils.getCurrentExtension()
