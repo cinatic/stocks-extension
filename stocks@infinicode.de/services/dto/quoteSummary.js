@@ -8,7 +8,7 @@ const { Translations } = Me.imports.helpers.translations
 
 var QuoteSummary = class QuoteSummary {
   constructor (symbol, provider, name, error) {
-    this.Name = null
+    this.Name = name
     this.FullName = null
     this.Symbol = symbol
     this.Provider = provider
@@ -36,11 +36,11 @@ var QuoteSummary = class QuoteSummary {
     this.PostMarketChangePercent = null
     this.PostMarketTimestamp = null
 
-    this.Error = null
+    this.Error = error
   }
 }
 
-var createQuoteSummaryFromEastMoneyData = (symbol, quoteData, error) => {
+var createQuoteSummaryFromEastMoneyData = ({ symbol, quoteData, error }) => {
   const newObject = new QuoteSummary(symbol, FINANCE_PROVIDER.EAST_MONEY)
   newObject.Error = error
 
@@ -74,7 +74,7 @@ var createQuoteSummaryFromEastMoneyData = (symbol, quoteData, error) => {
   return newObject
 }
 
-var createQuoteSummaryFromYahooData = (symbol, quoteData, error) => {
+var createQuoteSummaryFromYahooData = ({ symbol, quoteData, error }) => {
   const newObject = new QuoteSummary(symbol, FINANCE_PROVIDER.YAHOO)
   newObject.Error = error
 

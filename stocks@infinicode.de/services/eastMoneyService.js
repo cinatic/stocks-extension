@@ -28,11 +28,16 @@ var getQuoteSummary = async ({ symbol }) => {
   const url = `${API_ENDPOINT}/${API_VERSION_SUMMARY}`
   const response = await fetch({ url, queryParameters })
 
-  if (response.ok) {
-    return createQuoteSummaryFromEastMoneyData(symbol, response.json())
-  } else {
-    return createQuoteSummaryFromEastMoneyData(symbol, response.json(), `${response.statusText} - ${response.text()}`)
+  const params = {
+    symbol,
+    quoteData: response.json()
   }
+
+  if (!response.ok) {
+    params.error = `${response.statusText} - ${response.text()}`
+  }
+
+  return createQuoteSummaryFromEastMoneyData(params)
 }
 
 var getHistoricalQuotes = async ({ symbol, range = '1mo' }) => {

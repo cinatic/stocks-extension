@@ -11,10 +11,22 @@ const { StockCard } = Me.imports.components.cards.stockCard
 const { SearchBar } = Me.imports.components.searchBar.searchBar
 const { setTimeout, clearTimeout } = Me.imports.helpers.components
 const { removeCache } = Me.imports.helpers.data
-const { Settings } = Me.imports.helpers.settings
+
+const {
+  Settings,
+  STOCKS_SYMBOL_PAIRS,
+  STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
+} = Me.imports.helpers.settings
+
 const { Translations } = Me.imports.helpers.translations
 
 const FinanceService = Me.imports.services.financeService
+
+
+const SETTING_KEYS_TO_REFRESH = [
+  STOCKS_SYMBOL_PAIRS,
+  STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
+]
 
 var StockOverviewScreen = GObject.registerClass({
   GTypeName: 'StockExtension_StockOverviewScreen'
@@ -45,7 +57,7 @@ var StockOverviewScreen = GObject.registerClass({
     searchBar.connect('text-change', (sender, searchText) => this._filter_results(searchText))
 
     this._settingsChangedId = Settings.connect('changed', (value, key) => {
-      if (key === 'symbol-pairs') {
+      if (SETTING_KEYS_TO_REFRESH.includes(key)) {
         this._loadData()
       }
     })

@@ -27,11 +27,16 @@ var getQuoteSummary = async ({ symbol }) => {
 
   const response = await fetch({ url, queryParameters })
 
-  if (response.ok) {
-    return createQuoteSummaryFromYahooData(symbol, response.json())
-  } else {
-    return createQuoteSummaryFromYahooData(symbol, response.json(), `${response.statusText} - ${response.text()}`)
+  const params = {
+    symbol,
+    quoteData: response.json()
   }
+
+  if (!response.ok) {
+    params.error = `${response.statusText} - ${response.text()}`
+  }
+
+  return createQuoteSummaryFromYahooData(params)
 }
 
 var getHistoricalQuotes = async ({ symbol, range = '1mo', includeTimestamps = true }) => {
