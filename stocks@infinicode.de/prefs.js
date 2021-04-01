@@ -14,7 +14,7 @@ const EXTENSIONDIR = Me.dir.get_path()
 const STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
 
 var PrefsWidget = GObject.registerClass({
-  GTypeName: 'StocksExtension2_PrefsWidget'
+  GTypeName: 'StocksExtension_PrefsWidget'
 }, class Widget extends Gtk.Box {
 
   /********** Properties ******************/
@@ -201,7 +201,6 @@ var PrefsWidget = GObject.registerClass({
   }
 
   initSpinner (gtkWidget, identifier) {
-    log(`init spinner ${identifier}`)
     this.Settings.bind(identifier, gtkWidget, 'value', Gio.SettingsBindFlags.DEFAULT)
   }
 
