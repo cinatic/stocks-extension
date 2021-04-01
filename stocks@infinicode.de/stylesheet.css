@@ -54,6 +54,15 @@
     text-align: left;
 }
 
+.stocks-extension .menu-stock-ticker .stock-info-box.compact .ticker-stock-name-label,
+.stocks-extension .menu-stock-ticker .stock-info-box.regular .ticker-stock-name-label {
+    margin-right: 10px;
+}
+
+.stocks-extension .menu-stock-ticker .separator {
+    margin: 0 10px;
+}
+
 .stocks-extension .search-bar {
     height: 40px;
     padding: 5px 10px;
