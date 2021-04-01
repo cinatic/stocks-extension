@@ -126,7 +126,7 @@ var MenuStockTicker = GObject.registerClass({
 
     const stockNameLabel = new St.Label({
       style_class: 'ticker-stock-name-label',
-      text: name || Translations.UNKNOWN
+      text: name
     })
 
     stockInfoBox.add_child(stockNameLabel)
