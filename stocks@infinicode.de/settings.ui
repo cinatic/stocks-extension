@@ -420,7 +420,7 @@
     <property name="height-request">480</property>
     <property name="visible">True</property>
     <property name="can-focus">True</property>
-    <property name="border-width">20</property>
+    <property name="border-width">0</property>
     <child>
       <object class="GtkViewport" id="scrolled-viewport">
         <property name="visible">True</property>
@@ -551,14 +551,14 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBoxText" id="position_in_panel">
+                  <object class="GtkComboBoxText" id="position-in-panel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
                     <items>
-                      <item translatable="yes">Center</item>
-                      <item translatable="yes">Right</item>
-                      <item translatable="yes">Left</item>
+                        <item id="center" translatable="yes">Center</item>
+                        <item id="right" translatable="yes">Right</item>
+                        <item id="left" translatable="yes">Left</item>
                     </items>
                   </object>
                   <packing>
@@ -581,14 +581,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="ticker_interval">
+                  <object class="GtkSpinButton" id="ticker-interval">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="input-purpose">number</property>
                     <property name="adjustment">stock-interval-adjustment</property>
-                    <property name="climb-rate">5</property>
                     <property name="numeric">True</property>
-                    <property name="update-policy">if-valid</property>
                     <property name="value">10</property>
                   </object>
                   <packing>
@@ -612,7 +610,7 @@
                 </child>
 
                 <child>
-                  <object class="GtkSwitch" id="show_ticker_off_market_prices">
+                  <object class="GtkSwitch" id="show-ticker-off-market-prices">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">If enabled the ticker will automatically show pre / post market prices if available marked by a * sign.</property>
