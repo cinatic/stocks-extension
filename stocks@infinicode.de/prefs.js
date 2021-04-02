@@ -1,69 +1,21 @@
-const { Gio, GLib, GObject, Gtk } = imports.gi
+const { Gio, GObject, Gtk } = imports.gi
 
 const Config = imports.misc.config
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
-const Settings = Me.imports.helpers.settings
+const { getSettings, Settings } = Me.imports.helpers.settings
 
-const { decodeBase64JsonOrDefault, isNullOrEmpty, isNullOrUndefined } = Me.imports.helpers.data
+const { isNullOrEmpty, isNullOrUndefined } = Me.imports.helpers.data
 const { initTranslations, Translations } = Me.imports.helpers.translations
 const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
 
 const EXTENSIONDIR = Me.dir.get_path()
-
-const STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
 
 var PrefsWidget = GObject.registerClass({
   GTypeName: 'StocksExtension_PrefsWidget'
 }, class Widget extends Gtk.Box {
 
   /********** Properties ******************/
-
-  get symbolPairs () {
-    if (!this.Settings) {
-      this.loadConfig()
-    }
-
-    const rawString = this.Settings.get_string(STOCKS_SYMBOL_PAIRS)
-
-    /****
-     * For backwards compatiblity intercept here if it contains certain string -&&- && -§§-
-     * if we found old format convert to new format and save
-     */
-    if (rawString.includes('-&&-') && rawString.includes('-§§-')) {
-      try {
-        let newData = Settings.convertOldSettingsFormat(rawString)
-
-        if (!newData) {
-          newData = Settings.DEFAULT_SYMBOL_DATA
-        }
-
-        this.Settings.set_string(STOCKS_SYMBOL_PAIRS, GLib.base64_encode(JSON.stringify(newData)))
-
-        return newData
-      } catch (e) {
-        log(`failed to convert old data ${e}`)
-        return Settings.DEFAULT_SYMBOL_DATA
-      }
-    }
-
-    const stockItems = decodeBase64JsonOrDefault(rawString, Settings.DEFAULT_SYMBOL_DATA)
-
-    if (isNullOrEmpty(stockItems)) {
-      this.Settings.set_string(STOCKS_SYMBOL_PAIRS, GLib.base64_encode(JSON.stringify(Settings.DEFAULT_SYMBOL_DATA)))
-      return Settings.DEFAULT_SYMBOL_DATA
-    }
-
-    return stockItems
-  }
-
-  set symbolPairs (v) {
-    if (!this.Settings) {
-      this.loadConfig()
-    }
-
-    this.Settings.set_string(STOCKS_SYMBOL_PAIRS, GLib.base64_encode(JSON.stringify(v)))
-  }
 
   _init (params = {}) {
     super._init(Object.assign(params, {
@@ -109,7 +61,7 @@ var PrefsWidget = GObject.registerClass({
           })
         })
 
-        this.symbolPairs = newStockModels
+        Settings.symbol_pairs = newStockModels
       }
     })
   }
@@ -197,7 +149,7 @@ var PrefsWidget = GObject.registerClass({
    * Load Config Data from file and connect change event
    */
   loadConfig () {
-    this.Settings = Settings.getSettings()
+    this.Settings = getSettings()
   }
 
   initSpinner (gtkWidget, identifier) {
@@ -270,7 +222,7 @@ var PrefsWidget = GObject.registerClass({
    * this recreates the TreeView (Symbol Table)
    */
   refreshTreeView () {
-    const stockItems = this.symbolPairs
+    const stockItems = Settings.symbol_pairs
     this.treeview = this.Window.get_object('tree-treeview')
     this.liststore = this.Window.get_object('tree-liststore')
 
@@ -308,7 +260,7 @@ var PrefsWidget = GObject.registerClass({
 
     // check if we have data (normally we should otherwise it could not be selected...)
     const selectionIndex = parseInt(selection[0][0].to_string())
-    const selectedStock = this.symbolPairs[selectionIndex]
+    const selectedStock = Settings.symbol_pairs[selectionIndex]
 
     if (!selectedStock) {
       return
@@ -339,7 +291,7 @@ var PrefsWidget = GObject.registerClass({
     }
 
     // append new item and write it to config
-    this.symbolPairs = [...this.symbolPairs, newItem]
+    Settings.symbol_pairs = [...Settings.symbol_pairs, newItem]
 
     this.refreshTreeView()
 
@@ -357,7 +309,7 @@ var PrefsWidget = GObject.registerClass({
       return
     }
 
-    const stockItems = this.symbolPairs
+    const stockItems = Settings.symbol_pairs
     const selectionIndex = parseInt(selection[0][0].to_string())
     const selectedStock = stockItems[selectionIndex]
 
@@ -373,7 +325,7 @@ var PrefsWidget = GObject.registerClass({
     }
 
     stockItems[selectionIndex] = newStockItem
-    this.symbolPairs = stockItems
+    Settings.symbol_pairs = stockItems
 
     this.refreshTreeView()
 
@@ -391,7 +343,7 @@ var PrefsWidget = GObject.registerClass({
       return
     }
 
-    const stockItems = this.symbolPairs
+    const stockItems = Settings.symbol_pairs
     const selectionIndex = parseInt(selection[0][0].to_string())
     const selectedStock = stockItems[selectionIndex]
 
@@ -401,7 +353,7 @@ var PrefsWidget = GObject.registerClass({
 
     stockItems.splice(selectionIndex, 1)
 
-    this.symbolPairs = stockItems
+    Settings.symbol_pairs = stockItems
 
     this.refreshTreeView()
   }

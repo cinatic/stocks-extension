@@ -3,7 +3,7 @@ const { Gio, GLib } = imports.gi
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
-const { decodeBase64JsonOrDefault, isNullOrEmpty } = Me.imports.helpers.data
+const { decodeBase64JsonOrDefault, isNullOrEmpty, isNullOrUndefined } = Me.imports.helpers.data
 const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
 
 var POSITION_IN_PANEL_KEY = 'position-in-panel'
@@ -86,28 +86,7 @@ const Handler = class {
 
   get symbol_pairs () {
     const rawString = this._settings.get_string(STOCKS_SYMBOL_PAIRS)
-
-    /****
-     * For backwards compatiblity intercept here if it contains certain string -&&- && -§§-
-     * if we found old format convert to new format and save
-     */
-    if (rawString.includes('-&&-') && rawString.includes('-§§-')) {
-      try {
-        let newData = convertOldSettingsFormat(rawString)
-
-        if (!newData) {
-          newData = DEFAULT_SYMBOL_DATA
-        }
-
-        this._settings.set_string(STOCKS_SYMBOL_PAIRS, GLib.base64_encode(JSON.stringify(newData)))
-
-        return newData
-      } catch (e) {
-        return DEFAULT_SYMBOL_DATA
-      }
-    }
-
-    const stockItems = decodeBase64JsonOrDefault(rawString, DEFAULT_SYMBOL_DATA)
+    const stockItems = this._validateStockItems(rawString)
 
     if (isNullOrEmpty(stockItems)) {
       this._settings.set_string(STOCKS_SYMBOL_PAIRS, GLib.base64_encode(JSON.stringify(DEFAULT_SYMBOL_DATA)))
@@ -115,6 +94,10 @@ const Handler = class {
     }
 
     return stockItems
+  }
+
+  set symbol_pairs (value) {
+    this._settings.set_string(STOCKS_SYMBOL_PAIRS, GLib.base64_encode(JSON.stringify(value)))
   }
 
   get ticker_interval () {
@@ -143,6 +126,47 @@ const Handler = class {
 
   disconnect (connectId) {
     this._settings.disconnect(connectId)
+  }
+
+  _validateStockItems (rawString) {
+    let stockItems = this._migrateStockItemsFromV1Structure(rawString)
+
+    if (isNullOrEmpty(stockItems)) {
+      stockItems = decodeBase64JsonOrDefault(rawString, DEFAULT_SYMBOL_DATA)
+    }
+
+    return this._ensureHealthyStockItemStructure(stockItems)
+  }
+
+  _migrateStockItemsFromV1Structure (rawString) {
+    /****
+     * For backwards compatiblity intercept here if it contains certain string -&&- && -§§-
+     * if we found old format convert to new format and save
+     */
+    if (rawString.includes('-&&-') && rawString.includes('-§§-')) {
+      try {
+        let newData = convertOldSettingsFormat(rawString)
+
+        if (!newData) {
+          newData = DEFAULT_SYMBOL_DATA
+        }
+
+        this._settings.set_string(STOCKS_SYMBOL_PAIRS, GLib.base64_encode(JSON.stringify(newData)))
+
+        return newData
+      } catch (e) {
+        return DEFAULT_SYMBOL_DATA
+      }
+    }
+  }
+
+  _ensureHealthyStockItemStructure (stockItems) {
+    return stockItems.map(item => ({
+      name: item.name || '',
+      symbol: item.symbol || '',
+      showInTicker: isNullOrUndefined(item.showInTicker) ? true : item.showInTicker,
+      provider: item.provider || FINANCE_PROVIDER.YAHOO
+    }))
   }
 }
 
