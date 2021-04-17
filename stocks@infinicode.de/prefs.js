@@ -23,7 +23,6 @@ var PrefsWidget = GObject.registerClass({
       spacing: 0
     }))
 
-    this._settingsChangedId = null
     this._treeViewItemHasDropped = false
 
     this.Window = new Gtk.Builder()
@@ -76,9 +75,9 @@ var PrefsWidget = GObject.registerClass({
     this.Window.add_from_file(uiFile)
     this.MainWidget = this.Window.get_object('main-widget')
 
-    let theObjects = this.Window.get_objects()
+    const gtkConfigObjects = this.Window.get_objects()
 
-    theObjects.forEach(gtkWidget => {
+    gtkConfigObjects.forEach(gtkWidget => {
       const gtkUiIdentifier = getWidgetUiIdentifier(gtkWidget)
       const widgetType = getWidgetType(gtkWidget)
 
@@ -203,19 +202,35 @@ var PrefsWidget = GObject.registerClass({
     })
 
     /**** ticker cell ****/
+    const toggleRenderer = new Gtk.CellRendererToggle()
+    toggleRenderer.set_activatable(true)
+    toggleRenderer.connect('toggled', this._toggleTickerVisibility.bind(this))
+
     const showInTicker = new Gtk.TreeViewColumn()
     showInTicker.set_title(Translations.SETTINGS.SHOW_IN_TICKER)
     this.treeview.append_column(showInTicker)
 
-    showInTicker.pack_start(renderer, null)
+    showInTicker.pack_start(toggleRenderer, null)
 
-    showInTicker.set_cell_data_func(renderer, function (tree, cell, model, iter) {
-      const value = model.get_value(iter, 3)
-
-      if (!isNullOrUndefined(value)) {
-        cell.markup = value.toString()
-      }
+    showInTicker.set_cell_data_func(toggleRenderer, function (tree, cell, model, iter) {
+      cell.active = model.get_value(iter, 3)
     })
+  }
+
+  _toggleTickerVisibility (cell, path) {
+    const treePath = Gtk.TreePath.new_from_string(path)
+    const itemIndex = treePath.get_indices()[0]
+
+    const stockItems = Settings.symbol_pairs
+    const toggledItem = stockItems[itemIndex]
+
+    toggledItem.showInTicker = !toggledItem.showInTicker
+
+    stockItems[itemIndex] = toggledItem
+
+    Settings.symbol_pairs = stockItems
+
+    this.refreshTreeView()
   }
 
   /**
