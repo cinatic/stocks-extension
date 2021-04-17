@@ -1,21 +1,33 @@
-const { GObject, St, Clutter } = imports.gi
+const { GObject, St, Clutter, Gtk, Pango } = imports.gi
 
 var ButtonGroup = GObject.registerClass({
   GTypeName: 'StockExtension_ButtonGroup',
   Signals: {
     'clicked': {
       param_types: [GObject.TYPE_OBJECT]
-    },
+    }
   }
-}, class ButtonGroup extends St.BoxLayout {
-  _init ({ buttons }) {
+}, class ButtonGroup extends St.ScrollView {
+  _init ({ buttons, style_class, enableScrollbar = true }) {
     super._init({
-      style_class: 'button-group',
+      style_class: `button-group ${style_class}`,
       x_align: Clutter.ActorAlign.CENTER
     })
 
+    if (!enableScrollbar) {
+      this.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
+    }
+
     this._selectedButton = buttons.find(item => item.selected)
     this._buttons = buttons
+
+    this._content = new St.BoxLayout({
+      style_class: 'button-group-content',
+      x_align: Clutter.ActorAlign.CENTER,
+      x_expand: true
+    })
+
+    this.add_actor(this._content)
 
     this.connect('destroy', this._onDestroy.bind(this))
 
@@ -27,7 +39,7 @@ var ButtonGroup = GObject.registerClass({
   }
 
   _createButtons () {
-    this.destroy_all_children()
+    this._content.destroy_all_children()
 
     this._buttons.forEach(button => {
       const additionalStyleClasses = this._selectedButton === button ? 'selected' : ''
@@ -37,6 +49,9 @@ var ButtonGroup = GObject.registerClass({
         label: button.label
       })
 
+      const clutterText = stButton.get_first_child()
+      clutterText.ellipsize = Pango.EllipsizeMode.NONE
+
       stButton.buttonData = button
 
       stButton.connect('clicked', () => {
@@ -45,7 +60,7 @@ var ButtonGroup = GObject.registerClass({
         this._sync()
       })
 
-      this.add_child(stButton)
+      this._content.add_child(stButton)
     })
   }
 

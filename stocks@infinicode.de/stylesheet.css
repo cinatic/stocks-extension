@@ -40,19 +40,27 @@
     max-height: 630px;
 }
 
-.stocks-extension .menu-stock-ticker .stock-info-box {
+.stocks-extension .menu-stock-ticker .stock-info-box,
+.stocks-extension .menu-stock-ticker .stock-quote-box {
     font-size: 1em;
 }
 
 .stocks-extension .menu-stock-ticker .ticker-stock-name-label,
-.stocks-extension .menu-stock-ticker .ticker-stock-quote-label-change {
-    font-size: .7em;
+.stocks-extension .menu-stock-ticker .ticker-stock-quote-change-label {
+    font-size: .8em;
 }
 
 .stocks-extension .menu-stock-ticker .ticker-stock-quote-label {
-    font-size: .7em;
+    font-size: .9em;
     text-align: left;
+    margin-right: 6px;
 }
+
+.stocks-extension .menu-stock-ticker .stock-info-box.tremendous .ticker-stock-quote-change-label,
+.stocks-extension .menu-stock-ticker .stock-info-box.tremendous .ticker-stock-quote-label {
+    font-size: .7em;
+}
+
 
 .stocks-extension .menu-stock-ticker .stock-info-box.compact .ticker-stock-name-label,
 .stocks-extension .menu-stock-ticker .stock-info-box.regular .ticker-stock-name-label {
