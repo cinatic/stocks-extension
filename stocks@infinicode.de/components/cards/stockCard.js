@@ -14,8 +14,7 @@ var StockCard = GObject.registerClass({
     super._init({
       style_class: 'card message stock-card',
       can_focus: true,
-      x_expand: true,
-      hover: true
+      x_expand: true
     })
 
     this.cardItem = quoteSummary
