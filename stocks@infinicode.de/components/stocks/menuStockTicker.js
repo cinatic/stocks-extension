@@ -1,4 +1,4 @@
-const { Clutter, GObject, St } = imports.gi
+const { Clutter, GObject, Pango, St } = imports.gi
 
 const Mainloop = imports.mainloop
 
@@ -113,7 +113,7 @@ var MenuStockTicker = GObject.registerClass({
   }
 
   _createCompactTickerItemBox (quoteSummary) {
-    let { name, currencySymbol, price, change, isOffMarket } = this._generateTickerInformation(quoteSummary)
+    let { name, currencySymbol, price, change, changePercent, isOffMarket } = this._generateTickerInformation(quoteSummary)
     const quoteColorStyleClass = getStockColorStyleClass(change)
 
     currencySymbol = currencySymbol || ''
@@ -121,22 +121,38 @@ var MenuStockTicker = GObject.registerClass({
     const stockInfoBox = new St.BoxLayout({
       style_class: 'stock-info-box compact',
       vertical: false,
-      y_align: Clutter.ActorAlign.CENTER
+      y_align: Clutter.ActorAlign.CENTER,
+      y_expand: true
     })
 
     const stockNameLabel = new St.Label({
+      y_align: Clutter.ActorAlign.CENTER,
+      y_expand: true,
       style_class: 'ticker-stock-name-label',
       text: name
     })
 
-    stockInfoBox.add_child(stockNameLabel)
-
     const stockQuoteLabel = new St.Label({
+      y_align: Clutter.ActorAlign.CENTER,
+      y_expand: true,
       style_class: `ticker-stock-quote-label fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(price)}${currencySymbol}${isOffMarket ? '*' : ''}`
+      text: `${roundOrDefault(price)}${currencySymbol}`
     })
 
+    const changeLabel = new St.Label({
+      y_align: Clutter.ActorAlign.CENTER,
+      y_expand: true,
+      style_class: `ticker-stock-quote-change-label fwb ${quoteColorStyleClass}`,
+      text: `${roundOrDefault(change)}  ${roundOrDefault(changePercent)} %${isOffMarket ? '*' : ''}`
+    })
+
+    stockNameLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
+    stockQuoteLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
+    changeLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
+
+    stockInfoBox.add_child(stockNameLabel)
     stockInfoBox.add_child(stockQuoteLabel)
+    stockInfoBox.add_child(changeLabel)
 
     return stockInfoBox
   }
@@ -150,13 +166,15 @@ var MenuStockTicker = GObject.registerClass({
     const stockInfoBox = new St.BoxLayout({
       style_class: `stock-info-box ${regular ? 'regular' : 'tremendous'}`,
       vertical: !regular,
-      y_align: Clutter.ActorAlign.CENTER
+      y_align: regular ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START
     })
 
     const stockNameLabel = new St.Label({
       style_class: 'ticker-stock-name-label',
-      text: name || Translations.UNKNOWN
+      text: name || Translations.UNKNOWN,
+      y_align: regular ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START
     })
+    stockNameLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
 
     stockInfoBox.add_child(stockNameLabel)
 
@@ -166,14 +184,21 @@ var MenuStockTicker = GObject.registerClass({
     })
 
     const stockQuoteLabel = new St.Label({
+      y_align: regular ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
+      y_expand: true,
       style_class: `ticker-stock-quote-label fwb ${quoteColorStyleClass}`,
       text: `${roundOrDefault(price)}${currencySymbol}`
     })
 
     const stockQuoteChangeLabel = new St.Label({
-      style_class: `ticker-stock-quote-label-change fwb ${quoteColorStyleClass}`,
+      y_align: regular ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
+      y_expand: true,
+      style_class: `ticker-stock-quote-change-label fwb ${quoteColorStyleClass}`,
       text: `(${roundOrDefault(change)}${currencySymbol} | ${roundOrDefault(changePercent)} %)${isOffMarket ? '*' : ''}`
     })
+
+    stockQuoteLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
+    stockQuoteChangeLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
 
     stockQuoteBox.add_child(stockQuoteLabel)
     stockQuoteBox.add_child(stockQuoteChangeLabel)
