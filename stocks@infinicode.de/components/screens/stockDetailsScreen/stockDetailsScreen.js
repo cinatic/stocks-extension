@@ -11,7 +11,7 @@ const { SearchBar } = Me.imports.components.searchBar.searchBar
 const { clearCache, roundOrDefault } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
 
-const { CHART_RANGES } = Me.imports.services.meta.generic
+const { CHART_RANGES, CHART_RANGES_MAX_GAP } = Me.imports.services.meta.generic
 const FinanceService = Me.imports.services.financeService
 
 var StockDetailsScreen = GObject.registerClass({
@@ -81,6 +81,7 @@ var StockDetailsScreen = GObject.registerClass({
       x2: quoteHistorical.MarketEnd,
       barData: quoteHistorical.VolumeData,
       additionalYData: this._isIntrayDayChart ? [this._quoteSummary.PreviousClose] : [],
+      maxGapSize: CHART_RANGES_MAX_GAP[this._selectedChartRange],
       onDraw: this._onChartDraw.bind(this)
     })
 
