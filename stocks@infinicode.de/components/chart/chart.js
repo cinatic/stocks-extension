@@ -13,17 +13,22 @@ var Chart = GObject.registerClass({
     }
   }
 }, class Chart extends St.DrawingArea {
-  _init ({ data, x1, x2, barData, onDraw, additionalYData }) {
+  _init ({ data, x1, x2, barData, onDraw, additionalYData, maxGapSize }) {
     super._init({
       style_class: 'chart',
       reactive: true
     })
 
-    this.data = data
-    this.barData = barData
+    // time series data, [[x, y]]; x = timestamp , y = value
+    // removeTimeGaps probably alter original x value but adds the original to end [[xModified, yOriginal, xOriginal]]
+    const [cleanedData, totalTimeShiftMillis] = this.removeTimeGaps(data, maxGapSize)
+    this.data = cleanedData
+
+    const [cleanedBarData] = this.removeTimeGaps(barData, maxGapSize)
+    this.barData = cleanedBarData
 
     this.x1 = x1
-    this.x2 = x2
+    this.x2 = x2 - totalTimeShiftMillis
 
     this._selectedX = null
     this._selectedY = null
@@ -215,7 +220,7 @@ var Chart = GObject.registerClass({
     const originalValueX = closest(this.data.filter(data => data[1] !== null).map(data => data[0]), hoveredValueX)
 
     const tsItem = this.data.find(data => data[0] === originalValueX)
-    this.emit('chart-hover', tsItem[0], tsItem[1])
+    this.emit('chart-hover', tsItem[2] || tsItem[0], tsItem[1])
 
     this._selectedX = chartX
     this._selectedY = chartY
@@ -265,6 +270,47 @@ var Chart = GObject.registerClass({
     maxValueY += buffer
 
     return [minValueY, maxValueY]
+  }
+
+  removeTimeGaps (data, maxGapInMillis) {
+    let totalTimeShiftMillis = 0
+
+    if (!data || !maxGapInMillis) {
+      return [data, totalTimeShiftMillis]
+    }
+
+    data = data.filter(item => !isNullOrUndefined(item[1]))
+
+    let previousTimeSeriesItem = null
+
+    const gapCleanedData = data.map(item => {
+      if (!previousTimeSeriesItem) {
+        previousTimeSeriesItem = item
+        return item
+      }
+
+      const previousX = previousTimeSeriesItem[2] || previousTimeSeriesItem[0]
+      const originalX = item[0]
+      const originalY = item[1]
+
+      const gapInMillis = originalX - previousX
+
+      if (gapInMillis >= maxGapInMillis) {
+        totalTimeShiftMillis += gapInMillis
+      }
+
+      const newItem = [originalX - totalTimeShiftMillis, originalY, originalX]
+
+      previousTimeSeriesItem = newItem
+
+      return newItem
+    })
+
+    if (this.x2) {
+      this.x2 = this.x2 - totalTimeShiftMillis
+    }
+
+    return [gapCleanedData, totalTimeShiftMillis]
   }
 
   // thx: https://stackoverflow.com/a/5732390/3828502
