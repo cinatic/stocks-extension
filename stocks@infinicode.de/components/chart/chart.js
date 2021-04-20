@@ -306,10 +306,6 @@ var Chart = GObject.registerClass({
       return newItem
     })
 
-    if (this.x2) {
-      this.x2 = this.x2 - totalTimeShiftMillis
-    }
-
     return [gapCleanedData, totalTimeShiftMillis]
   }
 
