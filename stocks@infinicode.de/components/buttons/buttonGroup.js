@@ -11,23 +11,37 @@ var ButtonGroup = GObject.registerClass({
   _init ({ buttons, style_class, enableScrollbar = true }) {
     super._init({
       style_class: `button-group ${style_class}`,
-      x_align: Clutter.ActorAlign.CENTER
+      y_expand: true,
+      x_expand: true
     })
 
     if (!enableScrollbar) {
       this.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
     }
 
+    this.set_overlay_scrollbars(true)
+
     this._selectedButton = buttons.find(item => item.selected)
     this._buttons = buttons
 
     this._content = new St.BoxLayout({
       style_class: 'button-group-content',
+      y_align: Clutter.ActorAlign.CENTER,
       x_align: Clutter.ActorAlign.CENTER,
+      y_expand: true,
       x_expand: true
     })
 
-    this.add_actor(this._content)
+    const innerContentBox = new St.BoxLayout({
+      vertical: true,
+      x_align: Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.CENTER,
+      y_expand: true,
+      x_expand: true
+    })
+    innerContentBox.add_child(this._content)
+
+    this.add_actor(innerContentBox)
 
     this.connect('destroy', this._onDestroy.bind(this))
 
@@ -45,6 +59,10 @@ var ButtonGroup = GObject.registerClass({
       const additionalStyleClasses = this._selectedButton === button ? 'selected' : ''
 
       const stButton = new St.Button({
+        x_align: Clutter.ActorAlign.CENTER,
+        y_align: Clutter.ActorAlign.CENTER,
+        y_expand: true,
+        x_expand: true,
         style_class: `button ${additionalStyleClasses}`,
         label: button.label
       })

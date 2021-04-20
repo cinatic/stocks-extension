@@ -25,9 +25,14 @@
     font-weight: bolder;
 }
 
+.button-group .button {
+    margin: 0 5px;
+}
+
 .button-group .button.selected {
-    font-weight: bold;
     text-decoration: underline;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
 }
 
 /*** main components ***/
@@ -108,12 +113,22 @@
 /*** stock details ***/
 .stocks-extension .stock-details {
     min-width: 480px;
-    margin: 10px 15px;
-    padding: 10px 20px;
+    margin: 10px 15px 5px 15px;
+    padding: 5px 20px;
 }
 
 .stocks-extension .stock-details-screen .button-group {
-    margin-bottom: 15px;
+    height: 65px;
+}
+
+.stocks-extension .stock-details-screen .button-group-content {
+    padding: 5px 0;
+}
+
+
+.stocks-extension .stock-details-screen .button-group .button {
+    height: 25px;
+    max-height: 25px;
 }
 
 .stocks-extension .stock-details .header-box {
