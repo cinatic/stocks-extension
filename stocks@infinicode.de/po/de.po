@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: fh@infinicode.de\n"
 "POT-Creation-Date: 2021-04-01 15:16+0200\n"
-"PO-Revision-Date: 2020-11-30 14:42+0100\n"
+"PO-Revision-Date: 2021-05-20 15:59+0200\n"
 "Last-Translator: fh@infinicode.de\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 2.4.3\n"
 
 #: stocks@infinicode.de/extension.js:63
 msgid "Stocks"
-msgstr ""
+msgstr "Börse"
 
 #: stocks@infinicode.de/settings_40.ui:5 stocks@infinicode.de/settings.ui:7
 msgid "Create Stock Item"
@@ -30,13 +30,13 @@ msgstr "Neuen Eintrag hinzufügen"
 #: stocks@infinicode.de/settings_40.ui:20 stocks@infinicode.de/settings.ui:28
 #: stocks@infinicode.de/helpers/translations.js:18
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: stocks@infinicode.de/settings_40.ui:45 stocks@infinicode.de/settings.ui:60
 #: stocks@infinicode.de/helpers/translations.js:19
 #: stocks@infinicode.de/helpers/translations.js:25
 msgid "Symbol"
-msgstr ""
+msgstr "Symbol"
 
 #: stocks@infinicode.de/settings_40.ui:67
 #: stocks@infinicode.de/settings_40.ui:236 stocks@infinicode.de/settings.ui:89
@@ -55,25 +55,25 @@ msgstr "Entscheide ob diese Aktie im Panelticker angezeigt werden soll"
 #: stocks@infinicode.de/settings.ui:321
 #: stocks@infinicode.de/helpers/translations.js:21
 msgid "Provider"
-msgstr ""
+msgstr "Quelle"
 
 #: stocks@infinicode.de/settings_40.ui:100
 #: stocks@infinicode.de/settings_40.ui:267 stocks@infinicode.de/settings.ui:127
 #: stocks@infinicode.de/settings.ui:333
 msgid "Select provider to fetch stock data from"
-msgstr ""
+msgstr "Provider für die Aktiendaten"
 
 #: stocks@infinicode.de/settings_40.ui:102
 #: stocks@infinicode.de/settings_40.ui:269 stocks@infinicode.de/settings.ui:129
 #: stocks@infinicode.de/settings.ui:335
 msgid "yahoo"
-msgstr ""
+msgstr "Yahoo"
 
 #: stocks@infinicode.de/settings_40.ui:103
 #: stocks@infinicode.de/settings_40.ui:270 stocks@infinicode.de/settings.ui:130
 #: stocks@infinicode.de/settings.ui:336
 msgid "eastmoney"
-msgstr ""
+msgstr "Eastmoney"
 
 #: stocks@infinicode.de/settings_40.ui:131
 #: stocks@infinicode.de/settings_40.ui:298 stocks@infinicode.de/settings.ui:159
@@ -121,47 +121,48 @@ msgstr "Links"
 
 #: stocks@infinicode.de/settings_40.ui:463 stocks@infinicode.de/settings.ui:582
 msgid "Ticker Item Display Variation"
-msgstr ""
+msgstr "Darstellung der Tickerelemente"
 
 #: stocks@infinicode.de/settings_40.ui:475 stocks@infinicode.de/settings.ui:595
 msgid "Compact"
-msgstr ""
+msgstr "Kompakt"
 
 #: stocks@infinicode.de/settings_40.ui:476 stocks@infinicode.de/settings.ui:596
 msgid "Regular"
-msgstr ""
+msgstr "Normal"
 
 #: stocks@infinicode.de/settings_40.ui:477 stocks@infinicode.de/settings.ui:597
 msgid "Tremendous"
-msgstr ""
+msgstr "Ausführlich"
 
 #: stocks@infinicode.de/settings_40.ui:490 stocks@infinicode.de/settings.ui:611
-#, fuzzy
 msgid "Items to show in ticker"
-msgstr "Im Ticker anzeigen?"
+msgstr "Anzahl der zu zeigenden Elemente im Ticker"
 
 #: stocks@infinicode.de/settings_40.ui:514 stocks@infinicode.de/settings.ui:639
 msgid "Stock Panel Ticker Interval in Seconds"
 msgstr "Wechseninterval des Tickers in Sekunden"
 
 #: stocks@infinicode.de/settings_40.ui:538 stocks@infinicode.de/settings.ui:667
-#, fuzzy
 msgid "Show off-market prices in Ticker"
-msgstr "Im Ticker anzeigen?"
+msgstr "Off-Market-Preise im Ticker anzeigen"
 
 #: stocks@infinicode.de/settings_40.ui:548 stocks@infinicode.de/settings.ui:680
 msgid ""
 "If enabled the ticker will automatically show pre / post market prices if "
 "available marked by a * sign."
 msgstr ""
+"Vor- und nachbörsliche Preise (markiert mit * Symbol) im Ticker anzeigen."
 
 #: stocks@infinicode.de/settings_40.ui:562 stocks@infinicode.de/settings.ui:696
 msgid "Use instrument names from provider"
-msgstr ""
+msgstr "Instrumentnamen vom Provider übernehmen"
 
 #: stocks@infinicode.de/settings_40.ui:572 stocks@infinicode.de/settings.ui:709
 msgid "If enabled the names for instruments will be taken from provider data."
 msgstr ""
+"Wenn aktiviert, übernimmt die Erweiterung die Namen der Instrumente vom "
+"Provider."
 
 #: stocks@infinicode.de/settings_40.ui:586 stocks@infinicode.de/settings.ui:727
 msgid "General"
@@ -169,21 +170,23 @@ msgstr "Allgemein"
 
 #: stocks@infinicode.de/settings_40.ui:621 stocks@infinicode.de/settings.ui:766
 msgid "Version: "
-msgstr ""
+msgstr "Version: "
 
 #: stocks@infinicode.de/settings_40.ui:628 stocks@infinicode.de/settings.ui:780
 msgid "unknown (self-build ?)"
-msgstr ""
+msgstr "unbekannt (selbst gebaut?)"
 
 #: stocks@infinicode.de/settings_40.ui:637 stocks@infinicode.de/settings.ui:800
 msgid ""
 "<span>Stocks-Extension is an extension to display and observe Stock quotes "
 "in GNOME Shell Panel</span>"
 msgstr ""
+"<span>Aktien ist eine Erweiterung um Aktienquoten im GNOME Shell Panel "
+"anzuzeigen</span>"
 
 #: stocks@infinicode.de/settings_40.ui:653 stocks@infinicode.de/settings.ui:823
 msgid "Maintained by"
-msgstr ""
+msgstr "Gepflegt von"
 
 #: stocks@infinicode.de/settings_40.ui:677 stocks@infinicode.de/settings.ui:874
 msgid ""
@@ -192,10 +195,15 @@ msgid ""
 "version 3 or later</a> for details.</span>\n"
 "                                        "
 msgstr ""
+"<span size=\"small\">Diese Programm wird OHNE JEDWEDE GARANTIE "
+"BEREITGESTELLT. Lesen Sie diesbezüglich die <a href=\"https://www.gnu.org/"
+"licenses/gpl\">GNU General Public License, version 3 or later</a> für "
+"weitere Details.</span>\n"
+"                                        "
 
 #: stocks@infinicode.de/settings_40.ui:691 stocks@infinicode.de/settings.ui:897
 msgid "About"
-msgstr ""
+msgstr "Über"
 
 #: stocks@infinicode.de/settings.ui:46 stocks@infinicode.de/settings.ui:76
 #: stocks@infinicode.de/settings.ui:254 stocks@infinicode.de/settings.ui:284
@@ -204,7 +212,7 @@ msgstr "Feld leeren"
 
 #: stocks@infinicode.de/helpers/translations.js:11
 msgid "back"
-msgstr "zurück"
+msgstr "Zurück"
 
 #: stocks@infinicode.de/helpers/translations.js:12
 msgid "Filter Results"
@@ -216,11 +224,11 @@ msgstr "Lade Daten"
 
 #: stocks@infinicode.de/helpers/translations.js:14
 msgid "No Symbols / Tickers configured."
-msgstr "Keine Aktien konfiguriert"
+msgstr "Keine Aktien konfiguriert."
 
 #: stocks@infinicode.de/helpers/translations.js:15
 msgid "stocks"
-msgstr ""
+msgstr "Aktien"
 
 #: stocks@infinicode.de/helpers/translations.js:16
 msgid "UNKNOWN"
@@ -242,12 +250,12 @@ msgstr "Veränderung"
 #: stocks@infinicode.de/helpers/translations.js:27
 #: stocks@infinicode.de/helpers/translations.js:39
 msgid "Pre Market*"
-msgstr ""
+msgstr "Vorbörse*"
 
 #: stocks@infinicode.de/helpers/translations.js:28
 #: stocks@infinicode.de/helpers/translations.js:40
 msgid "Post Market*"
-msgstr ""
+msgstr "Nachbörse*"
 
 #: stocks@infinicode.de/helpers/translations.js:29
 msgid "Volume"
@@ -279,48 +287,48 @@ msgstr "Tief"
 
 #: stocks@infinicode.de/helpers/translations.js:36
 msgid "Time"
-msgstr ""
+msgstr "Uhrzeit"
 
 #: stocks@infinicode.de/helpers/translations.js:37
 msgid "Before Hours*"
-msgstr ""
+msgstr "Vorbörse*"
 
 #: stocks@infinicode.de/helpers/translations.js:38
 msgid "After Hours*"
-msgstr ""
+msgstr "Nachbörse*"
 
 #: stocks@infinicode.de/helpers/translations.js:44
 msgid "1D"
-msgstr ""
+msgstr "1T"
 
 #: stocks@infinicode.de/helpers/translations.js:45
 msgid "5D"
-msgstr ""
+msgstr "5D"
 
 #: stocks@infinicode.de/helpers/translations.js:46
 msgid "1M"
-msgstr ""
+msgstr "1M"
 
 #: stocks@infinicode.de/helpers/translations.js:47
 msgid "6M"
-msgstr ""
+msgstr "6M"
 
 #: stocks@infinicode.de/helpers/translations.js:48
 msgid "YTD"
-msgstr ""
+msgstr "YTD"
 
 #: stocks@infinicode.de/helpers/translations.js:49
 msgid "1Y"
-msgstr ""
+msgstr "1J"
 
 #: stocks@infinicode.de/helpers/translations.js:50
 msgid "5Y"
-msgstr ""
+msgstr "5J"
 
 #: stocks@infinicode.de/helpers/translations.js:51
 msgid "Max"
-msgstr ""
+msgstr "Max"
 
 #: stocks@infinicode.de/helpers/translations.js:55
 msgid "%H:%M:%S %d.%m.%Y"
-msgstr ""
+msgstr "%H:%M:%S %d.%m.%Y"
