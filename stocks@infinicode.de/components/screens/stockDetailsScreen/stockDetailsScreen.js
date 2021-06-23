@@ -93,7 +93,8 @@ var StockDetailsScreen = GObject.registerClass({
         return
       }
 
-      chartValueLabel.text = `${(new Date(x)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)} ${roundOrDefault(y)}`
+      let text = chartValueLabel.get_clutter_text()
+      text.set_markup(`${(new Date(x)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)} <b>${roundOrDefault(y)}</b>`)
     })
 
     this.add_child(searchBar)
