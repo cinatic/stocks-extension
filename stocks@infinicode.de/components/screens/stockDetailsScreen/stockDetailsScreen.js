@@ -14,6 +14,10 @@ const { Translations } = Me.imports.helpers.translations
 const { CHART_RANGES } = Me.imports.services.meta.generic
 const FinanceService = Me.imports.services.financeService
 
+const { Settings } = Me.imports.helpers.settings
+
+const CHART_RANGES_VALUES = Object.values(CHART_RANGES)
+
 var StockDetailsScreen = GObject.registerClass({
   GTypeName: 'StockExtension_StockDetailsScreen'
 }, class StockDetailsScreen extends St.BoxLayout {
@@ -24,7 +28,7 @@ var StockDetailsScreen = GObject.registerClass({
     })
 
     this._passedQuoteSummary = quoteSummary
-    this._selectedChartRange = CHART_RANGES.INTRADAY
+    this._selectedChartRange = CHART_RANGES_VALUES[Settings.details_range_default]
     this._quoteSummary = null
 
     this._sync()

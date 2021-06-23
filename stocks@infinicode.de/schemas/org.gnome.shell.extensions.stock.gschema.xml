@@ -10,6 +10,16 @@
         <value value="1" nick="regular"/>
         <value value="2" nick="tremendous"/> <!-- :D -->
     </enum>
+    <enum id="org.gnome.shell.extensions.stocks.detailsrangedefault">
+        <value value="0" nick="1d"/>
+        <value value="1" nick="5d"/>
+        <value value="2" nick="1mo"/>
+        <value value="3" nick="6mo"/>
+        <value value="4" nick="ytd"/>
+        <value value="5" nick="1y"/>
+        <value value="6" nick="5y"/>
+        <value value="7" nick="max"/>
+    </enum>
     <enum id="org.gnome.shell.extensions.stocks.provider">
         <value value="0" nick="yahoo"/>
         <value value="1" nick="eastmoney"/>
@@ -22,6 +32,10 @@
         <key name="ticker-display-variation" enum="org.gnome.shell.extensions.stocks.tickerdisplayvariation">
             <default>'regular'</default>
             <summary>Ticker Display Variation</summary>
+        </key>
+        <key name="details-range-default" enum="org.gnome.shell.extensions.stocks.detailsrangedefault">
+            <default>'1mo'</default>
+            <summary>Details Range default</summary>
         </key>
         <key type="s" name="symbol-pairs">
             <default>'Xetra Alibaba-§§-AHLA.DE'</default>

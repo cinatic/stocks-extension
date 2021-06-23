@@ -12,6 +12,7 @@ var STOCKS_TICKER_INTERVAL = 'ticker-interval'
 var STOCKS_SHOW_OFF_MARKET_TICKER_PRICES = 'show-ticker-off-market-prices'
 var STOCKS_TICKER_STOCK_AMOUNT = 'ticker-stock-amount'
 var STOCKS_TICKER_DISPLAY_VARIATION = 'ticker-display-variation'
+var STOCKS_DETAILS_RANGE_DEFAULT = 'details-range-default'
 var STOCKS_USE_PROVIDER_INSTRUMENT_NAMES = 'use-provider-instrument-names'
 
 var SETTINGS_SCHEMA_DOMAIN = 'org.gnome.shell.extensions.stocks'
@@ -110,6 +111,10 @@ const Handler = class {
 
   get ticker_display_variation () {
     return this._settings.get_enum(STOCKS_TICKER_DISPLAY_VARIATION)
+  }
+
+  get details_range_default () {
+    return this._settings.get_enum(STOCKS_DETAILS_RANGE_DEFAULT)
   }
 
   get show_ticker_off_market_prices () {
