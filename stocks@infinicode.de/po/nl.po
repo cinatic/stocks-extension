@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-shell-extension-stocks\n"
 "Report-Msgid-Bugs-To: fh@infinicode.de\n"
-"POT-Creation-Date: 2021-04-01 21:11+0200\n"
+"POT-Creation-Date: 2021-11-17 09:28-0500\n"
 "PO-Revision-Date: 2021-07-14 14:52+0200\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch <vistausss@fastmail.com>\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.0\n"
-"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: nl\n"
 
 #: stocks@infinicode.de/extension.js:63
 msgid "Stocks"
@@ -134,19 +134,23 @@ msgstr "Normaal"
 msgid "Tremendous"
 msgstr "Groot"
 
-#: stocks@infinicode.de/settings_40.ui:490 stocks@infinicode.de/settings.ui:611
+#: stocks@infinicode.de/settings_40.ui:478 stocks@infinicode.de/settings.ui:598
+msgid "Minimal"
+msgstr "Minimal"
+
+#: stocks@infinicode.de/settings_40.ui:491 stocks@infinicode.de/settings.ui:612
 msgid "Items to show in ticker"
 msgstr "Te tonen items op ticker"
 
-#: stocks@infinicode.de/settings_40.ui:514 stocks@infinicode.de/settings.ui:639
+#: stocks@infinicode.de/settings_40.ui:515 stocks@infinicode.de/settings.ui:640
 msgid "Stock Panel Ticker Interval in Seconds"
 msgstr "Bijwerktussenpoos van ticker (in seconden)"
 
-#: stocks@infinicode.de/settings_40.ui:538 stocks@infinicode.de/settings.ui:667
+#: stocks@infinicode.de/settings_40.ui:539 stocks@infinicode.de/settings.ui:668
 msgid "Show off-market prices in Ticker"
 msgstr "Prijzen buiten de markt tonen op ticker"
 
-#: stocks@infinicode.de/settings_40.ui:548 stocks@infinicode.de/settings.ui:680
+#: stocks@infinicode.de/settings_40.ui:549 stocks@infinicode.de/settings.ui:681
 msgid ""
 "If enabled the ticker will automatically show pre / post market prices if "
 "available marked by a * sign."
@@ -154,28 +158,28 @@ msgstr ""
 "Schakel in om de ticker automatisch prijzen van voor en na de marktwaarde te "
 "markeren met ‘*’."
 
-#: stocks@infinicode.de/settings_40.ui:562 stocks@infinicode.de/settings.ui:696
+#: stocks@infinicode.de/settings_40.ui:563 stocks@infinicode.de/settings.ui:697
 msgid "Use instrument names from provider"
 msgstr "Instrumentnamen van dienst gebruiken"
 
-#: stocks@infinicode.de/settings_40.ui:572 stocks@infinicode.de/settings.ui:709
+#: stocks@infinicode.de/settings_40.ui:573 stocks@infinicode.de/settings.ui:710
 msgid "If enabled the names for instruments will be taken from provider data."
 msgstr ""
 "Schakel in om de instrumentnamen uit de aangeleverde gegevens te halen."
 
-#: stocks@infinicode.de/settings_40.ui:586 stocks@infinicode.de/settings.ui:727
+#: stocks@infinicode.de/settings_40.ui:587 stocks@infinicode.de/settings.ui:728
 msgid "General"
 msgstr "Algemeen"
 
-#: stocks@infinicode.de/settings_40.ui:621 stocks@infinicode.de/settings.ui:766
+#: stocks@infinicode.de/settings_40.ui:622 stocks@infinicode.de/settings.ui:767
 msgid "Version: "
 msgstr "Versie: "
 
-#: stocks@infinicode.de/settings_40.ui:628 stocks@infinicode.de/settings.ui:780
+#: stocks@infinicode.de/settings_40.ui:629 stocks@infinicode.de/settings.ui:781
 msgid "unknown (self-build ?)"
 msgstr "onbekend (zelf-gecompileerd?)"
 
-#: stocks@infinicode.de/settings_40.ui:637 stocks@infinicode.de/settings.ui:800
+#: stocks@infinicode.de/settings_40.ui:638 stocks@infinicode.de/settings.ui:801
 msgid ""
 "<span>Stocks-Extension is an extension to display and observe Stock quotes "
 "in GNOME Shell Panel</span>"
@@ -183,11 +187,11 @@ msgstr ""
 "<span>Aandelen is een uitbreiding die aandelen toont en bijhoudt op de GNOME "
 "Shell-bovenbalk</span>"
 
-#: stocks@infinicode.de/settings_40.ui:653 stocks@infinicode.de/settings.ui:823
+#: stocks@infinicode.de/settings_40.ui:654 stocks@infinicode.de/settings.ui:824
 msgid "Maintained by"
 msgstr "Beheerd door"
 
-#: stocks@infinicode.de/settings_40.ui:677 stocks@infinicode.de/settings.ui:874
+#: stocks@infinicode.de/settings_40.ui:678 stocks@infinicode.de/settings.ui:875
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY. See the "
 "<a href=\"https://www.gnu.org/licenses/gpl\">GNU General Public License, "
@@ -199,7 +203,7 @@ msgstr ""
 "Public License, versie 3 of hoger</a>.</span>\n"
 "                                        "
 
-#: stocks@infinicode.de/settings_40.ui:691 stocks@infinicode.de/settings.ui:897
+#: stocks@infinicode.de/settings_40.ui:692 stocks@infinicode.de/settings.ui:898
 msgid "About"
 msgstr "Over"
 
