@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: fh@infinicode.de\n"
-"POT-Creation-Date: 2021-04-01 15:16+0200\n"
+"POT-Creation-Date: 2021-11-17 09:28-0500\n"
 "PO-Revision-Date: 2020-11-30 14:42+0100\n"
 "Last-Translator: fh@infinicode.de\n"
 "Language-Team: German\n"
@@ -135,57 +135,61 @@ msgstr ""
 msgid "Tremendous"
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:490 stocks@infinicode.de/settings.ui:611
+#: stocks@infinicode.de/settings_40.ui:478 stocks@infinicode.de/settings.ui:598
+msgid "Minimal"
+msgstr ""
+
+#: stocks@infinicode.de/settings_40.ui:491 stocks@infinicode.de/settings.ui:612
 #, fuzzy
 msgid "Items to show in ticker"
 msgstr "Im Ticker anzeigen?"
 
-#: stocks@infinicode.de/settings_40.ui:514 stocks@infinicode.de/settings.ui:639
+#: stocks@infinicode.de/settings_40.ui:515 stocks@infinicode.de/settings.ui:640
 msgid "Stock Panel Ticker Interval in Seconds"
 msgstr "Wechseninterval des Tickers in Sekunden"
 
-#: stocks@infinicode.de/settings_40.ui:538 stocks@infinicode.de/settings.ui:667
+#: stocks@infinicode.de/settings_40.ui:539 stocks@infinicode.de/settings.ui:668
 #, fuzzy
 msgid "Show off-market prices in Ticker"
 msgstr "Im Ticker anzeigen?"
 
-#: stocks@infinicode.de/settings_40.ui:548 stocks@infinicode.de/settings.ui:680
+#: stocks@infinicode.de/settings_40.ui:549 stocks@infinicode.de/settings.ui:681
 msgid ""
 "If enabled the ticker will automatically show pre / post market prices if "
 "available marked by a * sign."
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:562 stocks@infinicode.de/settings.ui:696
+#: stocks@infinicode.de/settings_40.ui:563 stocks@infinicode.de/settings.ui:697
 msgid "Use instrument names from provider"
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:572 stocks@infinicode.de/settings.ui:709
+#: stocks@infinicode.de/settings_40.ui:573 stocks@infinicode.de/settings.ui:710
 msgid "If enabled the names for instruments will be taken from provider data."
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:586 stocks@infinicode.de/settings.ui:727
+#: stocks@infinicode.de/settings_40.ui:587 stocks@infinicode.de/settings.ui:728
 msgid "General"
 msgstr "Allgemein"
 
-#: stocks@infinicode.de/settings_40.ui:621 stocks@infinicode.de/settings.ui:766
+#: stocks@infinicode.de/settings_40.ui:622 stocks@infinicode.de/settings.ui:767
 msgid "Version: "
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:628 stocks@infinicode.de/settings.ui:780
+#: stocks@infinicode.de/settings_40.ui:629 stocks@infinicode.de/settings.ui:781
 msgid "unknown (self-build ?)"
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:637 stocks@infinicode.de/settings.ui:800
+#: stocks@infinicode.de/settings_40.ui:638 stocks@infinicode.de/settings.ui:801
 msgid ""
 "<span>Stocks-Extension is an extension to display and observe Stock quotes "
 "in GNOME Shell Panel</span>"
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:653 stocks@infinicode.de/settings.ui:823
+#: stocks@infinicode.de/settings_40.ui:654 stocks@infinicode.de/settings.ui:824
 msgid "Maintained by"
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:677 stocks@infinicode.de/settings.ui:874
+#: stocks@infinicode.de/settings_40.ui:678 stocks@infinicode.de/settings.ui:875
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY. See the "
 "<a href=\"https://www.gnu.org/licenses/gpl\">GNU General Public License, "
@@ -193,7 +197,7 @@ msgid ""
 "                                        "
 msgstr ""
 
-#: stocks@infinicode.de/settings_40.ui:691 stocks@infinicode.de/settings.ui:897
+#: stocks@infinicode.de/settings_40.ui:692 stocks@infinicode.de/settings.ui:898
 msgid "About"
 msgstr ""
 

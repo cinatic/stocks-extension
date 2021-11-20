@@ -34,7 +34,8 @@ const SETTING_KEYS_TO_REFRESH = [
 const TICKER_ITEM_VARIATION = {
   COMPACT: 0,
   REGULAR: 1,
-  TREMENDOUS: 2
+  TREMENDOUS: 2,
+  MINIMAL: 3
 }
 
 var MenuStockTicker = GObject.registerClass({
@@ -208,6 +209,42 @@ var MenuStockTicker = GObject.registerClass({
     return stockInfoBox
   }
 
+  _createMinimalTickerItemBox (quoteSummary) {
+    let { symbol, currencySymbol, price, change } = this._generateTickerInformation(quoteSummary)
+    const quoteColorStyleClass = getStockColorStyleClass(change)
+
+    currencySymbol = currencySymbol || ''
+
+    const stockInfoBox = new St.BoxLayout({
+      style_class: 'stock-info-box compact',
+      vertical: false,
+      y_align: Clutter.ActorAlign.CENTER,
+      y_expand: true
+    })
+
+    const stockNameLabel = new St.Label({
+      y_align: Clutter.ActorAlign.CENTER,
+      y_expand: true,
+      style_class: 'ticker-stock-name-label',
+      text: symbol
+    })
+
+    const stockQuoteLabel = new St.Label({
+      y_align: Clutter.ActorAlign.CENTER,
+      y_expand: true,
+      style_class: `ticker-stock-quote-label fwb ${quoteColorStyleClass}`,
+      text: `${roundOrDefault(price)}${currencySymbol}`
+    })
+
+    stockNameLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
+    stockQuoteLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
+
+    stockInfoBox.add_child(stockNameLabel)
+    stockInfoBox.add_child(stockQuoteLabel)
+
+    return stockInfoBox
+  }
+
   _showInfoMessage (message) {
     this.destroy_all_children()
 
@@ -273,12 +310,15 @@ var MenuStockTicker = GObject.registerClass({
       case TICKER_ITEM_VARIATION.COMPACT:
         return this._createCompactTickerItemBox
 
+      case TICKER_ITEM_VARIATION.TREMENDOUS:
+        return this._createTremendousTickerItemBox
+
+      case TICKER_ITEM_VARIATION.MINIMAL:
+        return this._createMinimalTickerItemBox
+
       default:
       case TICKER_ITEM_VARIATION.REGULAR:
         return quoteSummary => this._createTremendousTickerItemBox(quoteSummary, true)
-
-      case TICKER_ITEM_VARIATION.TREMENDOUS:
-        return this._createTremendousTickerItemBox
     }
   }
 
@@ -289,7 +329,8 @@ var MenuStockTicker = GObject.registerClass({
       price: quoteSummary.Close,
       change: quoteSummary.Change,
       changePercent: quoteSummary.ChangePercent,
-      isOffMarket: false
+      isOffMarket: false,
+      symbol: quoteSummary.Symbol
     }
 
     if (Settings.show_ticker_off_market_prices) {

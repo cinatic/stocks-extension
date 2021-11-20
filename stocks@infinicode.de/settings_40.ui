@@ -475,6 +475,7 @@
                           <item id="compact" translatable="yes">Compact</item>
                           <item id="regular" translatable="yes">Regular</item>
                           <item id="tremendous" translatable="yes">Tremendous</item>
+                          <item id="minimal" translatable="yes">Minimal</item>
                         </items>
                         <layout>
                           <property name="column">1</property>
