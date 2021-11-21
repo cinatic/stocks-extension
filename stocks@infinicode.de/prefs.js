@@ -6,7 +6,7 @@ const Me = ExtensionUtils.getCurrentExtension()
 const { getSettings, Settings } = Me.imports.helpers.settings
 
 const { isNullOrEmpty, isNullOrUndefined } = Me.imports.helpers.data
-const { initTranslations, Translations } = Me.imports.helpers.translations
+const { Translations } = Me.imports.helpers.translations
 const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
 
 const EXTENSIONDIR = Me.dir.get_path()
@@ -401,9 +401,7 @@ const getWidgetType = gtkWidget => {
 const isGnome4 = () => Config.PACKAGE_VERSION.startsWith('4')
 
 // this is called when settings has been opened
-var init = () => {
-  initTranslations(Settings.SETTINGS_SCHEMA_DOMAIN)
-}
+var init = () => { }
 
 function buildPrefsWidget () {
   const widget = new PrefsWidget()

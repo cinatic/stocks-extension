@@ -399,7 +399,7 @@
                         <child>
                           <object class="GtkButton" id="tree-toolbutton-edit">
                             <property name="can-focus">0</property>
-                            <property name="icon-name">document-edit</property>
+                            <property name="icon-name">gtk-edit</property>
                           </object>
                         </child>
                       </object>

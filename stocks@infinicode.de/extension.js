@@ -33,7 +33,6 @@ const Me = ExtensionUtils.getCurrentExtension()
 const { MenuStockTicker } = Me.imports.components.stocks.menuStockTicker
 const { ScreenWrapper } = Me.imports.components.screenWrapper.screenWrapper
 const { EventHandler } = Me.imports.helpers.eventHandler
-const { initTranslations } = Me.imports.helpers.translations
 const { Settings } = Me.imports.helpers.settings
 
 const Gettext = imports.gettext.domain('stocks@infinicode.de')
@@ -127,9 +126,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
 
 var stocksMenu
 
-function init (extensionMeta) {
-  initTranslations()
-}
+function init (extensionMeta) { }
 
 function enable () {
   stocksMenu = new StocksMenuButton()
