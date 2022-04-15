@@ -60,7 +60,7 @@ const generateQueryString = params => {
   return `?${paramKeyValues.join('&')}`
 }
 
-var fetch = ({ url, method = 'GET', headers, queryParameters }) => {
+var fetch = ({ url, method = 'GET', headers, queryParameters, customHttpSession = null }) => {
   return new Promise(resolve => {
     url = url + generateQueryString(queryParameters)
 
@@ -72,7 +72,7 @@ var fetch = ({ url, method = 'GET', headers, queryParameters }) => {
       appendHeaders(request_message, headers)
     }
 
-    const httpSession = new Soup.SessionAsync({
+    const httpSession = customHttpSession || new Soup.SessionAsync({
       user_agent: DEFAULT_CHROME_USER_AGENT,
       timeout: DEFAULT_TIME_OUT_IN_SECONDS
     })

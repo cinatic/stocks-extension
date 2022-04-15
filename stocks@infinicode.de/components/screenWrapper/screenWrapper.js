@@ -3,6 +3,7 @@ const { GObject, St } = imports.gi
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 const { StockOverviewScreen } = Me.imports.components.screens.stockOverviewScreen.stockOverviewScreen
+const { StockNewsListScreen } = Me.imports.components.screens.stockNewsListScreen.stockNewsListScreen
 const { StockDetailsScreen } = Me.imports.components.screens.stockDetailsScreen.stockDetailsScreen
 const { EventHandler } = Me.imports.helpers.eventHandler
 
@@ -28,6 +29,10 @@ var ScreenWrapper = GObject.registerClass({
         switch (screenName) {
           case 'stock-details':
             screen = new StockDetailsScreen({ quoteSummary: additionalData.item })
+            break
+
+          case 'stock-news-list':
+            screen = new StockNewsListScreen({ quoteSummary: additionalData.item })
             break
 
           case 'overview':

@@ -4,11 +4,13 @@ const Me = ExtensionUtils.getCurrentExtension()
 const { fetch } = Me.imports.helpers.fetch
 const { createQuoteSummaryFromYahooData } = Me.imports.services.dto.quoteSummary
 const { createQuoteHistoricalFromYahooData } = Me.imports.services.dto.quoteHistorical
+const { createNewsListFromYahooData } = Me.imports.services.dto.newsList
 const { INTERVAL_MAPPINGS } = Me.imports.services.meta.yahoo
 
 const API_ENDPOINT = 'https://query2.finance.yahoo.com'
 const API_VERSION_SUMMARY = 'v10/finance'
 const API_VERSION_CHART = 'v8/finance'
+const RSS_NEWS_ENDPOINT = 'https://feeds.finance.yahoo.com/rss/2.0/headline?s={SYMBOL}&region=US&lang=en-US'
 
 const defaultQueryParameters = {
   formatted: 'false',
@@ -55,5 +57,17 @@ var getHistoricalQuotes = async ({ symbol, range = '1mo', includeTimestamps = tr
     return createQuoteHistoricalFromYahooData(response.json())
   } else {
     return createQuoteHistoricalFromYahooData(null, `${response.statusText} - ${response.text()}`)
+  }
+}
+
+var getNewsList = async ({ symbol }) => {
+  const url = RSS_NEWS_ENDPOINT.replace('{SYMBOL}', symbol)
+
+  const response = await fetch({ url })
+
+  if (response.ok) {
+    return createNewsListFromYahooData(response.text())
+  } else {
+    return createNewsListFromYahooData(null, `${response.statusText} - ${response.text()}`)
   }
 }

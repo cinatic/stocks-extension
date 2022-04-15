@@ -84,6 +84,10 @@ const Handler = class {
     return this._settings.get_enum(POSITION_IN_PANEL_KEY)
   }
 
+  set position_in_panel (value) {
+    return this._settings.set_enum(POSITION_IN_PANEL_KEY, value)
+  }
+
   get symbol_pairs () {
     const rawString = this._settings.get_string(STOCKS_SYMBOL_PAIRS)
     const stockItems = this._validateStockItems(rawString)
@@ -104,20 +108,40 @@ const Handler = class {
     return this._settings.get_int(STOCKS_TICKER_INTERVAL)
   }
 
+  set ticker_interval (value) {
+    return this._settings.set_int(STOCKS_TICKER_INTERVAL, value)
+  }
+
   get ticker_stock_amount () {
     return this._settings.get_int(STOCKS_TICKER_STOCK_AMOUNT)
+  }
+
+  set ticker_stock_amount (value) {
+    return this._settings.set_int(STOCKS_TICKER_STOCK_AMOUNT, value)
   }
 
   get ticker_display_variation () {
     return this._settings.get_enum(STOCKS_TICKER_DISPLAY_VARIATION)
   }
 
+  set ticker_display_variation (value) {
+    return this._settings.set_enum(STOCKS_TICKER_DISPLAY_VARIATION, value)
+  }
+
   get show_ticker_off_market_prices () {
     return this._settings.get_boolean(STOCKS_SHOW_OFF_MARKET_TICKER_PRICES)
   }
 
+  set show_ticker_off_market_prices (value) {
+    return this._settings.set_boolean(STOCKS_SHOW_OFF_MARKET_TICKER_PRICES, value)
+  }
+
   get use_provider_instrument_names () {
     return this._settings.get_boolean(STOCKS_USE_PROVIDER_INSTRUMENT_NAMES)
+  }
+
+  set use_provider_instrument_names (value) {
+    return this._settings.set_boolean(STOCKS_USE_PROVIDER_INSTRUMENT_NAMES, value)
   }
 
   connect (identifier, onChange) {

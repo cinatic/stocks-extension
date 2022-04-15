@@ -8,26 +8,41 @@ var ButtonGroup = GObject.registerClass({
     }
   }
 }, class ButtonGroup extends St.ScrollView {
-  _init ({ buttons, style_class, enableScrollbar = true }) {
+  _init ({ buttons, style_class, enableScrollbar = true, sync_on_click = false, y_expand = true, x_expand = true }) {
     super._init({
       style_class: `button-group ${style_class}`,
-      x_align: Clutter.ActorAlign.CENTER
+      y_expand,
+      x_expand
     })
 
     if (!enableScrollbar) {
       this.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
     }
 
+    this.set_overlay_scrollbars(true)
+
+    this._sync_on_click = sync_on_click
     this._selectedButton = buttons.find(item => item.selected)
     this._buttons = buttons
 
     this._content = new St.BoxLayout({
       style_class: 'button-group-content',
+      y_align: Clutter.ActorAlign.CENTER,
       x_align: Clutter.ActorAlign.CENTER,
-      x_expand: true
+      y_expand,
+      x_expand
     })
 
-    this.add_actor(this._content)
+    const innerContentBox = new St.BoxLayout({
+      vertical: true,
+      x_align: Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.CENTER,
+      y_expand,
+      x_expand
+    })
+    innerContentBox.add_child(this._content)
+
+    this.add_actor(innerContentBox)
 
     this.connect('destroy', this._onDestroy.bind(this))
 
@@ -45,6 +60,10 @@ var ButtonGroup = GObject.registerClass({
       const additionalStyleClasses = this._selectedButton === button ? 'selected' : ''
 
       const stButton = new St.Button({
+        x_align: Clutter.ActorAlign.CENTER,
+        y_align: Clutter.ActorAlign.CENTER,
+        y_expand: this.y_expand,
+        x_expand: this.x_expand,
         style_class: `button ${additionalStyleClasses}`,
         label: button.label
       })
@@ -55,9 +74,13 @@ var ButtonGroup = GObject.registerClass({
       stButton.buttonData = button
 
       stButton.connect('clicked', () => {
-        this.emit('clicked', stButton)
         this._selectedButton = button
-        this._sync()
+
+        this.emit('clicked', stButton)
+
+        if (this._sync_on_click) {
+          this._sync()
+        }
       })
 
       this._content.add_child(stButton)

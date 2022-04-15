@@ -55,6 +55,11 @@ var getHistoricalQuotes = async ({ symbol, range = '1mo' }) => {
   }
 }
 
+var getNewsList = async () => {
+  // FIXME ...
+  return []
+}
+
 const _getIntradayQuotes = async ({ queryParameters }) => {
   const url = `${API_ENDPOINT}/${API_VERSION_INTRADAY_CHART}`
 

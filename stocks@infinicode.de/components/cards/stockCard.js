@@ -1,4 +1,4 @@
-const { Clutter, GObject, St } = imports.gi
+const { Clutter, GObject, Pango, St } = imports.gi
 
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
@@ -166,6 +166,8 @@ var StockCard = GObject.registerClass({
       text: `  |  ${fallbackIfNaN(Math.round(this.cardItem.Volume / 1000))} k  |  ${(new Date(this.cardItem.Timestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)}`
     })
 
+    additionalInformationLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
+
     additionalInformationBox.add_child(quoteChangeLabel)
     additionalInformationBox.add_child(placeHolder)
     additionalInformationBox.add_child(quoteChangePercentLabel)
@@ -202,6 +204,8 @@ var StockCard = GObject.registerClass({
       text: ` |  ${Translations.STOCKS.PRE_MARKET}  |  ${(new Date(this.cardItem.PreMarketTimestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)}`
     })
 
+    additionalInformationLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
+
     additionalInformationBox.add_child(quoteChangeLabel)
     additionalInformationBox.add_child(placeHolder)
     additionalInformationBox.add_child(quoteChangePercentLabel)
@@ -237,6 +241,8 @@ var StockCard = GObject.registerClass({
       style_class: 'additional-quote-information-label small-text fwb',
       text: `  |  ${Translations.STOCKS.POST_MARKET}  |  ${(new Date(this.cardItem.PostMarketTimestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)}`
     })
+
+    additionalInformationLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
 
     additionalInformationBox.add_child(quoteChangeLabel)
     additionalInformationBox.add_child(placeHolder)
