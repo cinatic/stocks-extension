@@ -8,10 +8,9 @@ const { SymbolsListPage } = Me.imports.components.settings.symbolsListPage
 const { SettingsPage } = Me.imports.components.settings.settingsPage
 
 const { SETTINGS_SCHEMA_DOMAIN } = Me.imports.helpers.settings
-const { initTranslations } = Me.imports.helpers.translations
 
 function init () {
-  initTranslations(SETTINGS_SCHEMA_DOMAIN)
+  ExtensionUtils.initTranslations(SETTINGS_SCHEMA_DOMAIN)
 }
 
 function fillPreferencesWindow (window) {

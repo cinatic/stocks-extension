@@ -1,10 +1,10 @@
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
-const DOMAIN = Me.metadata['gettext-domain'];
+const DOMAIN = Me.metadata['gettext-domain']
 
-const Gettext = imports.gettext.domain(DOMAIN);
-var _ = Gettext.gettext;
+const Gettext = imports.gettext.domain(DOMAIN)
+var _ = Gettext.gettext
 
 ExtensionUtils.initTranslations(DOMAIN)
 
@@ -46,6 +46,7 @@ var Translations = {
       COMPACT: _('Compact'),
       REGULAR: _('Regular'),
       TREMENDOUS: _('Tremendous'),
+      MINIMAL: _('Minimal')
     },
     TICKER_STOCK_AMOUNT_LABEL: _('Items to show in ticker'),
     TICKER_INTERVAL_LABEL: _('Stock Panel Ticker Interval in Seconds'),
