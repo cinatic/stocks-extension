@@ -47,3 +47,7 @@ To add stocks you need the provider related symbol / identifier. You should be a
 3. Enter Symbol (**yahoo** e.g. *AHLA.DE*, **eastmoney** e.g. *1.000001*) and give it a name
 
 ![Screenshot](images/settings.png)
+
+
+### debug
+dbus-run-session -- gnome-shell --nested --wayland

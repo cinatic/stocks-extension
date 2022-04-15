@@ -42,9 +42,9 @@ const Main = imports.ui.main
 const PanelMenu = imports.ui.panelMenu
 
 const MenuPosition = {
-  CENTER: 0,
-  RIGHT: 1,
-  LEFT: 2
+  LEFT: 0,
+  CENTER: 1,
+  RIGHT: 2
 }
 
 let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends PanelMenu.Button {
@@ -72,6 +72,8 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
     bin.add_actor(this._screenWrapper)
 
     // Bind events
+    // FIXME: figure out and fix why this triggers
+    // Apr 21 14:31:45 station gnome-shell[2006]: Object .Gjs_ui_boxpointer_BoxPointer (0x55853c5181c0), has been already deallocated — impossible to get any property from it. This might be caused by the object having been destroyed from C code using something such as destroy(), dispose(), or remove() vfuncs.
     EventHandler.connect('hide-panel', () => this.menu.close())
     this._settingsChangedId = Settings.connect('changed', this._sync.bind(this))
 
