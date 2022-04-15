@@ -6,7 +6,9 @@ const { Adw, Gio, GObject, Gtk } = imports.gi
 const { Settings } = Me.imports.helpers.settings
 const { Translations } = Me.imports.helpers.translations
 
-var SettingsPage = GObject.registerClass(
+var SettingsPage = GObject.registerClass({
+      GTypeName: 'StockExtension-SettingsPage',
+    },
     class StockListPreferencePage extends Adw.PreferencesPage {
       _init () {
         super._init({
@@ -22,7 +24,7 @@ var SettingsPage = GObject.registerClass(
 
 class GeneralPreferenceGroup extends Adw.PreferencesGroup {
   static {
-    GObject.registerClass(this)
+    GObject.registerClass({ GTypeName: 'StockExtension-GeneralPreferenceGroup' }, this)
   }
 
   constructor () {

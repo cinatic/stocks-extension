@@ -11,7 +11,9 @@ const { NewSymbolRow } = Me.imports.components.settings.subcomponents.newSymbolR
 const { SymbolModelList } = Me.imports.components.settings.subcomponents.symbolModelList
 const { SymbolRow } = Me.imports.components.settings.subcomponents.symbolRow
 
-var SymbolsListPage = GObject.registerClass(
+var SymbolsListPage = GObject.registerClass({
+      GTypeName: 'StockExtension-SymbolsListPage',
+    },
     class SymbolsListPreferencePage extends Adw.PreferencesPage {
       _init () {
         super._init({
@@ -27,7 +29,7 @@ var SymbolsListPage = GObject.registerClass(
 
 class SymbolListPreferenceGroup extends Adw.PreferencesGroup {
   static {
-    GObject.registerClass(this)
+    GObject.registerClass({ GTypeName: 'StockExtension-SymbolListPreferenceGroup' }, this)
 
     this.install_action('symbol.add', null, self => self._symbolModelList.append())
     this.install_action('symbol.remove', 's', (self, name, param) => self._symbolModelList.remove(param.unpack()))
@@ -58,9 +60,6 @@ class SymbolListPreferenceGroup extends Adw.PreferencesGroup {
     this.add(this._list)
 
     this._list.bind_model(listModel, item => {
-      log("what is here?")
-      log(item.id)
-      log(item)
       return !item.id
           ? new NewSymbolRow()
           : new SymbolRow(item, this._symbolModelList)

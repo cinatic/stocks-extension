@@ -14,7 +14,9 @@ const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS
 ]
 
-var SymbolModelList = GObject.registerClass(class SymbolModelList extends GObject.Object {
+var SymbolModelList = GObject.registerClass({
+  GTypeName: 'StockExtension-SymbolModelList',
+}, class SymbolModelList extends GObject.Object {
   static [GObject.interfaces] = [Gio.ListModel]
 
   #items = []
