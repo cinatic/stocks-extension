@@ -8,11 +8,11 @@ var ButtonGroup = GObject.registerClass({
     }
   }
 }, class ButtonGroup extends St.ScrollView {
-  _init ({ buttons, style_class, enableScrollbar = true }) {
+  _init ({ buttons, style_class, enableScrollbar = true, sync_on_click = false, y_expand = true, x_expand = true }) {
     super._init({
       style_class: `button-group ${style_class}`,
-      y_expand: true,
-      x_expand: true
+      y_expand,
+      x_expand
     })
 
     if (!enableScrollbar) {
@@ -21,6 +21,7 @@ var ButtonGroup = GObject.registerClass({
 
     this.set_overlay_scrollbars(true)
 
+    this._sync_on_click = sync_on_click
     this._selectedButton = buttons.find(item => item.selected)
     this._buttons = buttons
 
@@ -28,16 +29,16 @@ var ButtonGroup = GObject.registerClass({
       style_class: 'button-group-content',
       y_align: Clutter.ActorAlign.CENTER,
       x_align: Clutter.ActorAlign.CENTER,
-      y_expand: true,
-      x_expand: true
+      y_expand,
+      x_expand
     })
 
     const innerContentBox = new St.BoxLayout({
       vertical: true,
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
-      y_expand: true,
-      x_expand: true
+      y_expand,
+      x_expand
     })
     innerContentBox.add_child(this._content)
 
@@ -61,8 +62,8 @@ var ButtonGroup = GObject.registerClass({
       const stButton = new St.Button({
         x_align: Clutter.ActorAlign.CENTER,
         y_align: Clutter.ActorAlign.CENTER,
-        y_expand: true,
-        x_expand: true,
+        y_expand: this.y_expand,
+        x_expand: this.x_expand,
         style_class: `button ${additionalStyleClasses}`,
         label: button.label
       })
@@ -73,9 +74,13 @@ var ButtonGroup = GObject.registerClass({
       stButton.buttonData = button
 
       stButton.connect('clicked', () => {
-        this.emit('clicked', stButton)
         this._selectedButton = button
-        this._sync()
+
+        this.emit('clicked', stButton)
+
+        if (this._sync_on_click) {
+          this._sync()
+        }
       })
 
       this._content.add_child(stButton)
