@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="stocks@infinicode.de">
     <enum id="org.gnome.shell.extensions.stocks.position">
-        <value value="0" nick="center"/>
-        <value value="1" nick="right"/>
-        <value value="2" nick="left"/>
+        <value value="0" nick="left"/>
+        <value value="1" nick="center"/>
+        <value value="2" nick="right"/>
     </enum>
     <enum id="org.gnome.shell.extensions.stocks.tickerdisplayvariation">
         <value value="0" nick="compact"/>
