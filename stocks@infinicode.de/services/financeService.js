@@ -49,3 +49,13 @@ var getHistoricalQuotes = async ({ symbol, provider, range = '1y', includeTimest
     }
   })
 }
+
+var getNewsList = async ({ symbol, provider }) => {
+  return cacheOrDefault(`news_${provider}_${symbol}`, () => {
+    const service = services[provider]
+
+    if (symbol && service) {
+      return service.getNewsList({ symbol })
+    }
+  }, 15 * 60 * 1000)
+}
