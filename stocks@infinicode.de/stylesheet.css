@@ -110,10 +110,17 @@
     min-height: 20px;
 }
 
+.stocks-extension .card.news-card .news-details {
+    margin: 2px 0;
+    padding: 2px 0;
+    border-top: 1px dotted;
+    border-bottom: 1px dotted;
+}
+
 /*** stock details ***/
 .stocks-extension .stock-details {
     min-width: 480px;
-    margin: 10px 15px 5px 15px;
+    margin: 0 15px 5px 15px;
     padding: 5px 20px;
 }
 
@@ -125,14 +132,22 @@
     padding: 5px 0;
 }
 
-
 .stocks-extension .stock-details-screen .button-group .button {
     height: 25px;
     max-height: 25px;
 }
 
-.stocks-extension .stock-details .header-box {
-    margin-bottom: 16px;
+.stocks-extension .stock-details-screen .stock-details-tab-button-group {
+    height: 35px;
+}
+
+.stocks-extension .stock-details-screen .stock-details-tab-button-group .button-group-content {
+    padding: 0;
+}
+
+.stocks-extension .stock-details-screen .stock-details-tab-button-group .button {
+    height: 15px;
+    max-height: 15px;
 }
 
 .stocks-extension .stock-left-details-box {
@@ -153,7 +168,12 @@
     margin: 5px;
 }
 
-.stocks-extension .chart-hover-label {
+.stocks-extension .chart-hover-box {
     margin-top: 10px;
     text-align: center;
+}
+
+.stocks-extension .chart-hover-label {
+    margin-right: 5px;
+    font-weight: bolder;
 }

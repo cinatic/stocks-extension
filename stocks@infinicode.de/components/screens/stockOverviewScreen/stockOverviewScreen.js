@@ -41,20 +41,20 @@ var StockOverviewScreen = GObject.registerClass({
     this._showLoadingInfoTimeoutId = null
     this._autoRefreshTimeoutId = null
 
-    const searchBar = new SearchBar()
+    this._searchBar = new SearchBar()
     this._list = new FlatList()
 
-    this.add_child(searchBar)
+    this.add_child(this._searchBar)
     this.add_child(this._list)
 
     this.connect('destroy', this._onDestroy.bind(this))
 
-    searchBar.connect('refresh', () => {
+    this._searchBar.connect('refresh', () => {
       removeCache('summary_')
       this._loadData()
     })
 
-    searchBar.connect('text-change', (sender, searchText) => this._filter_results(searchText))
+    this._searchBar.connect('text-change', (sender, searchText) => this._filter_results(searchText))
 
     this._settingsChangedId = Settings.connect('changed', (value, key) => {
       if (SETTING_KEYS_TO_REFRESH.includes(key)) {
@@ -127,6 +127,8 @@ var StockOverviewScreen = GObject.registerClass({
     quoteSummaries.forEach(quoteSummary => {
       this._list.addItem(new StockCard(quoteSummary))
     })
+
+    this._filter_results(this._searchBar.search_text())
 
     this._isRendering = false
   }

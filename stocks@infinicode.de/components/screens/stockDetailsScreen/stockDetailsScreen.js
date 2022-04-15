@@ -5,10 +5,11 @@ const Me = ExtensionUtils.getCurrentExtension()
 
 const { ButtonGroup } = Me.imports.components.buttons.buttonGroup
 const { Chart } = Me.imports.components.chart.chart
+const { EventHandler } = Me.imports.helpers.eventHandler
 const { StockDetails } = Me.imports.components.stocks.stockDetails
 const { SearchBar } = Me.imports.components.searchBar.searchBar
 
-const { clearCache, roundOrDefault } = Me.imports.helpers.data
+const { clearCache, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
 
 const { CHART_RANGES, CHART_RANGES_MAX_GAP } = Me.imports.services.meta.generic
@@ -60,6 +61,37 @@ var StockDetailsScreen = GObject.registerClass({
       this._sync()
     })
 
+    const stockDetailsTabButtonGroup = new ButtonGroup({
+      style_class: 'stock-details-tab-button-group',
+      enableScrollbar: false,
+      y_expand: false,
+      buttons: ['KeyData', 'NewsList'].map(tabKey => ({
+        label: tabKey,
+        value: tabKey,
+        selected: tabKey === 'KeyData'
+      }))
+    })
+
+    stockDetailsTabButtonGroup.connect('clicked', (_, stButton) => {
+      const selectedTab = stButton.buttonData.value
+
+      if (selectedTab === 'KeyData') {
+        EventHandler.emit('show-screen', {
+          screen: 'stock-details',
+          additionalData: {
+            item: this._passedQuoteSummary
+          }
+        })
+      } else {
+        EventHandler.emit('show-screen', {
+          screen: 'stock-news-list',
+          additionalData: {
+            item: this._passedQuoteSummary
+          }
+        })
+      }
+    })
+
     const stockDetails = new StockDetails({ quoteSummary })
 
     const chartRangeButtonGroup = new ButtonGroup({
@@ -85,25 +117,44 @@ var StockDetailsScreen = GObject.registerClass({
       onDraw: this._onChartDraw.bind(this)
     })
 
+    const chartValueHoverBox = new St.BoxLayout({
+      style_class: 'chart-hover-box',
+      x_align: Clutter.ActorAlign.CENTER
+    })
+
     const chartValueLabel = new St.Label({ style_class: 'chart-hover-label', text: `` })
+    const chartValueChangeLabel = new St.Label({ style_class: 'chart-hover-change-label', text: `` })
+
+    chartValueHoverBox.add_child(chartValueLabel)
+    chartValueHoverBox.add_child(chartValueChangeLabel)
 
     // TODO: figure out how we can determine if chart lost focus
     this._chart.connect('chart-hover', (item, x, y) => {
       if (!x) {
         chartValueLabel.text = ''
+        chartValueChangeLabel.text = ''
         return
       }
 
+      const changeAbsolute = roundOrDefault(this._quoteSummary.Close - y)
+      const changePercentage = roundOrDefault((this._quoteSummary.Close / y * 100) - 100)
+
+      const changeColorStyleClass = getStockColorStyleClass(changePercentage)
+
       chartValueLabel.text = `${(new Date(x)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)} ${roundOrDefault(y)}`
+      chartValueChangeLabel.text = `(${changeAbsolute} / ${changePercentage} %)`
+      chartValueChangeLabel.style_class = `chart-hover-change-label ${changeColorStyleClass}`
     })
 
     this.add_child(searchBar)
+
+    this.add_child(stockDetailsTabButtonGroup)
     this.add_child(stockDetails)
 
     // FIXME: adding chart throws a lot of "Can't update stage views actor", no clue what is going on here
     this.add_child(chartRangeButtonGroup)
     this.add_child(this._chart)
-    this.add_child(chartValueLabel)
+    this.add_child(chartValueHoverBox)
   }
 
   _onChartDraw ({ width, height, cairoContext, secondaryColor }) {

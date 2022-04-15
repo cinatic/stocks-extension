@@ -25,6 +25,7 @@ var SearchBar = GObject.registerClass({
     })
 
     this.back_screen_name = back_screen_name
+    this._inputBox = null
 
     this._searchAreaBox = this._createSearchArea({ showFilterInputBox })
     this._buttonBox = this._createButtonBox()
@@ -58,26 +59,30 @@ var SearchBar = GObject.registerClass({
         icon_name: 'edit-find-symbolic'
       })
 
-      const inputBox = new St.Entry({
+      this._inputBox = new St.Entry({
         style_class: 'search-text-input',
         hint_text: Translations.FILTER_PLACEHOLDER,
         can_focus: true
       })
 
-      inputBox.connect('notify::text', entry => this.emit('text-change', entry.text))
+      this._inputBox.connect('notify::text', entry => this.emit('text-change', entry.text))
 
-      inputBox.set_primary_icon(searchIcon)
+      this._inputBox.set_primary_icon(searchIcon)
 
       const inputBoxBin = new St.Bin({
         style_class: 'search-text-input-bin',
         x_expand: true,
-        child: inputBox
+        child: this._inputBox
       })
 
       searchInputBox.add_child(inputBoxBin)
     }
 
     return searchInputBox
+  }
+
+  search_text () {
+    return this._inputBox.text
   }
 
   _createButtonBox () {
