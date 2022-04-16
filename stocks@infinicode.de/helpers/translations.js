@@ -1,5 +1,5 @@
-const Gettext = imports.gettext.domain(DOMAIN)
-var _ = Gettext.gettext
+const Gettext = imports.gettext
+const _ = Gettext.gettext
 
 var Translations = {
   EXTENSION: {

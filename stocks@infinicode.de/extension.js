@@ -33,7 +33,7 @@ const Me = ExtensionUtils.getCurrentExtension()
 const { MenuStockTicker } = Me.imports.components.stocks.menuStockTicker
 const { ScreenWrapper } = Me.imports.components.screenWrapper.screenWrapper
 const { EventHandler } = Me.imports.helpers.eventHandler
-const { Settings } = Me.imports.helpers.settings
+const { SettingsHandler } = Me.imports.helpers.settings
 
 const Gettext = imports.gettext.domain('stocks@infinicode.de')
 const _ = Gettext.gettext
@@ -51,6 +51,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
   _init () {
     this._previousPanelPosition = null
     this._settingsChangedId = null
+    this._settings = new SettingsHandler()
 
     // Panel menu item - the current class
     let menuAlignment = 0.25
@@ -75,7 +76,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
     // FIXME: figure out and fix why this triggers
     // Apr 21 14:31:45 station gnome-shell[2006]: Object .Gjs_ui_boxpointer_BoxPointer (0x55853c5181c0), has been already deallocated — impossible to get any property from it. This might be caused by the object having been destroyed from C code using something such as destroy(), dispose(), or remove() vfuncs.
     EventHandler.connect('hide-panel', () => this.menu.close())
-    this._settingsChangedId = Settings.connect('changed', this._sync.bind(this))
+    this._settingsChangedId = this._settings.connect('changed', this._sync.bind(this))
 
     this.menu.connect('destroy', this._destroyExtension.bind(this))
     this.menu.connect('open-state-changed', (menu, isOpen) => {
@@ -93,7 +94,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
     const container = this.container
     const parent = container.get_parent()
 
-    if (!parent || this._previousPanelPosition === Settings.position_in_panel) {
+    if (!parent || this._previousPanelPosition === this._settings.position_in_panel) {
       return
     }
 
@@ -101,7 +102,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
 
     let children = null
 
-    switch (Settings.position_in_panel) {
+    switch (this._settings.position_in_panel) {
       case MenuPosition.LEFT:
         children = Main.panel._leftBox.get_children()
         Main.panel._leftBox.insert_child_at_index(container, children.length)
@@ -116,12 +117,12 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
         break
     }
 
-    this._previousPanelPosition = Settings.position_in_panel
+    this._previousPanelPosition = this._settings.position_in_panel
   }
 
   _destroyExtension () {
     if (this._settingsChangedId) {
-      Settings.disconnect(this._settingsChangedId)
+      this._settings.disconnect(this._settingsChangedId)
     }
   }
 })

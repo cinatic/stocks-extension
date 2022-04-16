@@ -32,7 +32,7 @@ var convertOldSettingsFormat = rawString => rawString.split('-&&-').map(symbolPa
   provider: FINANCE_PROVIDER.YAHOO
 }))
 
-const Handler = class {
+var SettingsHandler = class SettingsHandler {
   constructor () {
     this._settings = ExtensionUtils.getSettings(SETTINGS_SCHEMA_DOMAIN)
   }
@@ -150,5 +150,3 @@ const Handler = class {
     }))
   }
 }
-
-var Settings = new Handler()

@@ -13,7 +13,7 @@ const { setTimeout, clearTimeout } = Me.imports.helpers.components
 const { removeCache } = Me.imports.helpers.data
 
 const {
-  Settings,
+  SettingsHandler,
   STOCKS_SYMBOL_PAIRS,
   STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
 } = Me.imports.helpers.settings
@@ -41,6 +41,8 @@ var StockOverviewScreen = GObject.registerClass({
     this._showLoadingInfoTimeoutId = null
     this._autoRefreshTimeoutId = null
 
+    this._settings = new SettingsHandler()
+
     this._searchBar = new SearchBar()
     this._list = new FlatList()
 
@@ -56,7 +58,7 @@ var StockOverviewScreen = GObject.registerClass({
 
     this._searchBar.connect('text-change', (sender, searchText) => this._filter_results(searchText))
 
-    this._settingsChangedId = Settings.connect('changed', (value, key) => {
+    this._settingsChangedId = this._settings.connect('changed', (value, key) => {
       if (SETTING_KEYS_TO_REFRESH.includes(key)) {
         this._loadData()
       }
@@ -92,7 +94,7 @@ var StockOverviewScreen = GObject.registerClass({
   }
 
   _registerTimeout () {
-    this._autoRefreshTimeoutId = Mainloop.timeout_add_seconds(Settings.ticker_interval || 10, () => {
+    this._autoRefreshTimeoutId = Mainloop.timeout_add_seconds(this._settings.ticker_interval || 10, () => {
       this._loadData()
 
       return true
@@ -104,7 +106,7 @@ var StockOverviewScreen = GObject.registerClass({
       return
     }
 
-    if (!Settings.symbol_pairs) {
+    if (!this._settings.symbol_pairs) {
       this._list.show_error_info(Translations.NO_SYMBOLS_CONFIGURED_ERROR)
       return
     }
@@ -114,7 +116,7 @@ var StockOverviewScreen = GObject.registerClass({
     this._showLoadingInfoTimeoutId = setTimeout(() => this._list.show_loading_info(), 500)
 
     const quoteSummaries = await Promise.all(
-        Settings.symbol_pairs.map(symbolData => FinanceService.getQuoteSummary({
+        this._settings.symbol_pairs.map(symbolData => FinanceService.getQuoteSummary({
           ...symbolData,
           fallbackName: symbolData.name
         }))
@@ -139,7 +141,7 @@ var StockOverviewScreen = GObject.registerClass({
     }
 
     if (this._settingsChangedId) {
-      Settings.disconnect(this._settingsChangedId)
+      this._settings.disconnect(this._settingsChangedId)
     }
   }
 })
