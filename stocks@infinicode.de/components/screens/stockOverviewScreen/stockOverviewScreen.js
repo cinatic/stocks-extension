@@ -5,7 +5,6 @@ const Mainloop = imports.mainloop
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
-const { EventHandler } = Me.imports.helpers.eventHandler
 const { FlatList } = Me.imports.components.flatList.flatList
 const { StockCard } = Me.imports.components.cards.stockCard
 const { SearchBar } = Me.imports.components.searchBar.searchBar
@@ -22,7 +21,6 @@ const { Translations } = Me.imports.helpers.translations
 
 const FinanceService = Me.imports.services.financeService
 
-
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS,
   STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
@@ -31,11 +29,13 @@ const SETTING_KEYS_TO_REFRESH = [
 var StockOverviewScreen = GObject.registerClass({
   GTypeName: 'StockExtension_StockOverviewScreen'
 }, class StockOverviewScreen extends St.BoxLayout {
-  _init () {
+  _init (mainEventHandler) {
     super._init({
       style_class: 'screen stock-overview-screen',
       vertical: true
     })
+
+    this._mainEventHandler = mainEventHandler
 
     this._isRendering = false
     this._showLoadingInfoTimeoutId = null
@@ -43,7 +43,7 @@ var StockOverviewScreen = GObject.registerClass({
 
     this._settings = new SettingsHandler()
 
-    this._searchBar = new SearchBar()
+    this._searchBar = new SearchBar({ mainEventHandler: this._mainEventHandler })
     this._list = new FlatList()
 
     this.add_child(this._searchBar)
@@ -64,7 +64,7 @@ var StockOverviewScreen = GObject.registerClass({
       }
     })
 
-    this._list.connect('clicked-item', (sender, item) => EventHandler.emit('show-screen', {
+    this._list.connect('clicked-item', (sender, item) => this._mainEventHandler.emit('show-screen', {
       screen: 'stock-details',
       additionalData: {
         item: item.cardItem

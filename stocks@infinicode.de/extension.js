@@ -32,6 +32,7 @@ const Me = ExtensionUtils.getCurrentExtension()
 
 const { MenuStockTicker } = Me.imports.components.stocks.menuStockTicker
 const { ScreenWrapper } = Me.imports.components.screenWrapper.screenWrapper
+
 const { EventHandler } = Me.imports.helpers.eventHandler
 const { SettingsHandler } = Me.imports.helpers.settings
 
@@ -51,7 +52,9 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
   _init () {
     this._previousPanelPosition = null
     this._settingsChangedId = null
+
     this._settings = new SettingsHandler()
+    this._mainEventHandler = new EventHandler()
 
     // Panel menu item - the current class
     let menuAlignment = 0.25
@@ -69,18 +72,18 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
     bin._delegate = this
     this.menu.box.add_child(bin)
 
-    this._screenWrapper = new ScreenWrapper()
+    this._screenWrapper = new ScreenWrapper(this._mainEventHandler)
     bin.add_actor(this._screenWrapper)
 
     // Bind events
     // FIXME: figure out and fix why this triggers
     // Apr 21 14:31:45 station gnome-shell[2006]: Object .Gjs_ui_boxpointer_BoxPointer (0x55853c5181c0), has been already deallocated — impossible to get any property from it. This might be caused by the object having been destroyed from C code using something such as destroy(), dispose(), or remove() vfuncs.
-    EventHandler.connect('hide-panel', () => this.menu.close())
+    this._mainEventHandler.connect('hide-panel', () => this.menu.close())
     this._settingsChangedId = this._settings.connect('changed', this._sync.bind(this))
 
     this.menu.connect('destroy', this._destroyExtension.bind(this))
     this.menu.connect('open-state-changed', (menu, isOpen) => {
-      EventHandler.emit('open-state-changed', { isOpen })
+      this._mainEventHandler.emit('open-state-changed', { isOpen })
     })
 
     this._sync()
