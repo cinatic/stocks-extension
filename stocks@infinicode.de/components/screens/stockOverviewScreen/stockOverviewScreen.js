@@ -136,6 +136,10 @@ var StockOverviewScreen = GObject.registerClass({
   }
 
   _onDestroy () {
+    if (this._showLoadingInfoTimeoutId) {
+      clearTimeout(this._showLoadingInfoTimeoutId)
+    }
+
     if (this._autoRefreshTimeoutId) {
       Mainloop.source_remove(this._autoRefreshTimeoutId)
     }
