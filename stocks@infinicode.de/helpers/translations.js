@@ -1,12 +1,5 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
-
-const DOMAIN = Me.metadata['gettext-domain']
-
 const Gettext = imports.gettext.domain(DOMAIN)
 var _ = Gettext.gettext
-
-ExtensionUtils.initTranslations(DOMAIN)
 
 var Translations = {
   EXTENSION: {

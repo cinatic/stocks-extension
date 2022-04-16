@@ -128,7 +128,9 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
 
 var stocksMenu
 
-function init (extensionMeta) { }
+function init (extensionMeta) {
+  ExtensionUtils.initTranslations(Me.metadata['gettext-domain'])
+}
 
 function enable () {
   stocksMenu = new StocksMenuButton()
