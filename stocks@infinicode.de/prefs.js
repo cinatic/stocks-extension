@@ -7,10 +7,8 @@ const { AboutPage } = Me.imports.components.settings.aboutPage
 const { SymbolsListPage } = Me.imports.components.settings.symbolsListPage
 const { SettingsPage } = Me.imports.components.settings.settingsPage
 
-const { SETTINGS_SCHEMA_DOMAIN } = Me.imports.helpers.settings
-
 function init () {
-  ExtensionUtils.initTranslations(Me.metadata['gettext-domain']);
+  ExtensionUtils.initTranslations()
 }
 
 function fillPreferencesWindow (window) {

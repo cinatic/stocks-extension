@@ -133,7 +133,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
 var stocksMenu
 
 function init (extensionMeta) {
-  ExtensionUtils.initTranslations(Me.metadata['gettext-domain'])
+  ExtensionUtils.initTranslations()
 }
 
 function enable () {
@@ -143,5 +143,7 @@ function enable () {
 }
 
 function disable () {
-  stocksMenu.destroy()
+  if (stocksMenu) {
+    stocksMenu.destroy()
+  }
 }
