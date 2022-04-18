@@ -3,7 +3,6 @@ const Me = ExtensionUtils.getCurrentExtension()
 
 const { Adw, Gio, GObject, Gtk } = imports.gi
 
-const { Settings } = Me.imports.helpers.settings
 const { Translations } = Me.imports.helpers.translations
 
 const { NewItemModel } = Me.imports.components.settings.subcomponents.newItemModel

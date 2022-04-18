@@ -3,7 +3,6 @@ const Me = ExtensionUtils.getCurrentExtension()
 
 const { Adw, GdkPixbuf, Gio, GLib, GObject, Gtk } = imports.gi
 
-const { Settings } = Me.imports.helpers.settings
 const { Translations } = Me.imports.helpers.translations
 
 var AboutPage = GObject.registerClass({
