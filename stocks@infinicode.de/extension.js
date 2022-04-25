@@ -146,4 +146,6 @@ function disable () {
   if (stocksMenu) {
     stocksMenu.destroy()
   }
+
+  stocksMenu = null
 }
