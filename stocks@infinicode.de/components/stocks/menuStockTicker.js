@@ -51,6 +51,7 @@ var MenuStockTicker = GObject.registerClass({
     this._visibleStockIndex = 0
     this._toggleDisplayTimeout = null
     this._settingsChangedId = null
+    this._showLoadingInfoTimeoutId = null
 
     this._settings = new SettingsHandler()
 
@@ -79,14 +80,14 @@ var MenuStockTicker = GObject.registerClass({
       return
     }
 
-    const showLoadingInfoTimeoutId = setTimeout(this._showInfoMessage.bind(this), 500)
+    this._showLoadingInfoTimeoutId = setTimeout(this._showInfoMessage.bind(this), 500)
 
     const quoteSummaries = await Promise.all(tickerBatch.map(stockItem => FinanceService.getQuoteSummary({
       ...stockItem,
       fallbackName: stockItem.name
     })))
 
-    clearTimeout(showLoadingInfoTimeoutId)
+    clearTimeout(this._showLoadingInfoTimeoutId)
 
     this._createMenuTicker({ quoteSummaries })
   }
@@ -304,6 +305,10 @@ var MenuStockTicker = GObject.registerClass({
 
     if (this._settingsChangedId) {
       this._settings.disconnect(this._settingsChangedId)
+    }
+
+    if (this._showLoadingInfoTimeoutId) {
+      clearTimeout(this._showLoadingInfoTimeoutId)
     }
   }
 

@@ -14,8 +14,6 @@ var STOCKS_TICKER_STOCK_AMOUNT = 'ticker-stock-amount'
 var STOCKS_TICKER_DISPLAY_VARIATION = 'ticker-display-variation'
 var STOCKS_USE_PROVIDER_INSTRUMENT_NAMES = 'use-provider-instrument-names'
 
-var SETTINGS_SCHEMA_DOMAIN = 'org.gnome.shell.extensions.stocks'
-
 var DEFAULT_SYMBOL_DATA = [
   {
     symbol: 'BABA',
