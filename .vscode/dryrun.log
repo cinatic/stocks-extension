@@ -1,0 +1,18 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/tim/git/stocks-extension'
+mkdir -p _build
+glib-compile-schemas stocks@infinicode.de/schemas
+mkdir -p stocks@infinicode.de/po
+xgettext --from-code=UTF-8 --package-name "gnome-shell-extension-stocks" --msgid-bugs-address=fh@infinicode.de -k_ -kN_ -o stocks@infinicode.de/po/stocks@infinicode.de.pot stocks@infinicode.de/extension.js stocks@infinicode.de/prefs.js stocks@infinicode.de/helpers/translations.js
+msgmerge -m -U --backup=none stocks@infinicode.de/po/de.po stocks@infinicode.de/po/stocks@infinicode.de.pot
+msgmerge -m -U --backup=none stocks@infinicode.de/po/nl.po stocks@infinicode.de/po/stocks@infinicode.de.pot
+msgmerge -m -U --backup=none stocks@infinicode.de/po/sv.po stocks@infinicode.de/po/stocks@infinicode.de.pot
+mkdir -p stocks@infinicode.de/locale/de/LC_MESSAGES
+mkdir -p stocks@infinicode.de/locale/nl/LC_MESSAGES
+mkdir -p stocks@infinicode.de/locale/sv/LC_MESSAGES
+msgfmt -c stocks@infinicode.de/po/de.po -o stocks@infinicode.de/locale/de/LC_MESSAGES/stocks@infinicode.de.mo
+msgfmt -c stocks@infinicode.de/po/nl.po -o stocks@infinicode.de/locale/nl/LC_MESSAGES/stocks@infinicode.de.mo
+msgfmt -c stocks@infinicode.de/po/sv.po -o stocks@infinicode.de/locale/sv/LC_MESSAGES/stocks@infinicode.de.mo
+cp -r --parents stocks@infinicode.de/extension.js stocks@infinicode.de/prefs.js stocks@infinicode.de/components stocks@infinicode.de/helpers stocks@infinicode.de/services stocks@infinicode.de/schemas/gschemas.compiled stocks@infinicode.de/stylesheet.css stocks@infinicode.de/media stocks@infinicode.de/metadata.json stocks@infinicode.de/locale/de/LC_MESSAGES/stocks@infinicode.de.mo stocks@infinicode.de/locale/nl/LC_MESSAGES/stocks@infinicode.de.mo stocks@infinicode.de/locale/sv/LC_MESSAGES/stocks@infinicode.de.mo README.md _build
+make: Leaving directory '/home/tim/git/stocks-extension'
+ 

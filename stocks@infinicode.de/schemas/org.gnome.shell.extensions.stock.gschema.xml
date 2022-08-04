@@ -1,31 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="stocks-qarj@infinicode.de">
     <enum id="org.gnome.shell.extensions.stocks.position">
-        <value value="0" nick="center"/>
-        <value value="1" nick="right"/>
-        <value value="2" nick="left"/>
+        <value value="0" nick="left"/>
+        <value value="1" nick="center"/>
+        <value value="2" nick="right"/>
     </enum>
-    <enum id="org.gnome.shell.extensions.stocks.displaytype">
-        <value value="0" nick="icon-and-text"/>
-        <value value="1" nick="icon-only"/>
-        <value value="2" nick="text-only"/>
+    <enum id="org.gnome.shell.extensions.stocks.tickerdisplayvariation">
+        <value value="0" nick="compact"/>
+        <value value="1" nick="regular"/>
+        <value value="2" nick="tremendous"/> <!-- :D -->
+        <value value="3" nick="minimal"/>
+    </enum>
+    <enum id="org.gnome.shell.extensions.stocks.provider">
+        <value value="0" nick="yahoo"/>
+        <value value="1" nick="eastmoney"/>
     </enum>
     <schema path="/org/gnome/shell/extensions/stocks/" id="org.gnome.shell.extensions.stocks">
         <key name="position-in-panel" enum="org.gnome.shell.extensions.stocks.position">
             <default>'center'</default>
             <summary>Position in Panel</summary>
         </key>
-        <key name="display-type" enum="org.gnome.shell.extensions.stocks.displaytype">
-            <default>'icon-and-text'</default>
-            <summary>Display Type in Panel</summary>
+        <key name="ticker-display-variation" enum="org.gnome.shell.extensions.stocks.tickerdisplayvariation">
+            <default>'regular'</default>
+            <summary>Ticker Display Variation</summary>
         </key>
         <key type="s" name="symbol-pairs">
             <default>'Xetra Alibaba-§§-AHLA.DE'</default>
-            <summary>A yahoo stock symbol definitions e.g. AHLA.DE</summary>
+            <summary>old version stock symbol definition (do not use anymore, but keep for migration))</summary>
         </key>
         <key type="s" name="symbol-current-quotes">
             <default>''</default>
             <summary>JSON representation of symbol data</summary>
+        </key>
+        <key type="i" name="ticker-interval">
+            <default>10</default>
+            <summary>Ticker Interval in Seconds</summary>
+        </key>
+        <key type="i" name="ticker-stock-amount">
+            <default>1</default>
+            <summary>Amount of Stocks to show simultaneously in Ticker</summary>
+        </key>
+        <key name="show-ticker-off-market-prices" type="b">
+            <default>true</default>
+            <summary>If enabled the ticker will automatically show pre / post market prices if available marked by a * sign.</summary>
+        </key>
+        <key name="use-provider-instrument-names" type="b">
+            <default>true</default>
+            <summary>If enabled instrument names will be used from data provider.</summary>
         </key>
     </schema>
 </schemalist>

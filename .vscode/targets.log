@@ -1,0 +1,489 @@
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+make: *** No rule to make target 'all'.  Stop.
+
+# GNU Make 4.3
+# Built for x86_64-pc-linux-gnu
+# Copyright (C) 1988-2020 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+
+# Make data base, printed on Thu Aug  4 21:29:38 2022
+
+# Variables
+
+# environment
+GDK_BACKEND = x11
+# environment
+LC_ALL = C
+# environment
+NO_AT_BRIDGE = 1
+# environment
+GNOME_SHELL_SESSION_MODE = ubuntu
+# environment
+SSH_AGENT_LAUNCHER = gnome-keyring
+# makefile (from 'Makefile', line 9)
+UUID := stocks@infinicode.de
+# environment
+MANDATORY_PATH = /usr/share/gconf/ubuntu.mandatory.path
+# makefile (from 'Makefile', line 14)
+SRC_DIR := stocks@infinicode.de
+# environment
+VSCODE_CWD = /home/tim/git/stocks-extension
+# environment
+NVM_PATH = /home/tim/.nvm/versions/node/v16.15.1/lib/node
+# environment
+WINDOWPATH = 2
+# environment
+NVM_DIR = /home/tim/.nvm
+# environment
+LIBVIRT_DEFAULT_URI = qemu:///system
+# default
+MAKE_COMMAND := make
+# environment
+GTK3_MODULES = xapp-gtk3-module
+# environment
+QT_ACCESSIBILITY = 1
+# environment
+MOZ_X11_EGL = 1
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# default
+.VARIABLES := 
+# environment
+PWD = /home/tim/git/stocks-extension
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# environment
+XDG_DATA_DIRS = /usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
+# environment
+OLDPWD = /home/tim/git
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# automatic
+%F = $(notdir $%)
+# environment
+CONDA_PROMPT_MODIFIER = (base) 
+# environment
+VSCODE_CODE_CACHE_PATH = /home/tim/.config/Code/CachedData/3b889b090b5ad5793f524b5d1d39fda662b96a2a
+# makefile (from 'Makefile', line 19)
+JS_FILES := stocks@infinicode.de/extension.js stocks@infinicode.de/prefs.js
+# environment
+LANG = C
+# environment
+XAUTHORITY = /run/user/1000/gdm/Xauthority
+# default
+.LOADED := 
+# default
+.INCLUDE_DIRS = /usr/local/include /usr/include /usr/include
+# makefile (from 'Makefile', line 22)
+JS_COMPONENTS := stocks@infinicode.de/components stocks@infinicode.de/helpers stocks@infinicode.de/services
+# environment
+GNOME_TERMINAL_SERVICE = :1.110
+# makefile
+MAKEFLAGS = pqrR
+# makefile (from 'Makefile', line 40)
+INSTALLBASE := /home/tim/.local/share/gnome-shell/extensions
+# makefile
+CURDIR := /home/tim/git/stocks-extension
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+# environment
+LESSOPEN = | /usr/bin/lesspipe %s
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+MFLAGS = -pqrR
+# environment
+SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
+# default
+.SHELLFLAGS := -c
+# environment
+NVM_BIN = /home/tim/.nvm/versions/node/v16.15.1/bin
+# environment
+XDG_CONFIG_DIRS = /etc/xdg/xdg-ubuntu:/etc/xdg
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# environment
+XDG_SESSION_DESKTOP = ubuntu
+# makefile (from 'Makefile', line 1)
+MAKEFILE_LIST := Makefile
+# environment
+CONDA_SHLVL = 1
+# automatic
+@F = $(notdir $@)
+# environment
+VSCODE_PID = 27571
+# environment
+XDG_SESSION_TYPE = x11
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# environment
+CONDA_PYTHON_EXE = /home/tim/miniconda3/bin/python
+# environment
+SESSION_MANAGER = local/UbuntuIridium:@/tmp/.ICE-unix/3997,unix/UbuntuIridium:/tmp/.ICE-unix/3997
+# automatic
+*F = $(notdir $*)
+# makefile (from 'Makefile', line 20)
+CSS_FILES := stocks@infinicode.de/stylesheet.css
+# environment
+WOW_HOME = /media/rocket/Games/world-of-warcraft
+# environment
+MANPATH = /home/tim/.nvm/versions/node/v16.15.1/share/man:/usr/local/man:/usr/local/share/man:/usr/share/man
+# environment
+CHROME_DESKTOP = code-url-handler.desktop
+# environment
+DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-gb","availableLanguages":{},"_languagePackSupport":true}
+# makefile (from 'Makefile', line 41)
+INSTALL_DIR := /home/tim/.local/share/gnome-shell/extensions/stocks@infinicode.de
+# default
+MAKE_HOST := x86_64-pc-linux-gnu
+# environment
+GNOME_DESKTOP_SESSION_ID = this-is-deprecated
+# environment
+CONDA_PREFIX = /home/tim/miniconda3
+# makefile
+SHELL = /bin/sh
+# default
+MAKECMDGOALS := all
+# environment
+XMODIFIERS = @im=ibus
+# makefile (from 'Makefile', line 27)
+PO_FILES := stocks@infinicode.de/po/de.po stocks@infinicode.de/po/nl.po stocks@infinicode.de/po/sv.po
+# environment
+SHLVL = 1
+# environment
+GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/2bd68f93_d295_4649_ac5e_e6153cec49be
+# environment
+MAKELEVEL := 0
+# default
+MAKE = $(MAKE_COMMAND)
+# makefile (from 'Makefile', line 17)
+LOCALE_DIR := stocks@infinicode.de/locale
+# environment
+PATH = /home/tim/.nvm/versions/node/v16.15.1/bin:/home/tim/miniconda3/bin:/home/tim/miniconda3/condabin:/home/tim/.local/bin:/home/tim/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/usr/local/bin/WebImblaze-Framework:/home/tim/android-studio/bin:/home/tim/git/a1/scripts/timcmds:/home/tim/git/a1/scripts/workcmds
+# default
+MAKEFILES := 
+# environment
+LANGUAGE = en_GB:en
+# automatic
+^F = $(notdir $^)
+# makefile (from 'Makefile', line 21)
+MEDIA_FILES := stocks@infinicode.de/media
+# environment
+USERNAME = tim
+# makefile (from 'Makefile', line 32)
+FILES := stocks@infinicode.de/extension.js stocks@infinicode.de/prefs.js stocks@infinicode.de/components stocks@infinicode.de/helpers stocks@infinicode.de/services stocks@infinicode.de/schemas/gschemas.compiled stocks@infinicode.de/stylesheet.css stocks@infinicode.de/media stocks@infinicode.de/metadata.json stocks@infinicode.de/locale/de/LC_MESSAGES/stocks@infinicode.de.mo stocks@infinicode.de/locale/nl/LC_MESSAGES/stocks@infinicode.de.mo stocks@infinicode.de/locale/sv/LC_MESSAGES/stocks@infinicode.de.mo README.md
+# environment
+LESSCLOSE = /usr/bin/lesspipe %s %s
+# automatic
+?F = $(notdir $?)
+# environment
+XDG_CURRENT_DESKTOP = Unity
+# environment
+LS_COLORS = rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+# automatic
++F = $(notdir $+)
+# environment
+DESKTOP_SESSION = ubuntu
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = ubuntu:GNOME
+# 'override' directive
+GNUMAKEFLAGS := 
+# environment
+CONDA_DEFAULT_ENV = base
+# makefile (from 'Makefile', line 31)
+TOLOCALIZE := stocks@infinicode.de/extension.js stocks@infinicode.de/prefs.js stocks@infinicode.de/helpers/translations.js
+# environment
+LOGNAME = tim
+# environment
+NVM_NODEJS_ORG_MIRROR = https://nodejs.org/dist
+# makefile (from 'Makefile', line 8)
+EXTENSION_NAME := stocks
+# makefile
+.DEFAULT_GOAL := default
+# environment
+SYSTEMD_EXEC_PID = 4016
+# environment
+DISPLAY = :1
+# environment
+USER = tim
+# environment
+GTK_MODULES = gail:atk-bridge:appmenu-gtk-module
+# environment
+DEFAULTS_PATH = /usr/share/gconf/ubuntu.default.path
+# default
+MAKE_VERSION := 4.3
+# makefile (from 'Makefile', line 26)
+POT_FILE := stocks@infinicode.de/po/stocks@infinicode.de.pot
+# environment
+_ = /usr/bin/code
+# makefile (from 'Makefile', line 16)
+PO_DIR := stocks@infinicode.de/po
+# environment
+XDG_RUNTIME_DIR = /run/user/1000
+# environment
+GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
+# environment
+COLORTERM = truecolor
+# environment
+_CE_M = 
+# makefile (from 'Makefile', line 29)
+MO_DIR := stocks@infinicode.de/locale/de/LC_MESSAGES stocks@infinicode.de/locale/nl/LC_MESSAGES stocks@infinicode.de/locale/sv/LC_MESSAGES
+# environment
+NVM_CD_FLAGS = 
+# environment
+XDG_SESSION_CLASS = user
+# environment
+ANDROID_SDK = /home/tim/Android/Sdk
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# makefile (from 'Makefile', line 12)
+BUILD_DIR := _build
+# environment
+HOME = /home/tim
+# environment
+QT_IM_MODULE = ibus
+# environment
+NVM_IOJS_ORG_MIRROR = https://iojs.org/dist
+# makefile (from 'Makefile', line 28)
+MO_FILES := stocks@infinicode.de/locale/de/LC_MESSAGES/stocks@infinicode.de.mo stocks@infinicode.de/locale/nl/LC_MESSAGES/stocks@infinicode.de.mo stocks@infinicode.de/locale/sv/LC_MESSAGES/stocks@infinicode.de.mo
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# environment
+VSCODE_IPC_HOOK = /run/user/1000/vscode-8fa8f759-1.69.2-main.sock
+# environment
+TERM = xterm-256color
+# environment
+IM_CONFIG_PHASE = 1
+# default
+.RECIPEPREFIX := 
+# automatic
+<F = $(notdir $<)
+# default
+SUFFIXES := 
+# makefile (from 'Makefile', line 24)
+COMPILED_SCHEMAS := stocks@infinicode.de/schemas/gschemas.compiled
+# environment
+VSCODE_CLI = 1
+# environment
+ELECTRON_NO_ATTACH_CONSOLE = 1
+# environment
+VTE_VERSION = 6800
+# makefile (from 'Makefile', line 15)
+SCHEMAS_DIR := stocks@infinicode.de/schemas
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver output-sync check-symlink load
+# environment
+XDG_MENU_PREFIX = gnome-
+# environment
+CONDA_EXE = /home/tim/miniconda3/bin/conda
+# makefile (from 'Makefile', line 10)
+AUTHOR_MAIL := fh@infinicode.de
+# environment
+_CE_CONDA = 
+# environment
+GDMSESSION = ubuntu
+# variable set hash-table stats:
+ 
+# Load=139/1024=14%, Rehash=0, Collisions=13/225=6%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# stocks@infinicode.de (device 66305, inode 926167): 13 files, no impossibilities.
+# stocks@infinicode.de/po (device 66305, inode 926176): 6 files, no impossibilities.
+# . (device 66305, inode 925999): 11 files, no impossibilities.
+
+# 30 files, no impossibilities in 3 directories.
+
+# Implicit Rules
+
+stocks@infinicode.de/locale/%/LC_MESSAGES:
+#  recipe to execute (from 'Makefile', line 52):
+	mkdir -p $@
+
+stocks@infinicode.de/locale/%/LC_MESSAGES/stocks@infinicode.de.mo: stocks@infinicode.de/po/%.po
+#  recipe to execute (from 'Makefile', line 66):
+	msgfmt -c $< -o $@
+
+# 2 implicit rules, 0 (0.0%) terminal.
+# Files
+
+stocks@infinicode.de/po:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 55):
+	mkdir -p $@
+
+stocks@infinicode.de/locale/nl/LC_MESSAGES/stocks@infinicode.de.mo: stocks@infinicode.de/po/de.po stocks@infinicode.de/po/nl.po stocks@infinicode.de/po/sv.po stocks@infinicode.de/locale/de/LC_MESSAGES stocks@infinicode.de/locale/nl/LC_MESSAGES stocks@infinicode.de/locale/sv/LC_MESSAGES
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+package: _build
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 72):
+	cd $(BUILD_DIR)/${SRC_DIR} && zip -r ../$(EXTENSION_NAME)-extension.zip *
+
+_build:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 46):
+	mkdir -p $@
+
+stocks@infinicode.de/po/sv.po: stocks@infinicode.de/po/stocks@infinicode.de.pot stocks@infinicode.de/po
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 61):
+	msgmerge -m -U --backup=none $@ $<
+
+stocks@infinicode.de/po/nl.po: stocks@infinicode.de/po/stocks@infinicode.de.pot stocks@infinicode.de/po
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 61):
+	msgmerge -m -U --backup=none $@ $<
+
+default: build
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2022-08-04 21:26:15.110528502
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+stocks@infinicode.de/locale/nl/LC_MESSAGES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+mrproper: clean
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 83):
+	rm -rf $(BUILD_DIR) $(LOCALE_DIR)
+
+clean:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 80):
+	rm -f $(COMPILED_SCHEMAS) $(MO_FILES)
+
+# Not a target:
+stocks@infinicode.de/locale/sv/LC_MESSAGES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+stocks@infinicode.de/locale/de/LC_MESSAGES/stocks@infinicode.de.mo: stocks@infinicode.de/po/de.po stocks@infinicode.de/po/nl.po stocks@infinicode.de/po/sv.po stocks@infinicode.de/locale/de/LC_MESSAGES stocks@infinicode.de/locale/nl/LC_MESSAGES stocks@infinicode.de/locale/sv/LC_MESSAGES
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+stocks@infinicode.de/po/de.po: stocks@infinicode.de/po/stocks@infinicode.de.pot stocks@infinicode.de/po
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 61):
+	msgmerge -m -U --backup=none $@ $<
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+all:
+#  Command line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+
+stocks@infinicode.de/schemas/gschemas.compiled:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 49):
+	glib-compile-schemas $(SCHEMAS_DIR)
+
+build: _build stocks@infinicode.de/schemas/gschemas.compiled stocks@infinicode.de/locale/de/LC_MESSAGES/stocks@infinicode.de.mo stocks@infinicode.de/locale/nl/LC_MESSAGES/stocks@infinicode.de.mo stocks@infinicode.de/locale/sv/LC_MESSAGES/stocks@infinicode.de.mo
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 69):
+	cp -r --parents $(FILES) $<
+
+stocks@infinicode.de/locale/sv/LC_MESSAGES/stocks@infinicode.de.mo: stocks@infinicode.de/po/de.po stocks@infinicode.de/po/nl.po stocks@infinicode.de/po/sv.po stocks@infinicode.de/locale/de/LC_MESSAGES stocks@infinicode.de/locale/nl/LC_MESSAGES stocks@infinicode.de/locale/sv/LC_MESSAGES
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+stocks@infinicode.de/po/stocks@infinicode.de.pot: stocks@infinicode.de/po
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 58):
+	xgettext --from-code=UTF-8 --package-name "gnome-shell-extension-$(EXTENSION_NAME)" --msgid-bugs-address=$(AUTHOR_MAIL) -k_ -kN_ -o $(POT_FILE) $(TOLOCALIZE)
+
+install: build
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 75):
+	rm -rf $(INSTALL_DIR)
+	mkdir -p $(INSTALL_DIR)
+	cp -r $(BUILD_DIR)/${SRC_DIR}/* $(INSTALL_DIR)
+
+# Not a target:
+stocks@infinicode.de/locale/de/LC_MESSAGES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+.PHONY: clean mrproper
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# files hash-table stats:
+# Load=24/1024=2%, Rehash=0, Collisions=0/57=0%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 54 / storage = 1034 B / avg = 19 B
+# current buf: size = 8162 B / used = 1034 B / count = 54 / avg = 19 B
+
+# strcache performance: lookups = 98 / hit rate = 44%
+# hash-table stats:
+# Load=54/8192=1%, Rehash=0, Collisions=0/98=0%
+# Finished Make data base on Thu Aug  4 21:29:38 2022
+
+ 
