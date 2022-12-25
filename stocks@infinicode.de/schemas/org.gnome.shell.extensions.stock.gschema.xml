@@ -28,6 +28,22 @@
             <default>'Xetra Alibaba-§§-AHLA.DE'</default>
             <summary>old version stock symbol definition (do not use anymore, but keep for migration))</summary>
         </key>
+        <key type="s" name="quote-style-color-positive">
+            <default>'rgb(0,135,60)'</default>
+            <summary>Quote color positive</summary>
+        </key>
+        <key type="s" name="quote-style-color-negative">
+            <default>'rgb(244,78,63)'</default>
+            <summary>Quote color negative</summary>
+        </key>
+        <key type="s" name="quote-style-font-positive">
+            <default>'System-ui 11px'</default>
+            <summary>Quote font positive</summary>
+        </key>
+        <key type="s" name="quote-style-font-negative">
+            <default>'System-ui 11px'</default>
+            <summary>Quote font negative</summary>
+        </key>
         <key type="s" name="symbol-current-quotes">
             <default>''</default>
             <summary>JSON representation of symbol data</summary>

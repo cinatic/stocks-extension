@@ -53,20 +53,6 @@ var cacheOrDefault = async (cacheKey, evaluator, cacheDuration = CACHE_TIME) => 
   return freshData
 }
 
-var getStockColorStyleClass = change => {
-  let quoteColorStyleClass = 'quote-neutral'
-
-  if (change) {
-    if (change > 0.00) {
-      quoteColorStyleClass = 'quote-positive'
-    } else if (change < 0.00) {
-      quoteColorStyleClass = 'quote-negative'
-    }
-  }
-
-  return quoteColorStyleClass
-}
-
 var getComplementaryColor = (hex, bw = true) => {
   const padZero = (str, len) => {
     len = len || 2

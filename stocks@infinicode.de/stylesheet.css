@@ -15,16 +15,6 @@
     text-align: right;
 }
 
-.stocks-extension .quote-positive {
-    color: #00873c;
-    font-weight: bolder;
-}
-
-.stocks-extension .quote-negative {
-    color: #F44E3F;
-    font-weight: bolder;
-}
-
 .button-group .button {
     margin: 0 5px;
 }

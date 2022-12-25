@@ -3,14 +3,15 @@ const { Clutter, GObject, Pango, St } = imports.gi
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
-const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
+const { fallbackIfNaN, roundOrDefault } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
 const { MARKET_STATES } = Me.imports.services.meta.generic
+const { getQuoteStyle } = Me.imports.helpers.styles
 
 var StockCard = GObject.registerClass({
   GTypeName: 'StockExtension_StockCard'
 }, class StockCard extends St.Button {
-  _init (quoteSummary) {
+  _init(quoteSummary) {
     super._init({
       style_class: 'card message stock-card',
       can_focus: true,
@@ -33,7 +34,7 @@ var StockCard = GObject.registerClass({
     this._sync()
   }
 
-  _createCardHeader () {
+  _createCardHeader() {
     const headerBox = new St.BoxLayout({
       style_class: 'header-box',
       x_expand: true,
@@ -49,7 +50,7 @@ var StockCard = GObject.registerClass({
     return headerBox
   }
 
-  _createStockInfo () {
+  _createStockInfo() {
     let stockInformationBox = new St.BoxLayout({
       style_class: 'stock-information-box',
       x_expand: true,
@@ -78,7 +79,7 @@ var StockCard = GObject.registerClass({
     return stockInformationBox
   }
 
-  _createQuoteInfo () {
+  _createQuoteInfo() {
     const quoteInformationBox = new St.BoxLayout({
       style_class: 'quote-information-box',
       vertical: true
@@ -89,20 +90,22 @@ var StockCard = GObject.registerClass({
       x_align: Clutter.ActorAlign.END
     })
 
-    const quoteColorStyleClass = getStockColorStyleClass(this.cardItem.Change)
+    const quoteStyle = getQuoteStyle(this.cardItem.Change)
 
     const regularQuoteLabel = new St.Label({
-      style_class: `quote-label ${quoteColorStyleClass}`,
+      style_class: `quote-label`,
+      style: quoteStyle,
       text: `${roundOrDefault(this.cardItem.Close)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
     })
 
     quoteInformationPriceBox.add_child(regularQuoteLabel)
 
     if (this.cardItem.MarketState === MARKET_STATES.PRE) {
-      const preMarketQuoteColorStyleClass = getStockColorStyleClass(this.cardItem.PreMarketChange)
+      const preMarketQuoteStyle = getQuoteStyle(this.cardItem.PreMarketChange)
 
       const preMarketQuoteLabel = new St.Label({
-        style_class: `quote-label pre-market ${preMarketQuoteColorStyleClass}`,
+        style_class: `quote-label pre-market`,
+        style: preMarketQuoteStyle,
         text: `${roundOrDefault(this.cardItem.PreMarketPrice)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}*`
       })
 
@@ -111,10 +114,11 @@ var StockCard = GObject.registerClass({
     }
 
     if (this.cardItem.MarketState === MARKET_STATES.POST) {
-      const postMarketQuoteColorStyleClass = getStockColorStyleClass(this.cardItem.PostMarketChange)
+      const postMarketQuoteStyle = getQuoteStyle(this.cardItem.PostMarketChange)
 
       const postMarketQuoteLabel = new St.Label({
-        style_class: `quote-label post-market ${postMarketQuoteColorStyleClass}`,
+        style_class: `quote-label post-market`,
+        style: postMarketQuoteStyle,
         text: `${roundOrDefault(this.cardItem.PostMarketPrice)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}*`
       })
 
@@ -138,8 +142,8 @@ var StockCard = GObject.registerClass({
     return quoteInformationBox
   }
 
-  _createRegularAdditionalInformationBox () {
-    const quoteColorStyleClass = getStockColorStyleClass(this.cardItem.Change)
+  _createRegularAdditionalInformationBox() {
+    const quoteStyle = getQuoteStyle(this.cardItem.Change)
 
     const additionalInformationBox = new St.BoxLayout({
       style_class: 'info-section-box tar',
@@ -147,12 +151,14 @@ var StockCard = GObject.registerClass({
     })
 
     const quoteChangeLabel = new St.Label({
-      style_class: `small-text fwb ${quoteColorStyleClass}`,
+      style_class: `small-text fwb`,
+      style: quoteStyle,
       text: `${roundOrDefault(this.cardItem.Change)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
     })
 
     const quoteChangePercentLabel = new St.Label({
-      style_class: `small-text fwb ${quoteColorStyleClass}`,
+      style_class: `small-text fwb`,
+      style: quoteStyle,
       text: `${roundOrDefault(this.cardItem.ChangePercent)} %`
     })
 
@@ -176,8 +182,8 @@ var StockCard = GObject.registerClass({
     return additionalInformationBox
   }
 
-  _createPreMarketAdditionalInformationBox () {
-    const quoteColorStyleClass = getStockColorStyleClass(this.cardItem.PreMarketChange)
+  _createPreMarketAdditionalInformationBox() {
+    const quoteStyle = getQuoteStyle(this.cardItem.PreMarketChange)
 
     const additionalInformationBox = new St.BoxLayout({
       style_class: 'info-section-box tar',
@@ -185,12 +191,14 @@ var StockCard = GObject.registerClass({
     })
 
     const quoteChangeLabel = new St.Label({
-      style_class: `small-text fwb ${quoteColorStyleClass}`,
+      style_class: `small-text fwb`,
+      style: quoteStyle,
       text: `${roundOrDefault(this.cardItem.PreMarketChange)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
     })
 
     const quoteChangePercentLabel = new St.Label({
-      style_class: `small-text fwb ${quoteColorStyleClass}`,
+      style_class: `small-text fwb`,
+      style: quoteStyle,
       text: `${roundOrDefault(this.cardItem.PreMarketChangePercent)} %`
     })
 
@@ -214,8 +222,8 @@ var StockCard = GObject.registerClass({
     return additionalInformationBox
   }
 
-  _createPostMarketAdditionalInformationBox () {
-    const quoteColorStyleClass = getStockColorStyleClass(this.cardItem.PostMarketChange)
+  _createPostMarketAdditionalInformationBox() {
+    const quoteStyle = getQuoteStyle(this.cardItem.PostMarketChange)
 
     const additionalInformationBox = new St.BoxLayout({
       style_class: 'info-section-box tar',
@@ -223,12 +231,14 @@ var StockCard = GObject.registerClass({
     })
 
     const quoteChangeLabel = new St.Label({
-      style_class: `small-text fwb ${quoteColorStyleClass}`,
+      style_class: `small-text fwb`,
+      style: quoteStyle,
       text: `${roundOrDefault(this.cardItem.PostMarketChange)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
     })
 
     const quoteChangePercentLabel = new St.Label({
-      style_class: `small-text fwb ${quoteColorStyleClass}`,
+      style_class: `small-text fwb`,
+      style: quoteStyle,
       text: `${roundOrDefault(this.cardItem.PostMarketChangePercent)} %`
     })
 
@@ -252,9 +262,9 @@ var StockCard = GObject.registerClass({
     return additionalInformationBox
   }
 
-  _sync () {
+  _sync() {
   }
 
-  _onDestroy () {
+  _onDestroy() {
   }
 })
