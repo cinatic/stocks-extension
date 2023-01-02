@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: gnome-shell-extension-stocks\n"
 "Report-Msgid-Bugs-To: fh@infinicode.de\n"
 "POT-Creation-Date: 2022-04-14 22:30+0200\n"
-"PO-Revision-Date: 2021-07-14 14:52+0200\n"
+"PO-Revision-Date: 2023-01-02 22:05+0100\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch <vistausss@fastmail.com>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: stocks@infinicode.de/extension.js:63
 msgid "Stocks"
@@ -224,14 +224,12 @@ msgstr "Item wissen"
 
 #: stocks@infinicode.de/helpers/translations.js:12
 msgid "Stocks Extension"
-msgstr ""
+msgstr "Aandelenuitbreiding"
 
 #: stocks@infinicode.de/helpers/translations.js:13
-#, fuzzy
 msgid "A extension to display stock quotes in GNOME Shell Panel"
 msgstr ""
-"<span>Aandelen is een uitbreiding die aandelen toont en bijhoudt op de GNOME "
-"Shell-bovenbalk</span>"
+"Een uitbreiding die aandelen toont en bijhoudt op de GNOME Shell-bovenbalk"
 
 #: stocks@infinicode.de/helpers/translations.js:15
 msgid "back"
@@ -258,34 +256,29 @@ msgid "UNKNOWN"
 msgstr "ONBEKEND"
 
 #: stocks@infinicode.de/helpers/translations.js:22
-#, fuzzy
 msgid "Yahoo"
-msgstr "yahoo"
+msgstr "Yahoo"
 
 #: stocks@infinicode.de/helpers/translations.js:23
-#, fuzzy
 msgid "EastMoney"
-msgstr "eastmoney"
+msgstr "EastMoney"
 
 #: stocks@infinicode.de/helpers/translations.js:26
-#, fuzzy
 msgid "Add Symbol"
-msgstr "Symbool wijzigen"
+msgstr "Symbool toevoegen"
 
 #: stocks@infinicode.de/helpers/translations.js:27
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Changeme %d"
-msgstr "Wijzigen"
+msgstr "%d wijzigen"
 
 #: stocks@infinicode.de/helpers/translations.js:30
-#, fuzzy
 msgid "In Ticker?"
 msgstr "Tonen op ticker?"
 
 #: stocks@infinicode.de/helpers/translations.js:31
-#, fuzzy
 msgid " - in Ticker"
-msgstr "Tonen op ticker"
+msgstr " - op ticker"
 
 #: stocks@infinicode.de/helpers/translations.js:33
 #, javascript-format
@@ -294,10 +287,9 @@ msgstr "%s verwijderen?"
 
 #: stocks@infinicode.de/helpers/translations.js:35
 msgid "Settings"
-msgstr ""
+msgstr "Voorkeuren"
 
 #: stocks@infinicode.de/helpers/translations.js:43
-#, fuzzy
 msgid "Ticker Display Variation"
 msgstr "Weergavevariatie van tickeritems"
 
@@ -389,24 +381,23 @@ msgstr "Max."
 
 #: stocks@infinicode.de/helpers/translations.js:84
 msgid "OS"
-msgstr ""
+msgstr "Besturingssysteem"
 
 #: stocks@infinicode.de/helpers/translations.js:85
 msgid "Extension Version"
-msgstr ""
+msgstr "Uitbreidingsversie"
 
 #: stocks@infinicode.de/helpers/translations.js:86
 msgid "Git Commit"
-msgstr ""
+msgstr "Git-commit"
 
 #: stocks@infinicode.de/helpers/translations.js:87
-#, fuzzy
 msgid "GNOME Version"
-msgstr "Versie: "
+msgstr "GNOME-versie"
 
 #: stocks@infinicode.de/helpers/translations.js:88
 msgid "Session Type"
-msgstr ""
+msgstr "Sessietype"
 
 #: stocks@infinicode.de/helpers/translations.js:91
 msgid "%H:%M:%S %d.%m.%Y"
