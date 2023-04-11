@@ -111,12 +111,9 @@ var AboutPage = GObject.registerClass({
         let sessionTypeRow = new Adw.ActionRow({
           title: Translations.MISC.SESSION_TYPE,
         })
-        let windowingLabel
-        if (Me.metadata.isWayland) {
-          windowingLabel = 'Wayland'
-        } else {
-          windowingLabel = 'X11'
-        }
+
+        let windowingLabel = GLib.getenv("XDG_SESSION_TYPE");
+
         sessionTypeRow.add_suffix(new Gtk.Label({
           label: windowingLabel,
         }))
