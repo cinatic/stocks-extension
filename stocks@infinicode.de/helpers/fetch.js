@@ -10,7 +10,7 @@ const Response = class {
 
     if (message) {
       this.headers = message.response_headers
-      this.url = message.get_uri().to_string()
+      this.url = message.get_uri().to_string(true)
       this.status = message.status_code
       this.statusText = Soup.Status.get_phrase(this.status)
 

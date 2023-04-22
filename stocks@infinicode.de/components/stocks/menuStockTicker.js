@@ -6,7 +6,8 @@ const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
 const { setTimeout, clearTimeout } = Me.imports.helpers.components
-const { roundOrDefault, getStockColorStyleClass, isNullOrEmpty } = Me.imports.helpers.data
+const { roundOrDefault, isNullOrEmpty } = Me.imports.helpers.data
+const { getQuoteStyle } = Me.imports.helpers.styles
 
 const {
   SettingsHandler,
@@ -16,6 +17,13 @@ const {
   STOCKS_TICKER_STOCK_AMOUNT,
   STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
 } = Me.imports.helpers.settings
+
+const {
+  QUOTE_STYLE_COLOR_POSITIVE,
+  QUOTE_STYLE_COLOR_NEGATIVE,
+  QUOTE_STYLE_FONT_POSITIVE,
+  QUOTE_STYLE_FONT_NEGATIVE
+} = Me.imports.helpers.quoteStyleSettings
 
 const { Translations } = Me.imports.helpers.translations
 
@@ -28,7 +36,11 @@ const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SHOW_OFF_MARKET_TICKER_PRICES,
   STOCKS_TICKER_DISPLAY_VARIATION,
   STOCKS_TICKER_STOCK_AMOUNT,
-  STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
+  STOCKS_USE_PROVIDER_INSTRUMENT_NAMES,
+  QUOTE_STYLE_COLOR_POSITIVE,
+  QUOTE_STYLE_COLOR_NEGATIVE,
+  QUOTE_STYLE_FONT_POSITIVE,
+  QUOTE_STYLE_FONT_NEGATIVE
 ]
 
 const TICKER_ITEM_VARIATION = {
@@ -41,7 +53,7 @@ const TICKER_ITEM_VARIATION = {
 var MenuStockTicker = GObject.registerClass({
   GTypeName: 'StockExtension_MenuStockTicker'
 }, class MenuStockTicker extends St.BoxLayout {
-  _init () {
+  _init() {
     super._init({
       style_class: 'menu-stock-ticker',
       y_align: Clutter.ActorAlign.CENTER,
@@ -71,7 +83,7 @@ var MenuStockTicker = GObject.registerClass({
     this._registerTimeout(false)
   }
 
-  async _sync () {
+  async _sync() {
     const tickerEnabledItems = this._settings.symbol_pairs.filter(item => item.showInTicker)
     const tickerBatch = this._getBatch(tickerEnabledItems, this._visibleStockIndex, this._settings.ticker_stock_amount)
 
@@ -92,7 +104,7 @@ var MenuStockTicker = GObject.registerClass({
     this._createMenuTicker({ quoteSummaries })
   }
 
-  _createMenuTicker ({ quoteSummaries }) {
+  _createMenuTicker({ quoteSummaries }) {
     this.destroy_all_children()
 
     const tickerItemCreationFn = this._getTickerItemCreationFunction()
@@ -116,9 +128,9 @@ var MenuStockTicker = GObject.registerClass({
     })
   }
 
-  _createCompactTickerItemBox (quoteSummary) {
+  _createCompactTickerItemBox(quoteSummary) {
     let { name, currencySymbol, price, change, changePercent, isOffMarket } = this._generateTickerInformation(quoteSummary)
-    const quoteColorStyleClass = getStockColorStyleClass(change)
+    const quoteStyle = getQuoteStyle(change)
 
     currencySymbol = currencySymbol || ''
 
@@ -139,14 +151,16 @@ var MenuStockTicker = GObject.registerClass({
     const stockQuoteLabel = new St.Label({
       y_align: Clutter.ActorAlign.CENTER,
       y_expand: true,
-      style_class: `ticker-stock-quote-label fwb ${quoteColorStyleClass}`,
+      style_class: `ticker-stock-quote-label fwb`,
+      style: quoteStyle,
       text: `${roundOrDefault(price)}${currencySymbol}`
     })
 
     const changeLabel = new St.Label({
       y_align: Clutter.ActorAlign.CENTER,
       y_expand: true,
-      style_class: `ticker-stock-quote-change-label fwb ${quoteColorStyleClass}`,
+      style_class: `ticker-stock-quote-change-label fwb`,
+      style: quoteStyle,
       text: `${roundOrDefault(change)}  ${roundOrDefault(changePercent)} %${isOffMarket ? '*' : ''}`
     })
 
@@ -161,9 +175,9 @@ var MenuStockTicker = GObject.registerClass({
     return stockInfoBox
   }
 
-  _createTremendousTickerItemBox (quoteSummary, regular) {
+  _createTremendousTickerItemBox(quoteSummary, regular) {
     let { name, currencySymbol, price, change, changePercent, isOffMarket } = this._generateTickerInformation(quoteSummary)
-    const quoteColorStyleClass = getStockColorStyleClass(change)
+    const quoteStyle = getQuoteStyle(change)
 
     currencySymbol = currencySymbol || ''
 
@@ -190,14 +204,16 @@ var MenuStockTicker = GObject.registerClass({
     const stockQuoteLabel = new St.Label({
       y_align: regular ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
       y_expand: true,
-      style_class: `ticker-stock-quote-label fwb ${quoteColorStyleClass}`,
+      style_class: `ticker-stock-quote-label fwb`,
+      style: quoteStyle,
       text: `${roundOrDefault(price)}${currencySymbol}`
     })
 
     const stockQuoteChangeLabel = new St.Label({
       y_align: regular ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
       y_expand: true,
-      style_class: `ticker-stock-quote-change-label fwb ${quoteColorStyleClass}`,
+      style_class: `ticker-stock-quote-change-label fwb`,
+      style: quoteStyle,
       text: `(${roundOrDefault(change)}${currencySymbol} | ${roundOrDefault(changePercent)} %)${isOffMarket ? '*' : ''}`
     })
 
@@ -212,9 +228,9 @@ var MenuStockTicker = GObject.registerClass({
     return stockInfoBox
   }
 
-  _createMinimalTickerItemBox (quoteSummary) {
+  _createMinimalTickerItemBox(quoteSummary) {
     let { symbol, currencySymbol, price, change } = this._generateTickerInformation(quoteSummary)
-    const quoteColorStyleClass = getStockColorStyleClass(change)
+    const quoteStyle = getQuoteStyle(change)
 
     currencySymbol = currencySymbol || ''
 
@@ -235,7 +251,8 @@ var MenuStockTicker = GObject.registerClass({
     const stockQuoteLabel = new St.Label({
       y_align: Clutter.ActorAlign.CENTER,
       y_expand: true,
-      style_class: `ticker-stock-quote-label fwb ${quoteColorStyleClass}`,
+      style_class: `ticker-stock-quote-label fwb`,
+      style: quoteStyle,
       text: `${roundOrDefault(price)}${currencySymbol}`
     })
 
@@ -248,7 +265,7 @@ var MenuStockTicker = GObject.registerClass({
     return stockInfoBox
   }
 
-  _showInfoMessage (message) {
+  _showInfoMessage(message) {
     this.destroy_all_children()
 
     const infoMessageBin = new St.Bin({
@@ -264,7 +281,7 @@ var MenuStockTicker = GObject.registerClass({
     this.add_child(infoMessageBin)
   }
 
-  _onPress (actor, event) {
+  _onPress(actor, event) {
     // left click === 1, middle click === 2, right click === 3
     const buttonID = event.get_button()
 
@@ -276,7 +293,7 @@ var MenuStockTicker = GObject.registerClass({
     }
   }
 
-  _registerTimeout (toggleImmediately = true) {
+  _registerTimeout(toggleImmediately = true) {
     if (this._toggleDisplayTimeout) {
       Mainloop.source_remove(this._toggleDisplayTimeout)
       this._toggleDisplayTimeout = null
@@ -293,12 +310,12 @@ var MenuStockTicker = GObject.registerClass({
     })
   }
 
-  _showNextStock () {
+  _showNextStock() {
     this._visibleStockIndex = this._visibleStockIndex + 1 >= this._settings.symbol_pairs.filter(item => item.showInTicker).length ? 0 : this._visibleStockIndex + 1
     this._sync()
   }
 
-  _onDestroy () {
+  _onDestroy() {
     if (this._toggleDisplayTimeout) {
       Mainloop.source_remove(this._toggleDisplayTimeout)
     }
@@ -312,7 +329,7 @@ var MenuStockTicker = GObject.registerClass({
     }
   }
 
-  _getTickerItemCreationFunction () {
+  _getTickerItemCreationFunction() {
     switch (this._settings.ticker_display_variation) {
       case TICKER_ITEM_VARIATION.COMPACT:
         return this._createCompactTickerItemBox
@@ -329,7 +346,7 @@ var MenuStockTicker = GObject.registerClass({
     }
   }
 
-  _generateTickerInformation (quoteSummary) {
+  _generateTickerInformation(quoteSummary) {
     const stockInfoDetails = {
       name: quoteSummary.FullName,
       currencySymbol: quoteSummary.CurrencySymbol,
@@ -359,7 +376,7 @@ var MenuStockTicker = GObject.registerClass({
     return stockInfoDetails
   }
 
-  _getBatch (items, index, amount) {
+  _getBatch(items, index, amount) {
     const start = index * amount
     const end = start + amount
 

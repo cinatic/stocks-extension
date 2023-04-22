@@ -3,14 +3,14 @@ const { Clutter, GObject, Pango, St } = imports.gi
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
-const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
+const { fallbackIfNaN, roundOrDefault } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
 const { MARKET_STATES } = Me.imports.services.meta.generic
 
 var NewsCard = GObject.registerClass({
   GTypeName: 'StockExtension_NewsCard'
 }, class NewsCard extends St.Button {
-  _init (newsItem, fgColor) {
+  _init(newsItem, fgColor) {
     super._init({
       style_class: 'card message news-card',
       can_focus: true,
@@ -34,7 +34,7 @@ var NewsCard = GObject.registerClass({
     this._sync()
   }
 
-  _createNewsContent () {
+  _createNewsContent() {
     let newsContentBox = new St.BoxLayout({
       style_class: 'news-content-box',
       x_expand: true,
@@ -83,9 +83,9 @@ var NewsCard = GObject.registerClass({
     return newsContentBox
   }
 
-  _sync () {
+  _sync() {
   }
 
-  _onDestroy () {
+  _onDestroy() {
   }
 })

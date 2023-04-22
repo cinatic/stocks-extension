@@ -8,16 +8,17 @@ const { Chart } = Me.imports.components.chart.chart
 const { StockDetails } = Me.imports.components.stocks.stockDetails
 const { SearchBar } = Me.imports.components.searchBar.searchBar
 
-const { clearCache, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
+const { clearCache, roundOrDefault } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
 
 const { CHART_RANGES, CHART_RANGES_MAX_GAP } = Me.imports.services.meta.generic
 const FinanceService = Me.imports.services.financeService
+const { getQuoteStyle } = Me.imports.helpers.styles
 
 var StockDetailsScreen = GObject.registerClass({
   GTypeName: 'StockExtension_StockDetailsScreen'
 }, class StockDetailsScreen extends St.BoxLayout {
-  _init ({ quoteSummary, mainEventHandler }) {
+  _init({ quoteSummary, mainEventHandler }) {
     super._init({
       style_class: 'screen stock-details-screen',
       vertical: true
@@ -32,7 +33,7 @@ var StockDetailsScreen = GObject.registerClass({
     this._sync()
   }
 
-  async _sync () {
+  async _sync() {
     const [quoteSummary, quoteHistorical] = await Promise.all([
       FinanceService.getQuoteSummary({
         symbol: this._passedQuoteSummary.Symbol,
@@ -141,11 +142,12 @@ var StockDetailsScreen = GObject.registerClass({
       const changeAbsolute = roundOrDefault(this._quoteSummary.Close - y)
       const changePercentage = roundOrDefault((this._quoteSummary.Close / y * 100) - 100)
 
-      const changeColorStyleClass = getStockColorStyleClass(changePercentage)
+      const quoteStyle = getQuoteStyle(changePercentage)
 
       chartValueLabel.text = `${(new Date(x)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)} ${roundOrDefault(y)}`
       chartValueChangeLabel.text = `(${changeAbsolute} / ${changePercentage} %)`
-      chartValueChangeLabel.style_class = `chart-hover-change-label ${changeColorStyleClass}`
+      chartValueChangeLabel.style_class = `chart-hover-change-label`
+      chartValueChangeLabel.style = quoteStyle
     })
 
     this.add_child(searchBar)
@@ -159,7 +161,7 @@ var StockDetailsScreen = GObject.registerClass({
     this.add_child(chartValueHoverBox)
   }
 
-  _onChartDraw ({ width, height, cairoContext, secondaryColor }) {
+  _onChartDraw({ width, height, cairoContext, secondaryColor }) {
     if (this._isIntrayDayChart && this._quoteSummary && this._quoteSummary.PreviousClose) {
       const [minValueY, maxValueY] = this._chart.getYRange()
 

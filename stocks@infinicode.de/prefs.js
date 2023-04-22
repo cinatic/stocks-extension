@@ -6,12 +6,13 @@ const Me = ExtensionUtils.getCurrentExtension()
 const { AboutPage } = Me.imports.components.settings.aboutPage
 const { SymbolsListPage } = Me.imports.components.settings.symbolsListPage
 const { SettingsPage } = Me.imports.components.settings.settingsPage
+const { StylesPage } = Me.imports.components.settings.stylesPage
 
-function init () {
+function init() {
   ExtensionUtils.initTranslations()
 }
 
-function fillPreferencesWindow (window) {
+function fillPreferencesWindow(window) {
   let iconTheme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
   if (!iconTheme.get_search_path().includes(Me.path + '/media')) {
     iconTheme.add_search_path(Me.path + '/media')
@@ -24,6 +25,9 @@ function fillPreferencesWindow (window) {
 
   const settingsPage = new SettingsPage()
   window.add(settingsPage)
+
+  const stylesPage = new StylesPage()
+  window.add(stylesPage)
 
   const aboutPage = new AboutPage()
   window.add(aboutPage)

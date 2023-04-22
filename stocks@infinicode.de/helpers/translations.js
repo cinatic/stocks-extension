@@ -27,6 +27,7 @@ var Translations = {
     REMOVE_CONFIRMATION_TEXT: _('Remove %s?'),
     TITLE_GENERAL: _('General'),
     TITLE_SETTINGS: _('Settings'),
+    TITLE_STYLES: _('Styles'),
     TITLE_ABOUT: _('About'),
     TITLE_SYMBOLS: _('Symbols'),
     TITLE_SYMBOLS_LIST: _('Symbol List'),
@@ -44,7 +45,16 @@ var Translations = {
     TICKER_STOCK_AMOUNT_LABEL: _('Items to show in ticker'),
     TICKER_INTERVAL_LABEL: _('Stock Panel Ticker Interval in Seconds'),
     SHOW_TICKER_OFF_MARKET_PRICES_LABEL: _('Show off-market prices in Ticker'),
-    USE_NAMES_FROM_PROVIDER_LABEL: _('Use instrument names from provider')
+    USE_NAMES_FROM_PROVIDER_LABEL: _('Use instrument names from provider'),
+    QUOTE_STYLE: {
+      GROUP_TITLE: _('Quote styles'),
+      ROW_POSITIVE: _('Positive'),
+      ROW_NEGATIVE: _('Negative'),
+      COLOR_CHOOSER_POSITIVE: _('Quote positive color'),
+      COLOR_CHOOSER_NEGATIVE: _('Quote negative color'),
+      FONT_CHOOSER_POSITIVE: _('Quote positive font'),
+      FONT_CHOOSER_NEGATIVE: _('Quote negative font'),
+    }
   },
   STOCKS: {
     SYMBOL: _('Symbol'),
