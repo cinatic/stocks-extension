@@ -4,7 +4,7 @@ const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
 const { AboutPage } = Me.imports.components.settings.aboutPage
-const { SymbolsListPage } = Me.imports.components.settings.symbolsListPage
+const { PortfolioListPage } = Me.imports.components.settings.portfolioListPage
 const { SettingsPage } = Me.imports.components.settings.settingsPage
 
 function init () {
@@ -19,8 +19,8 @@ function fillPreferencesWindow (window) {
 
   window.set_search_enabled(true)
 
-  const symbolsListPage = new SymbolsListPage()
-  window.add(symbolsListPage)
+  const portfolioListPage = new PortfolioListPage()
+  window.add(portfolioListPage)
 
   const settingsPage = new SettingsPage()
   window.add(settingsPage)

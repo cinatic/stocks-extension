@@ -4,6 +4,7 @@ const Me = ExtensionUtils.getCurrentExtension()
 const { Adw, Gio, GObject, Gtk } = imports.gi
 
 const { Translations } = Me.imports.helpers.translations
+const { SettingsHandler } = Me.imports.helpers.settings
 
 const { NewItemModel } = Me.imports.components.settings.subcomponents.newItemModel
 const { NewSymbolRow } = Me.imports.components.settings.subcomponents.newSymbolRow
@@ -14,14 +15,14 @@ var SymbolsListPage = GObject.registerClass({
       GTypeName: 'StockExtension-SymbolsListPage',
     },
     class SymbolsListPreferencePage extends Adw.PreferencesPage {
-      _init () {
+      _init (portfolioItem) {
         super._init({
           title: Translations.SETTINGS.TITLE_SYMBOLS,
           icon_name: 'view-list-symbolic',
           name: 'SymbolsListPage'
         })
 
-        const preferenceGroup = new SymbolListPreferenceGroup()
+        const preferenceGroup = new SymbolListPreferenceGroup(portfolioItem)
         this.add(preferenceGroup)
       }
     })
@@ -39,19 +40,38 @@ class SymbolListPreferenceGroup extends Adw.PreferencesGroup {
     })
   }
 
-  constructor () {
-    super({
-      title: Translations.SETTINGS.TITLE_SYMBOLS_LIST,
-    })
+  constructor (portfolioItem) {
+    super()
 
-    this._symbolModelList = new SymbolModelList()
+    let symbols = []
+    this._settings = new SettingsHandler()
+
+    try {
+      symbols = JSON.parse(portfolioItem.symbols || '[]')
+    } catch (e) {
+    }
+
+    this._symbolModelList = new SymbolModelList(portfolioItem.id, symbols)
 
     const store = new Gio.ListStore({ item_type: Gio.ListModel })
     const listModel = new Gtk.FlattenListModel({ model: store })
     store.append(this._symbolModelList)
     store.append(new NewItemModel())
 
+    const listNameEntryRow = new Adw.EntryRow({
+      title: Translations.SETTINGS.PORTFOLIO_NAME,
+      text: portfolioItem.name
+    })
+
+    listNameEntryRow.connect('changed', () => {
+      this._settings.updatePortfolioById(portfolioItem.id, listNameEntryRow.get_text())
+    })
+
+    this.add(listNameEntryRow)
+
     this._list = new Gtk.ListBox({
+      margin_top: 4,
+      margin_end: 4,
       selection_mode: Gtk.SelectionMode.NONE,
       css_classes: ['boxed-list'],
     })

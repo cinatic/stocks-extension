@@ -28,6 +28,10 @@
             <default>'Xetra Alibaba-§§-AHLA.DE'</default>
             <summary>old version stock symbol definition (do not use anymore, but keep for migration))</summary>
         </key>
+        <key type="s" name="portfolios">
+            <default>''</default>
+            <summary>JSON representation of portfolio data</summary>
+        </key>
         <key type="s" name="symbol-current-quotes">
             <default>''</default>
             <summary>JSON representation of symbol data</summary>
@@ -47,6 +51,10 @@
         <key name="use-provider-instrument-names" type="b">
             <default>true</default>
             <summary>If enabled instrument names will be used from data provider.</summary>
+        </key>
+        <key name="selected-portfolio" type="s">
+            <default>''</default>
+            <summary>Selected portfolio by user</summary>
         </key>
     </schema>
 </schemalist>
