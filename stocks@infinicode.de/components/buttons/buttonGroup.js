@@ -19,7 +19,7 @@ var ButtonGroup = GObject.registerClass({
       this.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
     }
 
-    this.set_overlay_scrollbars(true)
+    // this.set_overlay_scrollbars(true)
 
     this._sync_on_click = sync_on_click
     this._selectedButton = buttons.find(item => item.selected)
@@ -27,7 +27,6 @@ var ButtonGroup = GObject.registerClass({
 
     this._content = new St.BoxLayout({
       style_class: 'button-group-content',
-      y_align: Clutter.ActorAlign.CENTER,
       x_align: Clutter.ActorAlign.CENTER,
       y_expand,
       x_expand

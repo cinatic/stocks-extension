@@ -6,9 +6,10 @@
   "settings-schema": "org.gnome.shell.extensions.stocks",
   "gettext-domain": "stocks@infinicode.de",
   "shell-version": [
-    "43"
+    "43",
+    "44"
   ],
   "url": "https://github.com/cinatic/stocks-extension",
   "uuid": "stocks@infinicode.de",
-  "version": 25
+  "version": 26
 }

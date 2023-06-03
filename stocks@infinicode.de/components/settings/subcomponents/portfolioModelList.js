@@ -3,29 +3,26 @@ const Me = ExtensionUtils.getCurrentExtension()
 
 const { Gio, GObject } = imports.gi
 
-const { StockItem } = Me.imports.components.settings.subcomponents.stockItem
+const { PortfolioItem } = Me.imports.components.settings.subcomponents.portfolioItem
 
-const { SettingsHandler, STOCKS_SYMBOL_PAIRS, } = Me.imports.helpers.settings
+const { SettingsHandler, STOCKS_PORTFOLIOS } = Me.imports.helpers.settings
 const { Translations } = Me.imports.helpers.translations
 
-const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
-
 const SETTING_KEYS_TO_REFRESH = [
-  STOCKS_SYMBOL_PAIRS
+  STOCKS_PORTFOLIOS
 ]
 
-var SymbolModelList = GObject.registerClass({
-  GTypeName: 'StockExtension-SymbolModelList',
-}, class SymbolModelList extends GObject.Object {
+var PortfolioModelList = GObject.registerClass({
+  GTypeName: 'StockExtension-PortfolioModelList',
+}, class PortfolioModelList extends GObject.Object {
   static [GObject.interfaces] = [Gio.ListModel]
 
   #items = []
   #changedId
 
-  constructor (portfolioId) {
+  constructor () {
     super()
 
-    this._portfolioId = portfolioId
     this._settings = new SettingsHandler()
     this.#items = this.convert_items()
 
@@ -44,31 +41,26 @@ var SymbolModelList = GObject.registerClass({
   }
 
   convert_items () {
-    return this._settings.symbolsByPortfolio(this._portfolioId).map(item => {
-      const stockItem = new StockItem()
+    return this._settings.portfolios.map(configItem => {
+      const item = new PortfolioItem()
 
-      stockItem.id = item.id || Gio.dbus_generate_guid()
-      stockItem.name = item.name
-      stockItem.symbol = item.symbol
-      stockItem.provider = item.provider
-      stockItem.showInTicker = item.showInTicker
+      item.id = configItem.id || Gio.dbus_generate_guid()
+      item.name = configItem.name
+      item.symbols = configItem.symbols
 
-      return stockItem
+      return item
     })
   }
 
   append () {
-    const name = Translations.SETTINGS.DEFAULT_NAME.format(this.#items.length + 1)
+    const name = Translations.SETTINGS.DEFAULT_PORTFOLIO_NAME.format(this.#items.length + 1)
 
-    const newStockItem = new StockItem()
+    const newItem = new PortfolioItem()
 
-    newStockItem.id = Gio.dbus_generate_guid()
-    newStockItem.name = name
-    newStockItem.symbol = 'AHLA.DE'
-    newStockItem.provider = FINANCE_PROVIDER.YAHOO
-    newStockItem.showInTicker = false
+    newItem.id = Gio.dbus_generate_guid()
+    newItem.name = name
 
-    this.#items.push(newStockItem)
+    this.#items.push(newItem)
 
     // https://gitlab.gnome.org/GNOME/gnome-shell-extensions/-/issues/390
     // this does not cause scroll to top / whole list refresh
@@ -93,7 +85,7 @@ var SymbolModelList = GObject.registerClass({
     this.save_items()
   }
 
-  edit (id, name, symbol, showInTicker, provider) {
+  edit (id) {
     const pos = this.#items.findIndex(item => item.id === id)
 
     if (pos === -1) {
@@ -102,11 +94,6 @@ var SymbolModelList = GObject.registerClass({
 
     const [modifiedItem] = this.#items.splice(pos, 1)
     this.items_changed(pos, 1, 0)
-
-    modifiedItem.name = name
-    modifiedItem.symbol = symbol
-    modifiedItem.showInTicker = showInTicker
-    modifiedItem.provider = provider
 
     this.#items.splice(pos, 0, modifiedItem)
 
@@ -133,11 +120,11 @@ var SymbolModelList = GObject.registerClass({
   }
 
   save_items () {
-    this._settings.updatePortfolioById(this._portfolioId, null, this.#items)
+    this._settings.portfolios = this.#items
   }
 
   vfunc_get_item_type () {
-    return StockItem
+    return PortfolioItem
   }
 
   vfunc_get_n_items () {
