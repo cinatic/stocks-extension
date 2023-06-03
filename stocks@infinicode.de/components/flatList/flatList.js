@@ -30,6 +30,7 @@ var FlatList = GObject.registerClass({
 
     this._id = id
     this._persist_scroll_position = persistScrollPosition
+    this._resetScrollPositionTimeoutId = null
 
     this._content = new St.BoxLayout({
       style_class: 'flatlist',
@@ -43,6 +44,8 @@ var FlatList = GObject.registerClass({
     }
 
     this.add_actor(this._content)
+
+    this.connect('destroy', this._onDestroy.bind(this))
   }
 
   get items () {
@@ -66,7 +69,7 @@ var FlatList = GObject.registerClass({
     this._content.connect('stage-views-changed', async () => {
       const savedScrollPosition = await cacheOrDefault(cacheKey, () => this.vscroll.adjustment.value, 365 * 24 * 60 * 60 * 1000)
 
-      setTimeout(() => {
+      this._resetScrollPositionTimeoutId = setTimeout(() => {
         if (this.vscroll.adjustment.value !== savedScrollPosition) {
           this.vscroll.adjustment.value = savedScrollPosition
         }
@@ -126,6 +129,12 @@ var FlatList = GObject.registerClass({
         duration: MESSAGE_ANIMATION_TIME,
         mode: Clutter.AnimationMode.EASE_OUT_QUAD
       })
+    }
+  }
+
+  _onDestroy () {
+    if (this._resetScrollPositionTimeoutId) {
+      clearTimeout(this._resetScrollPositionTimeoutId)
     }
   }
 })
