@@ -34,8 +34,10 @@ var Chart = GObject.registerClass({
     this._selectedY = null
     this._onDraw = onDraw
     this._additionalYData = additionalYData || []
+    this._userLines = []
 
     this.connect('repaint', this._draw.bind(this))
+    this.connect('button-press-event', this._onClick.bind(this))
     this.connect('motion-event', this._onHover.bind(this))
     this.connect('leave-event', this._onLeave.bind(this))
   }
@@ -72,6 +74,7 @@ var Chart = GObject.registerClass({
     this._draw_line_chart(baseParams)
     this._draw_volume_bars(baseParams)
     this._draw_crosshair(baseParams)
+    this._draw_user_lines(baseParams)
 
     if (this._onDraw) {
       this._onDraw(baseParams)
@@ -171,6 +174,29 @@ var Chart = GObject.registerClass({
     }
   }
 
+  _draw_user_lines ({ width, height, cairoContext, secondaryColor }) {
+    this._userLines.forEach(userLine => {
+      let { x1, x2, y1, y2 } = userLine
+
+      x2 = isNullOrUndefined(x2) ? this._selectedX : x2
+      y2 = isNullOrUndefined(y2) ? this._selectedY : y2
+
+      if (!x2 || !y2) {
+        return
+      }
+
+      this.draw_line({
+        x1,
+        x2,
+        y1,
+        y2,
+        cairoContext,
+        color: Clutter.color_from_string('#ff0000ff')[1],
+        lineWidth: 1.5
+      })
+    })
+  }
+
   draw_line ({ x1, x2, y1, y2, cairoContext, color, dashed, lineWidth = 0.5 }) {
     Clutter.cairo_set_source_color(cairoContext, color)
 
@@ -197,6 +223,35 @@ var Chart = GObject.registerClass({
       this.encodeValue(x, minValueX, maxValueX, 0, width),
       isNullOrUndefined(y) ? null : this.encodeValue(y, minValueY, maxValueY, 0, height)
     ])
+  }
+
+  _onClick (item, event) {
+    if (isNullOrEmpty(this.data)) {
+      return
+    }
+
+    // first get position then
+    // check if there is an open userline otherwise open one
+
+    const [coordX, coordY] = event.get_coords()
+    const [positionX, positionY] = item.get_transformed_position()
+
+    const chartX = coordX - positionX
+    const chartY = coordY - positionY
+
+    const userLine = this._userLines.find(item => isNullOrUndefined(item.x2))
+
+    if (userLine) {
+      userLine.x2 = chartX
+      userLine.y2 = chartY
+    } else {
+      this._userLines.push({
+        x1: chartX,
+        y1: chartY
+      })
+    }
+
+    this.queue_repaint()
   }
 
   _onHover (item, event) {
