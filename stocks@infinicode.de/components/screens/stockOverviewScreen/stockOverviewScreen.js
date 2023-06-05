@@ -76,6 +76,7 @@ var StockOverviewScreen = GObject.registerClass({
     this._list.connect('clicked-item', (sender, item) => this._mainEventHandler.emit('show-screen', {
       screen: 'stock-details',
       additionalData: {
+        portfolioId: this._settings.selected_portfolio,
         item: item.cardItem
       }
     }))

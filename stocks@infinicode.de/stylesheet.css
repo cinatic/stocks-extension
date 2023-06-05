@@ -177,3 +177,10 @@
     margin-right: 5px;
     font-weight: bolder;
 }
+
+
+/*** edit screen ***/
+
+.stocks-extension .edit-screen .form-element-box {
+    margin: 10px 15px;
+}

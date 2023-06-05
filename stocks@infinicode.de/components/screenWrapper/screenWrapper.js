@@ -2,8 +2,11 @@ const { GObject, St } = imports.gi
 
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
+
+const { EditTransactionScreen } = Me.imports.components.screens.editTransactionScreen.editTransactionScreen
 const { StockOverviewScreen } = Me.imports.components.screens.stockOverviewScreen.stockOverviewScreen
 const { StockNewsListScreen } = Me.imports.components.screens.stockNewsListScreen.stockNewsListScreen
+const { StockTransactionsScreen } = Me.imports.components.screens.stockTransactionsScreen.stockTransactionsScreen
 const { StockDetailsScreen } = Me.imports.components.screens.stockDetailsScreen.stockDetailsScreen
 
 var ScreenWrapper = GObject.registerClass({
@@ -29,11 +32,19 @@ var ScreenWrapper = GObject.registerClass({
 
         switch (screenName) {
           case 'stock-details':
-            screen = new StockDetailsScreen({ quoteSummary: additionalData.item, mainEventHandler: this._mainEventHandler })
+            screen = new StockDetailsScreen({ portfolioId: additionalData.portfolioId, quoteSummary: additionalData.item, mainEventHandler: this._mainEventHandler })
             break
 
           case 'stock-news-list':
             screen = new StockNewsListScreen({ quoteSummary: additionalData.item, mainEventHandler: this._mainEventHandler })
+            break
+
+          case 'stock-transactions':
+            screen = new StockTransactionsScreen({ portfolioId: additionalData.portfolioId, quoteSummary: additionalData.item, mainEventHandler: this._mainEventHandler })
+            break
+
+          case 'edit-transaction':
+            screen = new EditTransactionScreen({ transactionItem: additionalData.transaction, portfolioId: additionalData.portfolioId, quoteSummary: additionalData.item, mainEventHandler: this._mainEventHandler })
             break
 
           case 'overview':

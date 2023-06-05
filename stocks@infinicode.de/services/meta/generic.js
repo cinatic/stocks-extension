@@ -9,6 +9,11 @@ var CHART_RANGES = {
   MAX: 'max'
 }
 
+var TRANSACTION_TYPES = {
+  BUY: 'buy',
+  SELL: 'sell'
+}
+
 var CHART_RANGES_MAX_GAP = {
   [CHART_RANGES.INTRADAY]: null,
   [CHART_RANGES.WEEK]: 3600 * 1000,

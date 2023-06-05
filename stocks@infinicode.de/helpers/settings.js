@@ -9,6 +9,7 @@ const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
 var POSITION_IN_PANEL_KEY = 'position-in-panel'
 var STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
 var STOCKS_PORTFOLIOS = 'portfolios'
+var STOCKS_TRANSACTIONS = 'transactions'
 var STOCKS_TICKER_INTERVAL = 'ticker-interval'
 var STOCKS_SHOW_OFF_MARKET_TICKER_PRICES = 'show-ticker-off-market-prices'
 var STOCKS_TICKER_STOCK_AMOUNT = 'ticker-stock-amount'
@@ -78,6 +79,15 @@ var SettingsHandler = class SettingsHandler {
 
   set portfolios (value) {
     this._settings.set_string(STOCKS_PORTFOLIOS, GLib.base64_encode(JSON.stringify(value)))
+  }
+
+  get transactions () {
+    const rawString = this._settings.get_string(STOCKS_TRANSACTIONS)
+    return decodeBase64JsonOrDefault(rawString, {})
+  }
+
+  set transactions (value) {
+    this._settings.set_string(STOCKS_TRANSACTIONS, GLib.base64_encode(JSON.stringify(value)))
   }
 
   get ticker_interval () {

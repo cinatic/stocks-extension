@@ -38,7 +38,7 @@ var StockNewsListScreen = GObject.registerClass({
       style_class: 'stock-details-tab-button-group',
       enableScrollbar: false,
       y_expand: false,
-      buttons: ['KeyData', 'NewsList'].map(tabKey => ({
+      buttons: ['KeyData', 'Transactions', 'NewsList'].map(tabKey => ({
         label: tabKey,
         value: tabKey,
         selected: tabKey === 'NewsList'
@@ -48,21 +48,22 @@ var StockNewsListScreen = GObject.registerClass({
     stockDetailsTabButtonGroup.connect('clicked', (_, stButton) => {
       const selectedTab = stButton.buttonData.value
 
+      let screen
+
       if (selectedTab === 'KeyData') {
-        this._mainEventHandler.emit('show-screen', {
-          screen: 'stock-details',
-          additionalData: {
-            item: this._passedQuoteSummary
-          }
-        })
+        screen = 'stock-details'
+      } else if (selectedTab === 'Transactions') {
+        screen = 'stock-transactions'
       } else {
-        this._mainEventHandler.emit('show-screen', {
-          screen: 'stock-news-list',
-          additionalData: {
-            item: this._passedQuoteSummary
-          }
-        })
+        screen = 'stock-news-list'
       }
+
+      this._mainEventHandler.emit('show-screen', {
+        screen,
+        additionalData: {
+          item: this._passedQuoteSummary
+        }
+      })
     })
 
     this.add_child(this._searchBar)

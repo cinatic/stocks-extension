@@ -16,6 +16,12 @@ var Translations = {
     YAHOO: _('Yahoo'),
     EAST_MONEY: _('EastMoney')
   },
+  TRANSACTIONS: {
+    INVALID_PRICE: _('Price could not be parsed'),
+    INVALID_AMOUNT: _('Amount must be a whole number'),
+    INVALID_DATE: _('Date could not be parsed'),
+    TITLE_TRANSACTION_TYPE: _('Transaction Type'),
+  },
   SETTINGS: {
     ADD_SYMBOL: _('Add Symbol'),
     ADD_PORTFOLIO: _('Add Portfolio'),
@@ -68,6 +74,14 @@ var Translations = {
     TIME_POST_MARKET: _('After Hours*'),
     PRE_MARKET: _('Pre Market*'),
     POST_MARKET: _('Post Market*'),
+    REALIZED: _('Realized'),
+    VALUE: _('Value'),
+    COST: _('Cost'),
+    PRICE: _('Price'),
+    TRANSACTION_TYPE: {
+      BUY: _('Buy'),
+      SELL: _('Sell')
+    }
   },
   CHART: {
     RANGES: {
@@ -82,6 +96,12 @@ var Translations = {
     }
   },
   MISC: {
+    SAVE: _('Save'),
+    DATE: _('Date'),
+    ALLTIME: _('Alltime'),
+    TOTAL: _('Total'),
+    TODAY: _('Today'),
+    AMOUNT: _('Amount'),
     OS: _('OS'),
     EXTENSION_VERSION: _('Extension Version'),
     GIT_COMMIT: _('Git Commit'),

@@ -36,6 +36,10 @@
             <default>''</default>
             <summary>JSON representation of symbol data</summary>
         </key>
+        <key type="s" name="transactions">
+            <default>''</default>
+            <summary>JSON representation of transaction data</summary>
+        </key>
         <key type="i" name="ticker-interval">
             <default>10</default>
             <summary>Ticker Interval in Seconds</summary>
