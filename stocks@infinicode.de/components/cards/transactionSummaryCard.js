@@ -7,10 +7,11 @@ const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.he
 const { Translations } = Me.imports.helpers.translations
 const { MARKET_STATES } = Me.imports.services.meta.generic
 
+
 var TransactionSummaryCard = GObject.registerClass({
   GTypeName: 'StockExtension_TransactionSummaryCard'
 }, class TransactionSummaryCard extends St.Button {
-  _init (quoteSummary) {
+  _init (quoteSummary, transactionResult) {
     super._init({
       style_class: 'card message stock-card',
       can_focus: true,
@@ -18,6 +19,7 @@ var TransactionSummaryCard = GObject.registerClass({
     })
 
     this.cardItem = quoteSummary
+    this._transaction = transactionResult
 
     let vContentBox = new St.BoxLayout({
       vertical: true,
@@ -26,7 +28,7 @@ var TransactionSummaryCard = GObject.registerClass({
     this.set_child(vContentBox)
 
     const cardHeaderBox = this._createCardHeader()
-    const detailBox = this._createDetailBox({ quoteSummary })
+    const detailBox = this._createDetailBox({ quoteSummary, transactionResult })
 
     vContentBox.add_child(cardHeaderBox)
     vContentBox.add_child(detailBox)
@@ -131,20 +133,20 @@ var TransactionSummaryCard = GObject.registerClass({
     return infoBox
   }
 
-  _createDetailBox ({ quoteSummary }) {
+  _createDetailBox ({ quoteSummary, transactionResult }) {
     let detailBox = new St.BoxLayout({
       style_class: 'stock-details-box',
       x_expand: true,
       y_expand: false
     })
 
-    detailBox.add_child(this._createLeftDetailBox({ quoteSummary }))
-    detailBox.add_child(this._createRightDetailBox({ quoteSummary }))
+    detailBox.add_child(this._createLeftDetailBox({ quoteSummary, transactionResult }))
+    detailBox.add_child(this._createRightDetailBox({ quoteSummary, transactionResult }))
 
     return detailBox
   }
 
-  _createLeftDetailBox ({ quoteSummary }) {
+  _createLeftDetailBox ({ quoteSummary, transactionResult }) {
     let leftDetailBox = new St.BoxLayout({
       style_class: 'stock-left-details-box',
       x_expand: true,
@@ -154,23 +156,23 @@ var TransactionSummaryCard = GObject.registerClass({
 
     leftDetailBox.add(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TODAY),
-        this._createDetailItemValueForChange(-800.22, quoteSummary.CurrencySymbol, -22.00)
+        this._createDetailItemValueForChange(transactionResult.today, quoteSummary.CurrencySymbol, transactionResult.todayPercent)
     ))
 
     leftDetailBox.add(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.VALUE),
-        this._createDetailItemValue(`15.111,00 ${quoteSummary.CurrencySymbol}`)
+        this._createDetailItemValue(`${roundOrDefault(transactionResult.value, '--')} ${quoteSummary.CurrencySymbol}`)
     ))
 
     leftDetailBox.add(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.ALLTIME),
-        this._createDetailItemValueForChange(-800.22, quoteSummary.CurrencySymbol, -22.00)
+        this._createDetailItemValueForChange(transactionResult.alltime, quoteSummary.CurrencySymbol, transactionResult.alltimePercent)
     ))
 
     return leftDetailBox
   }
 
-  _createRightDetailBox ({ quoteSummary }) {
+  _createRightDetailBox ({ quoteSummary, transactionResult }) {
     let rightDetailBox = new St.BoxLayout({
       style_class: 'stock-details-box',
       x_expand: true,
@@ -180,17 +182,17 @@ var TransactionSummaryCard = GObject.registerClass({
 
     rightDetailBox.add(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TOTAL),
-        this._createDetailItemValueForChange(8330.22, quoteSummary.CurrencySymbol, 22.00)
+        this._createDetailItemValueForChange(transactionResult.total, quoteSummary.CurrencySymbol, transactionResult.totalPercent)
     ))
 
     rightDetailBox.add(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.COST),
-        this._createDetailItemValue(`35.111,00 ${quoteSummary.CurrencySymbol}`)
+        this._createDetailItemValue(`${roundOrDefault(transactionResult.unrealizedCost, '--')} ${quoteSummary.CurrencySymbol}`)
     ))
 
     rightDetailBox.add(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.REALIZED),
-        this._createDetailItemValueForChange(-800.22, quoteSummary.CurrencySymbol, -22.00)
+        this._createDetailItemValueForChange(transactionResult.realized, quoteSummary.CurrencySymbol, transactionResult.realizedPercent)
     ))
 
     return rightDetailBox

@@ -36,7 +36,7 @@ var ScreenWrapper = GObject.registerClass({
             break
 
           case 'stock-news-list':
-            screen = new StockNewsListScreen({ quoteSummary: additionalData.item, mainEventHandler: this._mainEventHandler })
+            screen = new StockNewsListScreen({ portfolioId: additionalData.portfolioId, quoteSummary: additionalData.item, mainEventHandler: this._mainEventHandler })
             break
 
           case 'stock-transactions':
@@ -44,7 +44,7 @@ var ScreenWrapper = GObject.registerClass({
             break
 
           case 'edit-transaction':
-            screen = new EditTransactionScreen({ transactionItem: additionalData.transaction, portfolioId: additionalData.portfolioId, quoteSummary: additionalData.item, mainEventHandler: this._mainEventHandler })
+            screen = new EditTransactionScreen({ transaction: additionalData.transaction, portfolioId: additionalData.portfolioId, quoteSummary: additionalData.item, mainEventHandler: this._mainEventHandler })
             break
 
           case 'overview':

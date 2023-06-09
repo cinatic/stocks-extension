@@ -8,16 +8,26 @@ const { ButtonGroup } = Me.imports.components.buttons.buttonGroup
 const { FlatList } = Me.imports.components.flatList.flatList
 const { TransactionCard } = Me.imports.components.cards.transactionCard
 const { TransactionSummaryCard } = Me.imports.components.cards.transactionSummaryCard
-const { Chart } = Me.imports.components.chart.chart
-const { StockDetails } = Me.imports.components.stocks.stockDetails
 const { SearchBar } = Me.imports.components.searchBar.searchBar
 
 const { isNullOrEmpty } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
 
 const FinanceService = Me.imports.services.financeService
+const TransactionService = Me.imports.services.transactionService
 
-const { SettingsHandler } = Me.imports.helpers.settings
+const {
+  SettingsHandler,
+  STOCKS_PORTFOLIOS,
+  STOCKS_SYMBOL_PAIRS,
+  STOCKS_TRANSACTIONS
+} = Me.imports.helpers.settings
+
+const SETTING_KEYS_TO_REFRESH = [
+  STOCKS_SYMBOL_PAIRS,
+  STOCKS_PORTFOLIOS,
+  STOCKS_TRANSACTIONS
+]
 
 var StockTransactionsScreen = GObject.registerClass({
   GTypeName: 'StockExtension_StockTransactionsScreen'
@@ -35,22 +45,6 @@ var StockTransactionsScreen = GObject.registerClass({
     this._quoteSummary = null
 
     this._settings = new SettingsHandler()
-
-    this._sync().catch(e => {
-      log(e)
-    })
-  }
-
-  async _sync () {
-    const quoteSummary = await FinanceService.getQuoteSummary({
-      symbol: this._passedQuoteSummary.Symbol,
-      provider: this._passedQuoteSummary.Provider,
-      fallbackName: this._passedQuoteSummary.FullName
-    })
-
-    this._quoteSummary = quoteSummary
-
-    this.destroy_all_children()
 
     const searchBar = new SearchBar({
       back_screen_name: 'overview',
@@ -75,8 +69,13 @@ var StockTransactionsScreen = GObject.registerClass({
     })
 
     searchBar.connect('refresh', () => {
-      // clearCache()
       this._sync()
+    })
+
+    this._content = new St.BoxLayout({
+      y_expand: true,
+      x_expand: true,
+      vertical: true
     })
 
     const stockDetailsTabButtonGroup = new ButtonGroup({
@@ -106,35 +105,65 @@ var StockTransactionsScreen = GObject.registerClass({
       this._mainEventHandler.emit('show-screen', {
         screen,
         additionalData: {
-          item: this._passedQuoteSummary
+          item: this._passedQuoteSummary,
+          portfolioId: this._portfolioId
         }
       })
     })
 
-    const summaryCard = new TransactionSummaryCard(quoteSummary)
-    this._list = new FlatList({ id: 'transactions', persistScrollPosition: false })
-
     this.add_child(searchBar)
-
     this.add_child(stockDetailsTabButtonGroup)
-    this.add_child(summaryCard)
-    this.add_child(this._list)
+    this.add_child(this._content)
 
-    this._loadData()
+    this._settingsChangedId = this._settings.connect('changed', (value, key) => {
+      if (SETTING_KEYS_TO_REFRESH.includes(key)) {
+        this._sync()
+      }
+    })
+
+    this.connect('destroy', this._onDestroy.bind(this))
+
+    this._sync()
   }
 
-  _loadData () {
-    const transactions = (this._settings.transactions[this._portfolioId] || {})[this._quoteSummary.Symbol]
+  async _sync () {
+    const quoteSummary = await FinanceService.getQuoteSummary({
+      symbol: this._passedQuoteSummary.Symbol,
+      provider: this._passedQuoteSummary.Provider,
+      fallbackName: this._passedQuoteSummary.FullName
+    })
 
-    if (isNullOrEmpty(transactions)) {
-      this._list.show_error_info(Translations.NO_SYMBOLS_CONFIGURED_ERROR)
+    this._quoteSummary = quoteSummary
+    const transactionResult = TransactionService.loadCalculatedTransactionsForSymbol({ portfolioId: this._portfolioId, quoteSummary: this._quoteSummary })
+
+    this._content.destroy_all_children()
+
+    const summaryCard = new TransactionSummaryCard(quoteSummary, transactionResult)
+    this._list = new FlatList({ id: 'transactions', persistScrollPosition: false })
+
+    this._content.add_child(summaryCard)
+    this._content.add_child(this._list)
+
+    this._loadData(transactionResult)
+  }
+
+  _loadData (transactionResult) {
+
+    if (isNullOrEmpty(transactionResult) || isNullOrEmpty(transactionResult.transactions)) {
+      this._list.show_error_info(Translations.TRANSACTIONS.NO_TRANSACTIONS_ERROR)
       return
     }
 
     this._list.clear_list_items()
 
-    transactions.forEach(transaction => {
-      this._list.addItem(new TransactionCard({ portfolioId: this._portfolioId, transaction }))
+    transactionResult.transactions.forEach(transaction => {
+      this._list.addItem(new TransactionCard({ portfolioId: this._portfolioId, transaction, quoteSummary: this._quoteSummary, mainEventHandler: this._mainEventHandler }))
     })
+  }
+
+  _onDestroy () {
+    if (this._settingsChangedId) {
+      this._settings.disconnect(this._settingsChangedId)
+    }
   }
 })

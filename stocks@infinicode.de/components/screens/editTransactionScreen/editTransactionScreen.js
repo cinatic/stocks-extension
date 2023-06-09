@@ -7,21 +7,28 @@ const { ButtonGroup } = Me.imports.components.buttons.buttonGroup
 const { SearchBar } = Me.imports.components.searchBar.searchBar
 const { Translations } = Me.imports.helpers.translations
 const { TRANSACTION_TYPES } = Me.imports.services.meta.generic
-
 const { SettingsHandler } = Me.imports.helpers.settings
+const TransactionService = Me.imports.services.transactionService
 
 var EditTransactionScreen = GObject.registerClass({
   GTypeName: 'StockExtension_EditTransactionScreen'
 }, class EditTransactionScreen extends St.BoxLayout {
-  _init ({ portfolioId, quoteSummary, transactionItem, mainEventHandler }) {
+  _init ({ portfolioId, quoteSummary, transaction, mainEventHandler }) {
     super._init({
       style_class: 'screen edit-screen edit-transaction-screen',
       vertical: true
     })
 
     this._mainEventHandler = mainEventHandler
-    this.transaction = transactionItem || {}
-    this.newTransaction = { ...transactionItem }
+    this.transaction = transaction || {}
+
+    this.newTransaction = {
+      id: this.transaction.id,
+      type: this.transaction.type,
+      amount: this.transaction.amount,
+      price: this.transaction.price
+    }
+
     this._portfolioId = portfolioId
     this._quoteSummary = quoteSummary
 
@@ -148,7 +155,7 @@ var EditTransactionScreen = GObject.registerClass({
       formElement = new St.Entry({
         style_class: 'form-element-entry',
         hint_text: placeholder,
-        text: text || '',
+        text: (text || '').toString(),
         can_focus: true
       })
 
@@ -164,47 +171,20 @@ var EditTransactionScreen = GObject.registerClass({
   }
 
   _save () {
-    const error = this.validateTransaction()
-    log(JSON.stringify(this.newTransaction, null, 4))
+    const error = TransactionService.validate(this.newTransaction)
 
     if (error) {
       this._errorPlaceHolder.text = error
     } else {
-      const transactions = this._settings.transactions
-      const transactionsByPortfolio = transactions[this._portfolioId] || {}
-      const transactionsBySymbol = transactionsByPortfolio[this._quoteSummary.Symbol] || []
-
-      // slice if necesaary
-      transactionsBySymbol.push(this.newTransaction)
-
-      transactionsByPortfolio[this._quoteSummary.Symbol] = transactionsBySymbol
-      transactions[this._portfolioId] = transactionsByPortfolio
-
-      this._settings.transactions = transactions
+      TransactionService.save({ portfolioId: this._portfolioId, transaction: this.newTransaction, symbol: this._quoteSummary.Symbol })
 
       this._mainEventHandler.emit('show-screen', {
         screen: 'stock-transactions',
-        additionalDataForBackScreen: {
+        additionalData: {
           portfolioId: this._portfolioId,
           item: this._quoteSummary
         },
       })
-    }
-  }
-
-  validateTransaction () {
-    if (isNaN(parseInt(this.newTransaction.amount))) {
-      return Translations.TRANSACTIONS.INVALID_AMOUNT
-    }
-
-    if (isNaN(parseFloat(this.newTransaction.price))) {
-      return Translations.TRANSACTIONS.INVALID_PRICE
-    }
-
-    const timestamp = Date.parse(this.newTransaction.date)
-
-    if (isNaN(timestamp)) {
-      return Translations.TRANSACTIONS.INVALID_DATE
     }
   }
 
