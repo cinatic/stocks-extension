@@ -171,7 +171,7 @@ var StockOverviewScreen = GObject.registerClass({
     this._list.clear_list_items()
 
     quoteSummaries.forEach(quoteSummary => {
-      this._list.addItem(new StockCard(quoteSummary))
+      this._list.addItem(new StockCard(quoteSummary, this._settings.selected_portfolio))
     })
 
     this._filter_results(this._searchBar.search_text())

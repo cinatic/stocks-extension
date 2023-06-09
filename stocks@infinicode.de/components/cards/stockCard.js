@@ -3,14 +3,15 @@ const { Clutter, GObject, Pango, St } = imports.gi
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
-const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
+const { isNullOrEmpty, fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
 const { MARKET_STATES } = Me.imports.services.meta.generic
+const TransactionService = Me.imports.services.transactionService
 
 var StockCard = GObject.registerClass({
   GTypeName: 'StockExtension_StockCard'
 }, class StockCard extends St.Button {
-  _init (quoteSummary) {
+  _init (quoteSummary, portfolioId) {
     super._init({
       style_class: 'card message stock-card',
       can_focus: true,
@@ -18,6 +19,7 @@ var StockCard = GObject.registerClass({
     })
 
     this.cardItem = quoteSummary
+    const transactionResult = TransactionService.loadCalculatedTransactionsForSymbol({ portfolioId, quoteSummary })
 
     let vContentBox = new St.BoxLayout({
       vertical: true,
@@ -28,6 +30,11 @@ var StockCard = GObject.registerClass({
     const cardHeaderBox = this._createCardHeader()
 
     vContentBox.add_child(cardHeaderBox)
+
+    if (transactionResult && !isNullOrEmpty(transactionResult.transactions)) {
+      const transactionDetails = this._createDetailBox({ quoteSummary, transactionResult })
+      vContentBox.add_child(transactionDetails)
+    }
 
     this.connect('destroy', this._onDestroy.bind(this))
     this._sync()
@@ -250,6 +257,96 @@ var StockCard = GObject.registerClass({
     additionalInformationBox.add_child(additionalInformationLabel)
 
     return additionalInformationBox
+  }
+
+  _createDetailBox ({ quoteSummary, transactionResult }) {
+    let detailBox = new St.BoxLayout({
+      style_class: 'stock-transactions-box',
+      x_expand: true,
+      y_expand: false
+    })
+
+    detailBox.add_child(this._createLeftDetailBox({ quoteSummary, transactionResult }))
+    detailBox.add_child(this._createRightDetailBox({ quoteSummary, transactionResult }))
+
+    return detailBox
+  }
+
+  _createLeftDetailBox ({ quoteSummary, transactionResult }) {
+    let leftDetailBox = new St.BoxLayout({
+      style_class: 'stock-left-details-box',
+      x_expand: true,
+      y_expand: false,
+      vertical: true
+    })
+
+    leftDetailBox.add(this._createDetailItem(
+        this._createDetailItemLabel(Translations.MISC.TODAY),
+        this._createDetailItemValueForChange(transactionResult.today, quoteSummary.CurrencySymbol, transactionResult.todayPercent)
+    ))
+
+    return leftDetailBox
+  }
+
+  _createRightDetailBox ({ quoteSummary, transactionResult }) {
+    let rightDetailBox = new St.BoxLayout({
+      style_class: 'stock-details-box',
+      x_expand: true,
+      y_expand: false,
+      vertical: true
+    })
+
+    rightDetailBox.add(this._createDetailItem(
+        this._createDetailItemLabel(Translations.MISC.TOTAL),
+        this._createDetailItemValueForChange(transactionResult.total, quoteSummary.CurrencySymbol, transactionResult.totalPercent)
+    ))
+
+    return rightDetailBox
+  }
+
+  _createDetailItem (label, value) {
+    const detailItem = new St.BoxLayout({
+      style_class: 'detail-item-bin',
+      x_expand: true,
+      y_expand: false
+    })
+
+    detailItem.add_child(label)
+    detailItem.add_child(value)
+
+    return detailItem
+  }
+
+  _createDetailItemLabel (text) {
+    const detailItemLabel = new St.Bin({
+      style_class: 'detail-item-label-bin',
+      x_expand: true,
+      y_expand: false,
+      child: new St.Label({ style_class: 'detail-item-label small-text fwb', text })
+    })
+
+    return detailItemLabel
+  }
+
+  _createDetailItemValueForChange (change, currency, changePercent) {
+    const detailItem = new St.BoxLayout({
+      style_class: 'detail-item-value-box change',
+      x_expand: false,
+      y_expand: false,
+      x_align: St.Align.END
+    })
+
+    const quoteColorStyleClass = getStockColorStyleClass(change)
+
+    const changeLabel = new St.Label({ style_class: `detail-item-value small-text fwb change tar ${quoteColorStyleClass}`, text: `${roundOrDefault(change)}${currency ? ` ${currency}` : ''}` })
+    detailItem.add_child(changeLabel)
+
+    detailItem.add_child(new St.Label({ style_class: 'detail-item-value small-text fwb tar', text: ' / ' }))
+
+    const changePercentLabel = new St.Label({ style_class: `detail-item-value change small-text fwb tar ${quoteColorStyleClass}`, text: `${roundOrDefault(changePercent)} %` })
+    detailItem.add_child(changePercentLabel)
+
+    return detailItem
   }
 
   _sync () {

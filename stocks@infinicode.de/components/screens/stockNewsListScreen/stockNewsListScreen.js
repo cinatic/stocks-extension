@@ -19,7 +19,7 @@ const FinanceService = Me.imports.services.financeService
 var StockNewsListScreen = GObject.registerClass({
   GTypeName: 'StockExtension_StockNewsListScreen'
 }, class StockNewsListScreen extends St.BoxLayout {
-  _init ({ quoteSummary, mainEventHandler }) {
+  _init ({ quoteSummary, portfolioId, mainEventHandler }) {
     super._init({
       style_class: 'screen stock-details-screen',
       vertical: true
@@ -27,6 +27,7 @@ var StockNewsListScreen = GObject.registerClass({
 
     this._mainEventHandler = mainEventHandler
     this._passedQuoteSummary = quoteSummary
+    this._portfolioId = portfolioId
 
     this._isRendering = false
     this._showLoadingInfoTimeoutId = null
@@ -61,6 +62,7 @@ var StockNewsListScreen = GObject.registerClass({
       this._mainEventHandler.emit('show-screen', {
         screen,
         additionalData: {
+          portfolioId: this._portfolioId,
           item: this._passedQuoteSummary
         }
       })

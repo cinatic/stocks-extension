@@ -21,6 +21,8 @@ var Translations = {
     INVALID_AMOUNT: _('Amount must be a whole number'),
     INVALID_DATE: _('Date could not be parsed'),
     TITLE_TRANSACTION_TYPE: _('Transaction Type'),
+    NO_TRANSACTIONS_ERROR: _('No transactions, use the + Icon in the Search Bar to add transactions.'),
+    UNSOLD_ITEMS: _('%d of this transactions could not be assigned, check if your transactions are correct')
   },
   SETTINGS: {
     ADD_SYMBOL: _('Add Symbol'),

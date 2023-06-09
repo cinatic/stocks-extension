@@ -184,3 +184,16 @@
 .stocks-extension .edit-screen .form-element-box {
     margin: 10px 15px;
 }
+
+.stocks-extension .transaction-card .header-box {
+    margin-bottom: 4px;
+}
+
+.stocks-extension .stock-card .stock-transactions-box {
+    margin-top: 5px;
+}
+
+.stocks-extension .stock-card .detail-item-label,
+.stocks-extension .stock-card .detail-item-value {
+    font-size: .8em;
+}
