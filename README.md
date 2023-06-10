@@ -10,6 +10,7 @@ A extension to display stock quotes in GNOME Shell Panel
 
 <p align="middle">
     <img alt="commits" src="images/crayons.png" width="350">
+    <img alt="commits" src="images/transactions.png" width="350">
 </p>
 
 *stocks-extension* integrates stock quotes to your GNOME Shell Panel =)
