@@ -7,7 +7,6 @@ const { ButtonGroup } = Me.imports.components.buttons.buttonGroup
 const { SearchBar } = Me.imports.components.searchBar.searchBar
 const { Translations } = Me.imports.helpers.translations
 const { TRANSACTION_TYPES } = Me.imports.services.meta.generic
-const { SettingsHandler } = Me.imports.helpers.settings
 const TransactionService = Me.imports.services.transactionService
 
 var EditTransactionScreen = GObject.registerClass({
@@ -21,6 +20,7 @@ var EditTransactionScreen = GObject.registerClass({
 
     this._mainEventHandler = mainEventHandler
     this.transaction = transaction || {}
+    this._saveDelayTimeOutId = null
 
     this.newTransaction = {
       id: this.transaction.id,
@@ -31,8 +31,6 @@ var EditTransactionScreen = GObject.registerClass({
 
     this._portfolioId = portfolioId
     this._quoteSummary = quoteSummary
-
-    this._settings = new SettingsHandler()
 
     this._errorPlaceHolder = null
 
@@ -147,12 +145,12 @@ var EditTransactionScreen = GObject.registerClass({
       text: `${placeholder}:`
     })
 
-    let formElement
+    formElementbox.add_child(label)
 
     if (customFormElement) {
-      formElement = customFormElement
+      formElementbox.add_child(customFormElement)
     } else {
-      formElement = new St.Entry({
+      const formElement = new St.Entry({
         style_class: 'form-element-entry',
         hint_text: placeholder,
         text: (text || '').toString(),
@@ -162,10 +160,9 @@ var EditTransactionScreen = GObject.registerClass({
       formElement.connect('notify::text', entry => {
         this.newTransaction[dataField] = entry.text
       })
-    }
 
-    formElementbox.add_child(label)
-    formElementbox.add_child(formElement)
+      formElementbox.add_child(formElement)
+    }
 
     return formElementbox
   }
@@ -178,16 +175,23 @@ var EditTransactionScreen = GObject.registerClass({
     } else {
       TransactionService.save({ portfolioId: this._portfolioId, transaction: this.newTransaction, symbol: this._quoteSummary.Symbol })
 
-      this._mainEventHandler.emit('show-screen', {
-        screen: 'stock-transactions',
-        additionalData: {
-          portfolioId: this._portfolioId,
-          item: this._quoteSummary
-        },
-      })
+      // FIXME: had to set this timeout otherwise some weird stuff will happen
+      // clutter_actor_contains: assertion 'CLUTTER_IS_ACTOR (descendant)' failed
+      this._saveDelayTimeOutId = setTimeout(() => {
+        this._mainEventHandler.emit('show-screen', {
+          screen: 'stock-transactions',
+          additionalData: {
+            portfolioId: this._portfolioId,
+            item: this._quoteSummary
+          },
+        })
+      }, 250)
     }
   }
 
   _onDestroy () {
+    if (this._saveDelayTimeOutId) {
+      clearTimeout(this._saveDelayTimeOutId)
+    }
   }
 })
