@@ -126,7 +126,7 @@ var remove = ({ portfolioId, symbol, transaction }) => {
   const settings = new SettingsHandler()
   const transactions = settings.transactions
   const transactionsByPortfolio = transactions[portfolioId] || {}
-  let transactionsBySymbol = transactionsByPortfolio[symbol] || []
+  const transactionsBySymbol = transactionsByPortfolio[symbol] || []
 
   transactionsByPortfolio[symbol] = transactionsBySymbol.filter(item => item.id != transaction.id)
   transactions[portfolioId] = transactionsByPortfolio

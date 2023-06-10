@@ -20,7 +20,7 @@ var NewsCard = GObject.registerClass({
     this.cardItem = newsItem
     this._fgColor = fgColor
 
-    let vContentBox = new St.BoxLayout({
+    const vContentBox = new St.BoxLayout({
       vertical: true,
       x_expand: true
     })
@@ -35,7 +35,7 @@ var NewsCard = GObject.registerClass({
   }
 
   _createNewsContent () {
-    let newsContentBox = new St.BoxLayout({
+    const newsContentBox = new St.BoxLayout({
       style_class: 'news-content-box',
       x_expand: true,
       vertical: true

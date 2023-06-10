@@ -20,7 +20,7 @@ var IconButton = GObject.registerClass({
       ...props
     })
 
-    let hContentBox = new St.BoxLayout({
+    const hContentBox = new St.BoxLayout({
       vertical: false,
       x_expand: true,
       y_expand: true,

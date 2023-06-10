@@ -25,7 +25,7 @@ var TransactionCard = GObject.registerClass({
     this._portfolioId = portfolioId
     this._mainEventHandler = mainEventHandler
 
-    let vContentBox = new St.BoxLayout({
+    const vContentBox = new St.BoxLayout({
       vertical: true,
       x_expand: true
     })
@@ -61,7 +61,7 @@ var TransactionCard = GObject.registerClass({
   }
 
   _createStockInfo () {
-    let stockInformationBox = new St.BoxLayout({
+    const stockInformationBox = new St.BoxLayout({
       style_class: 'stock-information-box',
       x_expand: true,
       y_expand: true,
@@ -120,7 +120,7 @@ var TransactionCard = GObject.registerClass({
   }
 
   _createDetailBox ({ transaction, quoteSummary }) {
-    let detailBox = new St.BoxLayout({
+    const detailBox = new St.BoxLayout({
       style_class: 'stock-details-box',
       x_expand: true,
       y_expand: false
@@ -133,7 +133,7 @@ var TransactionCard = GObject.registerClass({
   }
 
   _createLeftDetailBox ({ transaction, quoteSummary }) {
-    let leftDetailBox = new St.BoxLayout({
+    const leftDetailBox = new St.BoxLayout({
       style_class: 'stock-left-details-box',
       x_expand: true,
       y_expand: false,
@@ -159,7 +159,7 @@ var TransactionCard = GObject.registerClass({
   }
 
   _createRightDetailBox ({ transaction, quoteSummary }) {
-    let rightDetailBox = new St.BoxLayout({
+    const rightDetailBox = new St.BoxLayout({
       style_class: 'stock-details-box',
       x_expand: true,
       y_expand: false,
