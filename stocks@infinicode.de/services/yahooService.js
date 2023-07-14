@@ -2,13 +2,13 @@ const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
 const { fetch } = Me.imports.helpers.fetch
-const { createQuoteSummaryFromYahooData } = Me.imports.services.dto.quoteSummary
+const { createQuoteSummaryFromYahooDataV6 } = Me.imports.services.dto.quoteSummary
 const { createQuoteHistoricalFromYahooData } = Me.imports.services.dto.quoteHistorical
 const { createNewsListFromYahooData } = Me.imports.services.dto.newsList
 const { INTERVAL_MAPPINGS } = Me.imports.services.meta.yahoo
 
-const API_ENDPOINT = 'https://query2.finance.yahoo.com'
-const API_VERSION_SUMMARY = 'v10/finance'
+const API_ENDPOINT = 'https://query1.finance.yahoo.com'
+const API_VERSION_SUMMARY = 'v6/finance'
 const API_VERSION_CHART = 'v8/finance'
 const RSS_NEWS_ENDPOINT = 'https://feeds.finance.yahoo.com/rss/2.0/headline?s={SYMBOL}&region=US&lang=en-US'
 
@@ -19,10 +19,12 @@ const defaultQueryParameters = {
   corsDomain: 'finance.yahoo.com'
 }
 
+const createQuoteSummaryFromYahooData = createQuoteSummaryFromYahooDataV6;
+
 var getQuoteSummary = async ({ symbol }) => {
   const queryParameters = {
     ...defaultQueryParameters,
-    modules: 'price%2CsummaryDetail%2CpageViews'
+    modules: 'price'
   }
 
   const url = `${API_ENDPOINT}/${API_VERSION_SUMMARY}/quoteSummary/${symbol}`
