@@ -136,3 +136,71 @@ var createQuoteSummaryFromYahooData = ({ symbol, quoteData, error }) => {
 
   return newObject
 }
+
+var createQuoteSummaryFromYahooDataV6 = ({ symbol, quoteData, error }) => {
+  const newObject = new QuoteSummary(symbol, FINANCE_PROVIDER.YAHOO)
+  newObject.Error = error
+
+  if (quoteData && quoteData.quoteSummary) {
+    if (quoteData.quoteSummary.result) {
+      const priceData = (quoteData.quoteSummary.result[0] || []).price || {}
+
+      newObject.FullName = priceData.longName
+
+      if (priceData.regularMarketTime) {
+        newObject.Timestamp = priceData.regularMarketTime * 1000
+      }
+
+      if (priceData.regularMarketChangePercent) {
+        newObject.ChangePercent = priceData.regularMarketChangePercent.raw * 100
+      }
+
+      newObject.Change = priceData.regularMarketChange.raw
+      newObject.PreviousClose = priceData.regularMarketPreviousClose.raw
+      newObject.Close = priceData.regularMarketPrice.raw
+      newObject.Open = priceData.regularMarketOpen.raw
+      newObject.Low = priceData.regularMarketDayLow.raw
+      newObject.High = priceData.regularMarketDayHigh.raw
+      newObject.Volume = priceData.regularMarketVolume.raw
+      newObject.CurrencySymbol = priceData.currencySymbol
+      newObject.ExchangeName = priceData.exchangeName
+
+      newObject.MarketState = priceData.marketState
+
+      newObject.PreMarketPrice = priceData.preMarketPrice.raw
+      newObject.PreMarketChange = priceData.preMarketChange.raw
+      if (priceData.preMarketChangePercent) {
+        newObject.PreMarketChangePercent = (priceData.preMarketChangePercent.raw) * 100
+      }
+
+      if (priceData.preMarketTime) {
+        newObject.PreMarketTimestamp = priceData.preMarketTime * 1000
+      }
+
+      newObject.PostMarketPrice = priceData.postMarketPrice.raw
+      newObject.PostMarketChange = priceData.postMarketChange.raw
+
+      if (priceData.postMarketChangePercent) {
+        newObject.PostMarketChangePercent = (priceData.postMarketChangePercent.raw) * 100
+      }
+
+      if (priceData.postMarketTime) {
+        newObject.PostMarketTimestamp = priceData.postMarketTime * 1000
+      }
+
+      if (newObject.MarketState === MARKET_STATES.PRE && isNullOrUndefined(newObject.PreMarketPrice)) {
+        newObject.MarketState = MARKET_STATES.PRE_WITHOUT_DATA
+      }
+
+      if (newObject.MarketState === MARKET_STATES.POST && isNullOrUndefined(newObject.PostMarketPrice)) {
+        newObject.MarketState = MARKET_STATES.POST_WITHOUT_DATA
+      }
+    }
+
+    if (quoteData.quoteSummary.error && quoteData.quoteSummary.error.description) {
+      newObject.Error = quoteData.quoteSummary.error.description
+    }
+  }
+
+  return newObject
+}
