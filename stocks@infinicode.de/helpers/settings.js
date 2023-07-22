@@ -19,10 +19,13 @@ var STOCKS_USE_PROVIDER_INSTRUMENT_NAMES = 'use-provider-instrument-names'
 
 var DEFAULT_SYMBOL_DATA = [
   {
-    symbol: 'BABA',
     name: 'Alibaba (NY)',
+    symbol: 'BABA',
+    provider: FINANCE_PROVIDER.YAHOO,
     showInTicker: true,
-    provider: FINANCE_PROVIDER.YAHOO
+    showPrice: true,
+    showDailyOffset: true,
+    showDailyPercentageOffset: true
   }
 ]
 
@@ -39,8 +42,11 @@ var DEFAULT_PORTFOLIO_DATA = [
 var convertOldSettingsFormat = rawString => rawString.split('-&&-').map(symbolPairString => ({
   name: symbolPairString.split('-§§-')[0],
   symbol: symbolPairString.split('-§§-')[1],
+  provider: FINANCE_PROVIDER.YAHOO,
   showInTicker: true,
-  provider: FINANCE_PROVIDER.YAHOO
+  showPrice: true,
+  showDailyOffset: true,
+  showDailyPercentageOffset: true
 }))
 
 var SettingsHandler = class SettingsHandler {
@@ -220,8 +226,11 @@ var SettingsHandler = class SettingsHandler {
     return stockItems.map(item => ({
       name: item.name || '',
       symbol: item.symbol || '',
+      provider: item.provider || FINANCE_PROVIDER.YAHOO,
       showInTicker: isNullOrUndefined(item.showInTicker) ? true : item.showInTicker,
-      provider: item.provider || FINANCE_PROVIDER.YAHOO
+      showPrice: isNullOrUndefined(item.showPrice) ? true : item.showPrice,
+      showDailyOffset: isNullOrUndefined(item.showDailyOffset) ? true : item.showDailyOffset,
+      showDailyPercentageOffset: isNullOrUndefined(item.showDailyPercentageOffset) ? true : item.showDailyPercentageOffset      
     }))
   }
 }
