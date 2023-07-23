@@ -10,8 +10,8 @@ var fallbackIfNaN = (value, fallback = '--') => typeof value === 'undefined' || 
 
 var closest = (array, target) => array.reduce((prev, curr) => Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev)
 
-var decodeBase64JsonOrDefault = (encodedJson, defaultValue) => {
-  try {
+var decodeBase64JsonOrDefault = (encodedJson, defaultValue) => {  
+  try {    
     const value = JSON.parse(ByteArray.toString(GLib.base64_decode(encodedJson)))
 
     if (!value) {
@@ -20,7 +20,7 @@ var decodeBase64JsonOrDefault = (encodedJson, defaultValue) => {
 
     return value
   } catch (e) {
-    log(`failed to decode base64 json ${e}`)
+    if (encodedJson) log(`failed to decode base64 json ${e}`)
     return defaultValue
   }
 }
