@@ -84,7 +84,7 @@ var MenuStockTicker = GObject.registerClass({
 
     return tickerEnabledItems
   }
-
+  
   async _sync () {
     const tickerEnabledItems = this._getEnabledSymbols()
 
@@ -97,14 +97,23 @@ var MenuStockTicker = GObject.registerClass({
 
     this._showLoadingInfoTimeoutId = setTimeout(this._showInfoMessage.bind(this), 500)
 
-    const quoteSummaries = await Promise.all(tickerBatch.map(stockItem => FinanceService.getQuoteSummary({
+    const tempSummaries = await Promise.all(tickerBatch.map(stockItem => FinanceService.getQuoteSummary({
       ...stockItem,
       fallbackName: stockItem.name
     })))
 
-    clearTimeout(this._showLoadingInfoTimeoutId)
+    const quoteSummaries = []
+    tempSummaries.forEach((quoteSummary, index) => {
+      quoteSummaries.push({
+        ...quoteSummary,
+        showPrice: tickerBatch[index].showPrice,
+        showDailyOffset: tickerBatch[index].showDailyOffset,
+        showDailyPercentageOffset: tickerBatch[index].showDailyPercentageOffset,
+      });
+    });
 
-    this._createMenuTicker({ quoteSummaries })
+    clearTimeout(this._showLoadingInfoTimeoutId)    
+    this._createMenuTicker({ quoteSummaries }, tickerBatch)
   }
 
   _createMenuTicker ({ quoteSummaries }) {
@@ -113,7 +122,9 @@ var MenuStockTicker = GObject.registerClass({
     const tickerItemCreationFn = this._getTickerItemCreationFunction()
 
     quoteSummaries.forEach((quoteSummary, index) => {
-      const stockTickerItemBox = tickerItemCreationFn.call(this, quoteSummary)
+      const stockTickerItemBox = tickerItemCreationFn.call(this, {
+        ...quoteSummary        
+      })
       this.add_child(stockTickerItemBox)
 
       if (index + 1 !== quoteSummaries.length) {
@@ -155,14 +166,14 @@ var MenuStockTicker = GObject.registerClass({
       y_align: Clutter.ActorAlign.CENTER,
       y_expand: true,
       style_class: `ticker-stock-quote-label fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(price)}${currencySymbol}`
+      text: (quoteSummary.showPrice)?`${roundOrDefault(price)}${currencySymbol}`:''
     })
 
     const changeLabel = new St.Label({
       y_align: Clutter.ActorAlign.CENTER,
       y_expand: true,
       style_class: `ticker-stock-quote-change-label fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(change)}  ${roundOrDefault(changePercent)} %${isOffMarket ? '*' : ''}`
+      text: `${quoteSummary.showDailyOffset ? roundOrDefault(change):''}  ${quoteSummary.showDailyPercentageOffset ? roundOrDefault(changePercent)+' %':''}${isOffMarket ? '*' : ''}`
     })
 
     stockNameLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
@@ -170,8 +181,12 @@ var MenuStockTicker = GObject.registerClass({
     changeLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
 
     stockInfoBox.add_child(stockNameLabel)
-    stockInfoBox.add_child(stockQuoteLabel)
-    stockInfoBox.add_child(changeLabel)
+    if (quoteSummary.showPrice || (!quoteSummary.showPrice && !quoteSummary.showDailyOffset && !quoteSummary.showDailyPercentageOffset)) {
+      stockInfoBox.add_child(stockQuoteLabel)
+    }
+    if (quoteSummary.showDailyOffset || quoteSummary.showDailyPercentageOffset) {
+      stockInfoBox.add_child(changeLabel)
+    }
 
     return stockInfoBox
   }
@@ -206,21 +221,25 @@ var MenuStockTicker = GObject.registerClass({
       y_align: regular ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
       y_expand: true,
       style_class: `ticker-stock-quote-label fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(price)}${currencySymbol}`
+      text: (quoteSummary.showPrice)?`${roundOrDefault(price)}${currencySymbol}`:''
     })
 
     const stockQuoteChangeLabel = new St.Label({
       y_align: regular ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
       y_expand: true,
       style_class: `ticker-stock-quote-change-label fwb ${quoteColorStyleClass}`,
-      text: `(${roundOrDefault(change)}${currencySymbol} | ${roundOrDefault(changePercent)} %)${isOffMarket ? '*' : ''}`
+      text: `(${quoteSummary.showDailyOffset ? roundOrDefault(change)+currencySymbol : ''}${quoteSummary.showDailyOffset && quoteSummary.showDailyPercentageOffset ? ' | ':''}${quoteSummary.showDailyPercentageOffset ? roundOrDefault(changePercent)+' %':''})${isOffMarket ? '*' : ''}`
     })
 
     stockQuoteLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
     stockQuoteChangeLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
 
-    stockQuoteBox.add_child(stockQuoteLabel)
-    stockQuoteBox.add_child(stockQuoteChangeLabel)
+    if (quoteSummary.showPrice || (!quoteSummary.showPrice && !quoteSummary.showDailyOffset && !quoteSummary.showDailyPercentageOffset)) {
+      stockQuoteBox.add_child(stockQuoteLabel)
+    }
+    if (quoteSummary.showDailyOffset || quoteSummary.showDailyPercentageOffset) {
+      stockQuoteBox.add_child(stockQuoteChangeLabel)
+    }
 
     stockInfoBox.add_child(stockQuoteBox)
 
@@ -251,7 +270,7 @@ var MenuStockTicker = GObject.registerClass({
       y_align: Clutter.ActorAlign.CENTER,
       y_expand: true,
       style_class: `ticker-stock-quote-label fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(price)}${currencySymbol}`
+      text: `${quoteSummary.showPrice ? roundOrDefault(price)+currencySymbol:''}${quoteSummary.showDailyPercentageOffset && !quoteSummary.showPrice ? roundOrDefault(changePercent)+ ' %':''}`
     })
 
     stockNameLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)

@@ -8,6 +8,9 @@ var StockItem = GObject.registerClass({
     'symbol': GObject.ParamSpec.string('symbol', 'symbol', 'symbol', GObject.ParamFlags.READWRITE, 'AHLA.DE'),
     'provider': GObject.ParamSpec.string('provider', 'provider', 'provider', GObject.ParamFlags.READWRITE, 'yahoo'),
     'showInTicker': GObject.ParamSpec.boolean('showInTicker', 'showInTicker', 'showInTicker', GObject.ParamFlags.READWRITE, false),
+    'showPrice': GObject.ParamSpec.boolean('showPrice', 'showPrice', 'showPrice', GObject.ParamFlags.READWRITE, true),
+    'showDailyOffset': GObject.ParamSpec.boolean('showDailyOffset', 'showDailyOffset', 'showDailyOffset', GObject.ParamFlags.READWRITE, true),
+    'showDailyPercentageOffset': GObject.ParamSpec.boolean('showDailyPercentageOffset', 'showDailyPercentageOffset', 'showDailyPercentageOffset', GObject.ParamFlags.READWRITE, true)
   },
 }, class StockItemClass extends GObject.Object {
   id = null
@@ -15,4 +18,7 @@ var StockItem = GObject.registerClass({
   symbol = null
   provider = null
   showInTicker = false
+  showPrice = true
+  showDailyOffset = true
+  showDailyPercentageOffset = true
 })

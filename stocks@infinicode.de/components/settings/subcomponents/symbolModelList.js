@@ -52,6 +52,9 @@ var SymbolModelList = GObject.registerClass({
       stockItem.symbol = item.symbol
       stockItem.provider = item.provider
       stockItem.showInTicker = item.showInTicker
+      stockItem.showPrice = item.showPrice
+      stockItem.showDailyOffset = item.showDailyOffset
+      stockItem.showDailyPercentageOffset = item.showDailyPercentageOffset   
 
       return stockItem
     })
@@ -67,7 +70,10 @@ var SymbolModelList = GObject.registerClass({
     newStockItem.symbol = 'AHLA.DE'
     newStockItem.provider = FINANCE_PROVIDER.YAHOO
     newStockItem.showInTicker = false
-
+    newStockItem.showPrice = true
+    newStockItem.showDailyOffset = true
+    newStockItem.showDailyPercentageOffset = true
+  
     this.#items.push(newStockItem)
 
     // https://gitlab.gnome.org/GNOME/gnome-shell-extensions/-/issues/390
@@ -93,7 +99,7 @@ var SymbolModelList = GObject.registerClass({
     this.save_items()
   }
 
-  edit (id, name, symbol, showInTicker, provider) {
+  edit (id, name, symbol, provider, showInTicker, showPrice, showDailyOffset, showDailyPercentageOffset) {
     const pos = this.#items.findIndex(item => item.id === id)
 
     if (pos === -1) {
@@ -105,8 +111,11 @@ var SymbolModelList = GObject.registerClass({
 
     modifiedItem.name = name
     modifiedItem.symbol = symbol
-    modifiedItem.showInTicker = showInTicker
     modifiedItem.provider = provider
+    modifiedItem.showInTicker = showInTicker
+    modifiedItem.showPrice = showPrice
+    modifiedItem.showDailyOffset = showDailyOffset
+    modifiedItem.showDailyPercentageOffset = showDailyPercentageOffset
 
     this.#items.splice(pos, 0, modifiedItem)
 

@@ -117,6 +117,9 @@ var SymbolRow = GObject.registerClass({
       editRowBox._symbolEntry.text = item.symbol || ''
       editRowBox._providerDropDown.selected = Object.values(FINANCE_PROVIDER).indexOf(item.provider) || 0
       editRowBox._showInTickerCheckButton.active = Boolean(item.showInTicker)
+      editRowBox._showPriceCheckButton.active = Boolean(item.showPrice)
+      editRowBox._showDailyOffsetCheckButton.active = Boolean(item.showDailyOffset)
+      editRowBox._showDailyPercentageOffsetCheckButton.active = Boolean(item.showDailyPercentageOffset)
     }
 
     editRowBox._nameEntry = new Gtk.Entry({
@@ -141,6 +144,18 @@ var SymbolRow = GObject.registerClass({
       label: Translations.SETTINGS.SHOW_IN_TICKER_LABEL
     })
 
+    editRowBox._showPriceCheckButton = new Gtk.CheckButton({
+      label: Translations.SETTINGS.SHOW_PRICE_LABEL
+    })
+
+    editRowBox._showDailyOffsetCheckButton = new Gtk.CheckButton({
+      label: Translations.SETTINGS.SHOW_DAILY_OFFSET_LABEL
+    })
+
+    editRowBox._showDailyPercentageOffsetCheckButton = new Gtk.CheckButton({
+      label: Translations.SETTINGS.SHOW_DAILY_PERCENTAGE_OFFSET_LABEL
+    })
+
     const saveButton = new Gtk.Button({
       icon_name: 'object-select-symbolic',
       has_frame: false,
@@ -151,11 +166,14 @@ var SymbolRow = GObject.registerClass({
         this.item.id,
         editRowBox._nameEntry.text,
         editRowBox._symbolEntry.text,
+        Object.values(FINANCE_PROVIDER)[editRowBox._providerDropDown.selected],
         editRowBox._showInTickerCheckButton.active,
-        Object.values(FINANCE_PROVIDER)[editRowBox._providerDropDown.selected]
+        editRowBox._showPriceCheckButton.active,
+        editRowBox._showDailyOffsetCheckButton.active,
+        editRowBox._showDailyPercentageOffsetCheckButton.active,
+        
       ]
-
-      this.activate_action('symbol.edit', new GLib.Variant('(sssbs)', data))
+      this.activate_action('symbol.edit', new GLib.Variant('(ssssbbbb)', data))
       this._stopEdit()
     })
 
@@ -163,6 +181,9 @@ var SymbolRow = GObject.registerClass({
     editRowBox.append(editRowBox._symbolEntry)
     editRowBox.append(editRowBox._providerDropDown)
     editRowBox.append(editRowBox._showInTickerCheckButton)
+    editRowBox.append(editRowBox._showPriceCheckButton)
+    editRowBox.append(editRowBox._showDailyOffsetCheckButton)
+    editRowBox.append(editRowBox._showDailyPercentageOffsetCheckButton)
     editRowBox.append(saveButton)
 
     const controller = new Gtk.ShortcutController()
