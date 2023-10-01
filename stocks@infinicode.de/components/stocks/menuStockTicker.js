@@ -9,7 +9,7 @@ const { setTimeout, clearTimeout } = Me.imports.helpers.components
 const { roundOrDefault, getStockColorStyleClass, isNullOrEmpty } = Me.imports.helpers.data
 
 const {
-  Settings,
+  SettingsHandler,
   STOCKS_SYMBOL_PAIRS, STOCKS_TICKER_INTERVAL,
   STOCKS_SHOW_OFF_MARKET_TICKER_PRICES,
   STOCKS_TICKER_DISPLAY_VARIATION,
@@ -51,13 +51,16 @@ var MenuStockTicker = GObject.registerClass({
     this._visibleStockIndex = 0
     this._toggleDisplayTimeout = null
     this._settingsChangedId = null
+    this._showLoadingInfoTimeoutId = null
+
+    this._settings = new SettingsHandler()
 
     this._sync()
 
     this.connect('destroy', this._onDestroy.bind(this))
     this.connect('button-press-event', this._onPress.bind(this))
 
-    this._settingsChangedId = Settings.connect('changed', (value, key) => {
+    this._settingsChangedId = this._settings.connect('changed', (value, key) => {
       this._registerTimeout(false)
 
       if (SETTING_KEYS_TO_REFRESH.includes(key)) {
@@ -69,22 +72,22 @@ var MenuStockTicker = GObject.registerClass({
   }
 
   async _sync () {
-    const tickerEnabledItems = Settings.symbol_pairs.filter(item => item.showInTicker)
-    const tickerBatch = this._getBatch(tickerEnabledItems, this._visibleStockIndex, Settings.ticker_stock_amount)
+    const tickerEnabledItems = this._settings.symbol_pairs.filter(item => item.showInTicker)
+    const tickerBatch = this._getBatch(tickerEnabledItems, this._visibleStockIndex, this._settings.ticker_stock_amount)
 
     if (isNullOrEmpty(tickerBatch)) {
       this._showInfoMessage(Translations.EMPTY_TICKER_TEXT)
       return
     }
 
-    const showLoadingInfoTimeoutId = setTimeout(this._showInfoMessage.bind(this), 500)
+    this._showLoadingInfoTimeoutId = setTimeout(this._showInfoMessage.bind(this), 500)
 
     const quoteSummaries = await Promise.all(tickerBatch.map(stockItem => FinanceService.getQuoteSummary({
       ...stockItem,
       fallbackName: stockItem.name
     })))
 
-    clearTimeout(showLoadingInfoTimeoutId)
+    clearTimeout(this._showLoadingInfoTimeoutId)
 
     this._createMenuTicker({ quoteSummaries })
   }
@@ -283,7 +286,7 @@ var MenuStockTicker = GObject.registerClass({
       this._showNextStock()
     }
 
-    this._toggleDisplayTimeout = Mainloop.timeout_add_seconds(Settings.ticker_interval || 10, () => {
+    this._toggleDisplayTimeout = Mainloop.timeout_add_seconds(this._settings.ticker_interval || 10, () => {
       this._showNextStock()
 
       return true
@@ -291,7 +294,7 @@ var MenuStockTicker = GObject.registerClass({
   }
 
   _showNextStock () {
-    this._visibleStockIndex = this._visibleStockIndex + 1 >= Settings.symbol_pairs.filter(item => item.showInTicker).length ? 0 : this._visibleStockIndex + 1
+    this._visibleStockIndex = this._visibleStockIndex + 1 >= this._settings.symbol_pairs.filter(item => item.showInTicker).length ? 0 : this._visibleStockIndex + 1
     this._sync()
   }
 
@@ -301,12 +304,16 @@ var MenuStockTicker = GObject.registerClass({
     }
 
     if (this._settingsChangedId) {
-      Settings.disconnect(this._settingsChangedId)
+      this._settings.disconnect(this._settingsChangedId)
+    }
+
+    if (this._showLoadingInfoTimeoutId) {
+      clearTimeout(this._showLoadingInfoTimeoutId)
     }
   }
 
   _getTickerItemCreationFunction () {
-    switch (Settings.ticker_display_variation) {
+    switch (this._settings.ticker_display_variation) {
       case TICKER_ITEM_VARIATION.COMPACT:
         return this._createCompactTickerItemBox
 
@@ -333,7 +340,7 @@ var MenuStockTicker = GObject.registerClass({
       symbol: quoteSummary.Symbol
     }
 
-    if (Settings.show_ticker_off_market_prices) {
+    if (this._settings.show_ticker_off_market_prices) {
       if (quoteSummary.MarketState === MARKET_STATES.PRE) {
         stockInfoDetails.price = quoteSummary.PreMarketPrice
         stockInfoDetails.change = quoteSummary.PreMarketChange

@@ -5,7 +5,6 @@ const Me = ExtensionUtils.getCurrentExtension()
 
 const { ButtonGroup } = Me.imports.components.buttons.buttonGroup
 const { Chart } = Me.imports.components.chart.chart
-const { EventHandler } = Me.imports.helpers.eventHandler
 const { StockDetails } = Me.imports.components.stocks.stockDetails
 const { SearchBar } = Me.imports.components.searchBar.searchBar
 
@@ -18,11 +17,13 @@ const FinanceService = Me.imports.services.financeService
 var StockDetailsScreen = GObject.registerClass({
   GTypeName: 'StockExtension_StockDetailsScreen'
 }, class StockDetailsScreen extends St.BoxLayout {
-  _init ({ quoteSummary }) {
+  _init ({ quoteSummary, mainEventHandler }) {
     super._init({
       style_class: 'screen stock-details-screen',
       vertical: true
     })
+
+    this._mainEventHandler = mainEventHandler
 
     this._passedQuoteSummary = quoteSummary
     this._selectedChartRange = CHART_RANGES.INTRADAY
@@ -53,7 +54,8 @@ var StockDetailsScreen = GObject.registerClass({
 
     const searchBar = new SearchBar({
       back_screen_name: 'overview',
-      showFilterInputBox: false
+      showFilterInputBox: false,
+      mainEventHandler: this._mainEventHandler
     })
 
     searchBar.connect('refresh', () => {
@@ -76,14 +78,14 @@ var StockDetailsScreen = GObject.registerClass({
       const selectedTab = stButton.buttonData.value
 
       if (selectedTab === 'KeyData') {
-        EventHandler.emit('show-screen', {
+        this._mainEventHandler.emit('show-screen', {
           screen: 'stock-details',
           additionalData: {
             item: this._passedQuoteSummary
           }
         })
       } else {
-        EventHandler.emit('show-screen', {
+        this._mainEventHandler.emit('show-screen', {
           screen: 'stock-news-list',
           additionalData: {
             item: this._passedQuoteSummary

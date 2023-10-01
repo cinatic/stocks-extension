@@ -5,7 +5,7 @@ const { Gio, GObject } = imports.gi
 
 const { StockItem } = Me.imports.components.settings.subcomponents.stockItem
 
-const { Settings, STOCKS_SYMBOL_PAIRS, } = Me.imports.helpers.settings
+const { SettingsHandler, STOCKS_SYMBOL_PAIRS, } = Me.imports.helpers.settings
 const { Translations } = Me.imports.helpers.translations
 
 const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
@@ -14,7 +14,9 @@ const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS
 ]
 
-var SymbolModelList = GObject.registerClass(class SymbolModelList extends GObject.Object {
+var SymbolModelList = GObject.registerClass({
+  GTypeName: 'StockExtension-SymbolModelList',
+}, class SymbolModelList extends GObject.Object {
   static [GObject.interfaces] = [Gio.ListModel]
 
   #items = []
@@ -23,10 +25,11 @@ var SymbolModelList = GObject.registerClass(class SymbolModelList extends GObjec
   constructor () {
     super()
 
+    this._settings = new SettingsHandler()
     this.#items = this.convert_items()
 
     this.#changedId =
-        Settings.connect('changed', (value, key) => {
+        this._settings.connect('changed', (value, key) => {
           if (!SETTING_KEYS_TO_REFRESH.includes(key)) {
             return
           }
@@ -40,7 +43,7 @@ var SymbolModelList = GObject.registerClass(class SymbolModelList extends GObjec
   }
 
   convert_items () {
-    return Settings.symbol_pairs.map(item => {
+    return this._settings.symbol_pairs.map(item => {
       const stockItem = new StockItem()
 
       stockItem.id = item.id || Gio.dbus_generate_guid()
@@ -129,7 +132,7 @@ var SymbolModelList = GObject.registerClass(class SymbolModelList extends GObjec
   }
 
   save_items () {
-    Settings.symbol_pairs = this.#items
+    this._settings.symbol_pairs = this.#items
   }
 
   vfunc_get_item_type () {

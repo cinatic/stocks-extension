@@ -5,8 +5,10 @@ const { Adw, Gio, GObject, Gtk } = imports.gi
 
 const { Translations } = Me.imports.helpers.translations
 
-var NewSymbolRow = GObject.registerClass(
-    class NewSymbolRowClass extends Adw.PreferencesRow {
+var NewSymbolRow = GObject.registerClass({
+      GTypeName: 'StockExtension-NewSymbolRow',
+    },
+    class StocksNewSymbolRowClass extends Adw.PreferencesRow {
 
       constructor () {
         super({

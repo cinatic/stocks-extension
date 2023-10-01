@@ -6,10 +6,11 @@ const Gettext = imports.gettext.domain(Me.metadata['gettext-domain'])
 const _ = Gettext.gettext
 
 const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
-const { Settings, SETTINGS_SCHEMA_DOMAIN } = Me.imports.helpers.settings
-const { initTranslations, Translations } = Me.imports.helpers.translations
+const { Translations } = Me.imports.helpers.translations
 
-var SymbolRow = GObject.registerClass(class SymbolRowClass extends Adw.PreferencesRow {
+var SymbolRow = GObject.registerClass({
+  GTypeName: 'StockExtension-SymbolRow',
+}, class SymbolRowClass extends Adw.PreferencesRow {
   constructor (item, symbolModelList) {
     super({ name: item.name })
 

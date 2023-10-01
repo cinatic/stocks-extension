@@ -1,6 +1,8 @@
 const { Gio, GObject } = imports.gi
 
-var NewItemModel = GObject.registerClass(class NewItemModelClass extends GObject.Object {
+var NewItemModel = GObject.registerClass({
+  GTypeName: 'StockExtension-NewItemModel',
+}, class NewItemModelClass extends GObject.Object {
   static [GObject.interfaces] = [Gio.ListModel]
 
   #item = new GObject.Object()

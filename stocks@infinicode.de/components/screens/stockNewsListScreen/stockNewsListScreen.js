@@ -1,38 +1,37 @@
 const { Clutter, Gio, GObject, St } = imports.gi
 
+const Mainloop = imports.mainloop
+
 const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
 const { ButtonGroup } = Me.imports.components.buttons.buttonGroup
 const { NewsCard } = Me.imports.components.cards.newsCard
-const { EventHandler } = Me.imports.helpers.eventHandler
 const { FlatList } = Me.imports.components.flatList.flatList
-const { StockDetails } = Me.imports.components.stocks.stockDetails
 const { SearchBar } = Me.imports.components.searchBar.searchBar
 
-const { clearCache, roundOrDefault } = Me.imports.helpers.data
 const { Translations } = Me.imports.helpers.translations
 const { setTimeout, clearTimeout } = Me.imports.helpers.components
 const { removeCache } = Me.imports.helpers.data
 
-const { CHART_RANGES, CHART_RANGES_MAX_GAP } = Me.imports.services.meta.generic
 const FinanceService = Me.imports.services.financeService
 
 var StockNewsListScreen = GObject.registerClass({
   GTypeName: 'StockExtension_StockNewsListScreen'
 }, class StockNewsListScreen extends St.BoxLayout {
-  _init ({ quoteSummary }) {
+  _init ({ quoteSummary, mainEventHandler }) {
     super._init({
       style_class: 'screen stock-details-screen',
       vertical: true
     })
 
+    this._mainEventHandler = mainEventHandler
     this._passedQuoteSummary = quoteSummary
 
     this._isRendering = false
     this._showLoadingInfoTimeoutId = null
 
-    this._searchBar = new SearchBar({ back_screen_name: 'overview' })
+    this._searchBar = new SearchBar({ back_screen_name: 'overview', mainEventHandler: this._mainEventHandler })
     this._list = new FlatList()
 
     const stockDetailsTabButtonGroup = new ButtonGroup({
@@ -50,14 +49,14 @@ var StockNewsListScreen = GObject.registerClass({
       const selectedTab = stButton.buttonData.value
 
       if (selectedTab === 'KeyData') {
-        EventHandler.emit('show-screen', {
+        this._mainEventHandler.emit('show-screen', {
           screen: 'stock-details',
           additionalData: {
             item: this._passedQuoteSummary
           }
         })
       } else {
-        EventHandler.emit('show-screen', {
+        this._mainEventHandler.emit('show-screen', {
           screen: 'stock-news-list',
           additionalData: {
             item: this._passedQuoteSummary
@@ -69,6 +68,8 @@ var StockNewsListScreen = GObject.registerClass({
     this.add_child(this._searchBar)
     this.add_child(stockDetailsTabButtonGroup)
     this.add_child(this._list)
+
+    this.connect('destroy', this._onDestroy.bind(this))
 
     this._searchBar.connect('refresh', () => {
       removeCache(`news_${this._passedQuoteSummary.Provider}_${this._passedQuoteSummary.Symbol}`)
@@ -127,5 +128,15 @@ var StockNewsListScreen = GObject.registerClass({
 
       item.visible = searchContent.includes(searchText.toUpperCase())
     })
+  }
+
+  _onDestroy () {
+    if (this._showLoadingInfoTimeoutId) {
+      clearTimeout(this._showLoadingInfoTimeoutId)
+    }
+
+    if (this._autoRefreshTimeoutId) {
+      Mainloop.source_remove(this._autoRefreshTimeoutId)
+    }
   }
 })

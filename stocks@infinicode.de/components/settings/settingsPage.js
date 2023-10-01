@@ -3,10 +3,12 @@ const Me = ExtensionUtils.getCurrentExtension()
 
 const { Adw, Gio, GObject, Gtk } = imports.gi
 
-const { Settings } = Me.imports.helpers.settings
+const { SettingsHandler } = Me.imports.helpers.settings
 const { Translations } = Me.imports.helpers.translations
 
-var SettingsPage = GObject.registerClass(
+var SettingsPage = GObject.registerClass({
+      GTypeName: 'StockExtension-SettingsPage',
+    },
     class StockListPreferencePage extends Adw.PreferencesPage {
       _init () {
         super._init({
@@ -22,13 +24,15 @@ var SettingsPage = GObject.registerClass(
 
 class GeneralPreferenceGroup extends Adw.PreferencesGroup {
   static {
-    GObject.registerClass(this)
+    GObject.registerClass({ GTypeName: 'StockExtension-GeneralPreferenceGroup' }, this)
   }
 
   constructor () {
     super({
       title: Translations.SETTINGS.TITLE_GENERAL
     })
+
+    this._settings = new SettingsHandler()
 
     const panelPositions = new Gtk.StringList()
     panelPositions.append(Translations.SETTINGS.POSITION_IN_PANEL_LEFT)
@@ -38,11 +42,11 @@ class GeneralPreferenceGroup extends Adw.PreferencesGroup {
     const panelPositionRow = new Adw.ComboRow({
       title: Translations.SETTINGS.POSITION_IN_PANEL,
       model: panelPositions,
-      selected: Settings.position_in_panel
+      selected: this._settings.position_in_panel
     })
 
     panelPositionRow.connect('notify::selected', (widget) => {
-      Settings.position_in_panel = widget.selected
+      this._settings.position_in_panel = widget.selected
     })
     this.add(panelPositionRow)
 
@@ -55,11 +59,11 @@ class GeneralPreferenceGroup extends Adw.PreferencesGroup {
     const tickerDisplayVariationRow = new Adw.ComboRow({
       title: Translations.SETTINGS.TICKER_DISPLAY_VARIATION.TITLE,
       model: tickerDisplayVariations,
-      selected: Settings.position_in_panel
+      selected: this._settings.position_in_panel
     })
 
     tickerDisplayVariationRow.connect('notify::selected', (widget) => {
-      Settings.ticker_display_variation = widget.selected
+      this._settings.ticker_display_variation = widget.selected
     })
     this.add(tickerDisplayVariationRow)
 
@@ -73,10 +77,10 @@ class GeneralPreferenceGroup extends Adw.PreferencesGroup {
       valign: Gtk.Align.CENTER,
     })
 
-    tickerStockAmountSpinButton.set_value(Settings.ticker_stock_amount)
+    tickerStockAmountSpinButton.set_value(this._settings.ticker_stock_amount)
 
     tickerStockAmountSpinButton.connect('value-changed', (widget) => {
-      Settings.ticker_stock_amount = widget.get_value()
+      this._settings.ticker_stock_amount = widget.get_value()
     })
 
     const tickerStockAmountRow = new Adw.ActionRow({
@@ -97,10 +101,10 @@ class GeneralPreferenceGroup extends Adw.PreferencesGroup {
       valign: Gtk.Align.CENTER,
     })
 
-    tickerIntervalSpinButton.set_value(Settings.ticker_interval)
+    tickerIntervalSpinButton.set_value(this._settings.ticker_interval)
 
     tickerIntervalSpinButton.connect('value-changed', (widget) => {
-      Settings.ticker_interval = widget.get_value()
+      this._settings.ticker_interval = widget.get_value()
     })
 
     const tickerIntervalRow = new Adw.ActionRow({
@@ -120,10 +124,10 @@ class GeneralPreferenceGroup extends Adw.PreferencesGroup {
       activatable_widget: showTickerOffMarketPricesSwitch
     })
 
-    showTickerOffMarketPricesSwitch.set_active(Settings.show_ticker_off_market_prices)
+    showTickerOffMarketPricesSwitch.set_active(this._settings.show_ticker_off_market_prices)
 
     showTickerOffMarketPricesSwitch.connect('notify::active', (widget) => {
-      Settings.show_ticker_off_market_prices = widget.get_active()
+      this._settings.show_ticker_off_market_prices = widget.get_active()
     })
 
     showTickerOffMarketPricesRow.add_suffix(showTickerOffMarketPricesSwitch)
@@ -138,10 +142,10 @@ class GeneralPreferenceGroup extends Adw.PreferencesGroup {
       activatable_widget: useNamesFromProviderSwitch
     })
 
-    useNamesFromProviderSwitch.set_active(Settings.use_provider_instrument_names)
+    useNamesFromProviderSwitch.set_active(this._settings.use_provider_instrument_names)
 
     useNamesFromProviderSwitch.connect('notify::active', (widget) => {
-      Settings.use_provider_instrument_names = widget.get_active()
+      this._settings.use_provider_instrument_names = widget.get_active()
     })
 
     useNamesFromProviderRow.add_suffix(useNamesFromProviderSwitch)

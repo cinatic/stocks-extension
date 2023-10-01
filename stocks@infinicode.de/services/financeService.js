@@ -2,7 +2,7 @@ const ExtensionUtils = imports.misc.extensionUtils
 const Me = ExtensionUtils.getCurrentExtension()
 
 const { cacheOrDefault } = Me.imports.helpers.data
-const { Settings } = Me.imports.helpers.settings
+const { SettingsHandler } = Me.imports.helpers.settings
 
 const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
 
@@ -15,6 +15,8 @@ const services = {
 }
 
 var getQuoteSummary = async ({ symbol, provider, fallbackName }) => {
+  const settings = new SettingsHandler()
+
   return cacheOrDefault(`summary_${symbol}_${provider}`, async () => {
     const service = services[provider]
 
@@ -32,7 +34,7 @@ var getQuoteSummary = async ({ symbol, provider, fallbackName }) => {
       summary.Symbol = symbol
     }
 
-    if (!summary.FullName || !Settings.use_provider_instrument_names) {
+    if (!summary.FullName || !settings.use_provider_instrument_names) {
       summary.FullName = fallbackName
     }
 
