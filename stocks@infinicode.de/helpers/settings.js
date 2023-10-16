@@ -1,23 +1,25 @@
-const { Gio, GLib } = imports.gi
+import GLib from 'gi://GLib'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { decodeBase64JsonOrDefault, isNullOrEmpty, isNullOrUndefined } from './data.js'
 
-const { decodeBase64JsonOrDefault, isNullOrEmpty, isNullOrUndefined } = Me.imports.helpers.data
-const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
+import { FINANCE_PROVIDER } from '../services/meta/generic.js'
 
-var POSITION_IN_PANEL_KEY = 'position-in-panel'
-var STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
-var STOCKS_PORTFOLIOS = 'portfolios'
-var STOCKS_TRANSACTIONS = 'transactions'
-var STOCKS_TICKER_INTERVAL = 'ticker-interval'
-var STOCKS_SHOW_OFF_MARKET_TICKER_PRICES = 'show-ticker-off-market-prices'
-var STOCKS_TICKER_STOCK_AMOUNT = 'ticker-stock-amount'
-var STOCKS_SELECTED_PORTFOLIO = 'selected-portfolio'
-var STOCKS_TICKER_DISPLAY_VARIATION = 'ticker-display-variation'
-var STOCKS_USE_PROVIDER_INSTRUMENT_NAMES = 'use-provider-instrument-names'
+let _getSettings = () => {}
+export const setSettingsGetter = (settings) => {
+  _getSettings = settings
+}
+export const POSITION_IN_PANEL_KEY = 'position-in-panel'
+export const STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
+export const STOCKS_PORTFOLIOS = 'portfolios'
+export const STOCKS_TRANSACTIONS = 'transactions'
+export const STOCKS_TICKER_INTERVAL = 'ticker-interval'
+export const STOCKS_SHOW_OFF_MARKET_TICKER_PRICES = 'show-ticker-off-market-prices'
+export const STOCKS_TICKER_STOCK_AMOUNT = 'ticker-stock-amount'
+export const STOCKS_SELECTED_PORTFOLIO = 'selected-portfolio'
+export const STOCKS_TICKER_DISPLAY_VARIATION = 'ticker-display-variation'
+export const STOCKS_USE_PROVIDER_INSTRUMENT_NAMES = 'use-provider-instrument-names'
 
-var DEFAULT_SYMBOL_DATA = [
+export const DEFAULT_SYMBOL_DATA = [
   {
     symbol: 'BABA',
     name: 'Alibaba (NY)',
@@ -26,7 +28,7 @@ var DEFAULT_SYMBOL_DATA = [
   }
 ]
 
-var DEFAULT_PORTFOLIO_DATA = [
+export const DEFAULT_PORTFOLIO_DATA = [
   {
     id: 'e3e619c6c567328e22f79bfd647b3003',
     name: 'List 1',
@@ -36,16 +38,16 @@ var DEFAULT_PORTFOLIO_DATA = [
   }
 ]
 
-var convertOldSettingsFormat = rawString => rawString.split('-&&-').map(symbolPairString => ({
+export const convertOldSettingsFormat = rawString => rawString.split('-&&-').map(symbolPairString => ({
   name: symbolPairString.split('-§§-')[0],
   symbol: symbolPairString.split('-§§-')[1],
   showInTicker: true,
   provider: FINANCE_PROVIDER.YAHOO
 }))
 
-var SettingsHandler = class SettingsHandler {
+export const SettingsHandler = class SettingsHandler {
   constructor () {
-    this._settings = ExtensionUtils.getSettings()
+    this._settings = _getSettings()
   }
 
   get position_in_panel () {

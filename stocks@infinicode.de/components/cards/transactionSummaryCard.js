@@ -1,14 +1,12 @@
-const { Clutter, GObject, Pango, St } = imports.gi
+import Clutter from 'gi://Clutter'
+import GObject from 'gi://GObject'
+import St from 'gi://St'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
-
-const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
-const { Translations } = Me.imports.helpers.translations
-const { MARKET_STATES } = Me.imports.services.meta.generic
+import { roundOrDefault, getStockColorStyleClass } from '../../helpers/data.js'
+import { Translations } from '../../helpers/translations.js'
 
 
-var TransactionSummaryCard = GObject.registerClass({
+export const TransactionSummaryCard = GObject.registerClass({
   GTypeName: 'StockExtension_TransactionSummaryCard'
 }, class TransactionSummaryCard extends St.Button {
   _init (quoteSummary, transactionResult) {
@@ -41,7 +39,7 @@ var TransactionSummaryCard = GObject.registerClass({
     const headerBox = new St.BoxLayout({
       style_class: 'header-box',
       x_expand: true,
-      y_align: St.Align.MIDDLE
+      y_align: Clutter.ActorAlign.CENTER
     })
 
     const leftBox = this._createStockInfo()
@@ -238,7 +236,7 @@ var TransactionSummaryCard = GObject.registerClass({
       style_class: 'detail-item-value-box change',
       x_expand: false,
       y_expand: false,
-      x_align: St.Align.END
+      x_align: Clutter.ActorAlign.END
     })
 
     const quoteColorStyleClass = getStockColorStyleClass(change)

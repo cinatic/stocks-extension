@@ -1,20 +1,18 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { cacheOrDefault } from '../helpers/data.js'
+import { SettingsHandler } from '../helpers/settings.js'
 
-const { cacheOrDefault } = Me.imports.helpers.data
-const { SettingsHandler } = Me.imports.helpers.settings
+import { FINANCE_PROVIDER } from './meta/generic.js'
+import { QuoteSummary } from './dto/quoteSummary.js'
 
-const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
-
-const yahooService = Me.imports.services.yahooService
-const eastMoneyService = Me.imports.services.eastMoneyService
+import * as yahooService from '../services/yahooService.js'
+import * as eastMoneyService from '../services/eastMoneyService.js'
 
 const services = {
   [FINANCE_PROVIDER.YAHOO]: yahooService,
   [FINANCE_PROVIDER.EAST_MONEY]: eastMoneyService
 }
 
-var getQuoteSummary = async ({ symbol, provider, fallbackName }) => {
+export const getQuoteSummary = async ({ symbol, provider, fallbackName }) => {
   const settings = new SettingsHandler()
 
   return cacheOrDefault(`summary_${symbol}_${provider}`, async () => {
@@ -42,7 +40,7 @@ var getQuoteSummary = async ({ symbol, provider, fallbackName }) => {
   })
 }
 
-var getHistoricalQuotes = async ({ symbol, provider, range = '1y', includeTimestamps = true }) => {
+export const getHistoricalQuotes = async ({ symbol, provider, range = '1y', includeTimestamps = true }) => {
   return cacheOrDefault(`chart_${symbol}_${provider}_${range}`, () => {
     const service = services[provider]
 
@@ -52,7 +50,7 @@ var getHistoricalQuotes = async ({ symbol, provider, range = '1y', includeTimest
   })
 }
 
-var getNewsList = async ({ symbol, provider }) => {
+export const getNewsList = async ({ symbol, provider }) => {
   return cacheOrDefault(`news_${provider}_${symbol}`, () => {
     const service = services[provider]
 

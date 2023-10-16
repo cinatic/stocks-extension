@@ -1,14 +1,15 @@
-const { Clutter, GObject, Pango, St } = imports.gi
+import Clutter from 'gi://Clutter'
+import GObject from 'gi://GObject'
+import St from 'gi://St'
+import Pango from 'gi://Pango'
+
 
 const Mainloop = imports.mainloop
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { setTimeout, clearTimeout } from '../../helpers/components.js'
+import { roundOrDefault, getStockColorStyleClass, isNullOrEmpty } from '../../helpers/data.js'
 
-const { setTimeout, clearTimeout } = Me.imports.helpers.components
-const { roundOrDefault, getStockColorStyleClass, isNullOrEmpty } = Me.imports.helpers.data
-
-const {
+import {
   SettingsHandler,
   STOCKS_SYMBOL_PAIRS, STOCKS_TICKER_INTERVAL,
   STOCKS_SHOW_OFF_MARKET_TICKER_PRICES,
@@ -16,12 +17,12 @@ const {
   STOCKS_TICKER_STOCK_AMOUNT,
   STOCKS_PORTFOLIOS,
   STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
-} = Me.imports.helpers.settings
+} from '../../helpers/settings.js'
 
-const { Translations } = Me.imports.helpers.translations
+import { Translations } from '../../helpers/translations.js'
 
-const { MARKET_STATES } = Me.imports.services.meta.generic
-const FinanceService = Me.imports.services.financeService
+import { MARKET_STATES } from '../../services/meta/generic.js'
+import * as FinanceService from '../../services/financeService.js'
 
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS,
@@ -40,7 +41,7 @@ const TICKER_ITEM_VARIATION = {
   MINIMAL: 3
 }
 
-var MenuStockTicker = GObject.registerClass({
+export const MenuStockTicker = GObject.registerClass({
   GTypeName: 'StockExtension_MenuStockTicker'
 }, class MenuStockTicker extends St.BoxLayout {
   _init () {

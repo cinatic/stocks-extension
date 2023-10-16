@@ -1,6 +1,7 @@
-const { Gio, GObject } = imports.gi
+import Gio from 'gi://Gio'
+import GObject from 'gi://GObject'
 
-var NewItemModel = GObject.registerClass({
+export const NewItemModel = GObject.registerClass({
   GTypeName: 'StockExtension-NewItemModel',
 }, class NewItemModelClass extends GObject.Object {
   static [GObject.interfaces] = [Gio.ListModel]

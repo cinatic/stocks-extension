@@ -10,10 +10,10 @@
  * @returns {Object}
  */
 
-var fromXML;
+export let fromXML;
 
 (function(exports) {
-  var UNESCAPE = {
+  const UNESCAPE = {
     "&amp;": "&",
     "&lt;": "<",
     "&gt;": ">",
@@ -21,8 +21,8 @@ var fromXML;
     "&quot;": '"'
   };
 
-  var ATTRIBUTE_KEY = "@";
-  var CHILD_NODE_KEY = "#";
+  const ATTRIBUTE_KEY = "@";
+  const CHILD_NODE_KEY = "#";
 
   exports.fromXML = fromXML = _fromXML;
 
@@ -31,36 +31,36 @@ var fromXML;
   }
 
   function parseXML(text) {
-    var list = String.prototype.split.call(text, /<([^!<>?](?:'[\S\s]*?'|"[\S\s]*?"|[^'"<>])*|!(?:--[\S\s]*?--|\[[^\[\]'"<>]+\[[\S\s]*?]]|DOCTYPE[^\[<>]*?\[[\S\s]*?]|(?:ENTITY[^"<>]*?"[\S\s]*?")?[\S\s]*?)|\?[\S\s]*?\?)>/);
-    var length = list.length;
+    const list = String.prototype.split.call(text, /<([^!<>?](?:'[\S\s]*?'|"[\S\s]*?"|[^'"<>])*|!(?:--[\S\s]*?--|\[[^\[\]'"<>]+\[[\S\s]*?]]|DOCTYPE[^\[<>]*?\[[\S\s]*?]|(?:ENTITY[^"<>]*?"[\S\s]*?")?[\S\s]*?)|\?[\S\s]*?\?)>/);
+    const length = list.length;
 
     // root element
-    var root = {f: []};
-    var elem = root;
+    const root = {f: []};
+    let elem = root;
 
     // dom tree stack
-    var stack = [];
+    const stack = [];
 
-    for (var i = 0; i < length;) {
+    for (let i = 0; i < length;) {
       // text node
-      var str = list[i++];
+      const str = list[i++];
       if (str) appendText(str);
 
       // child node
-      var tag = list[i++];
+      const tag = list[i++];
       if (tag) parseNode(tag);
     }
 
     return root;
 
     function parseNode(tag) {
-      var tagLength = tag.length;
-      var firstChar = tag[0];
+      const tagLength = tag.length;
+      const firstChar = tag[0];
       if (firstChar === "/") {
         // close tag
-        var closed = tag.replace(/^\/|[\s\/].*$/g, "").toLowerCase();
+        const closed = tag.replace(/^\/|[\s\/].*$/g, "").toLowerCase();
         while (stack.length) {
-          var tagName = elem.n && elem.n.toLowerCase();
+          const tagName = elem.n && elem.n.toLowerCase();
           elem = stack.pop();
           if (tagName === closed) break;
         }
@@ -76,7 +76,7 @@ var fromXML;
           appendChild({n: "!", r: tag.substr(1)});
         }
       } else {
-        var child = openTag(tag);
+        const child = openTag(tag);
         appendChild(child);
         if (tag[tagLength - 1] === "/") {
           child.c = 1; // emptyTag
@@ -98,9 +98,9 @@ var fromXML;
   }
 
   function openTag(tag) {
-    var elem = {f: []};
+    const elem = {f: []};
     tag = tag.replace(/\s*\/?$/, "");
-    var pos = tag.search(/[\s='"\/]/);
+    const pos = tag.search(/[\s='"\/]/);
     if (pos < 0) {
       elem.n = tag;
     } else {
@@ -112,19 +112,19 @@ var fromXML;
 
   function parseAttribute(elem, reviver) {
     if (!elem.t) return;
-    var list = elem.t.split(/([^\s='"]+(?:\s*=\s*(?:'[\S\s]*?'|"[\S\s]*?"|[^\s'"]*))?)/);
-    var length = list.length;
-    var attributes, val;
+    const list = elem.t.split(/([^\s='"]+(?:\s*=\s*(?:'[\S\s]*?'|"[\S\s]*?"|[^\s'"]*))?)/);
+    const length = list.length;
+    let attributes, val;
 
-    for (var i = 0; i < length; i++) {
-      var str = removeSpaces(list[i]);
+    for (let i = 0; i < length; i++) {
+      let str = removeSpaces(list[i]);
       if (!str) continue;
 
       if (!attributes) {
         attributes = {};
       }
 
-      var pos = str.indexOf("=");
+      const pos = str.indexOf("=");
       if (pos < 0) {
         // bare attribute
         str = ATTRIBUTE_KEY + str;
@@ -135,8 +135,8 @@ var fromXML;
         str = ATTRIBUTE_KEY + str.substr(0, pos).replace(/\s+$/, "");
 
         // quote: foo="FOO" bar='BAR'
-        var firstChar = val[0];
-        var lastChar = val[val.length - 1];
+        const firstChar = val[0];
+        const lastChar = val[val.length - 1];
         if (firstChar === lastChar && (firstChar === "'" || firstChar === '"')) {
           val = val.substr(1, val.length - 2);
         }
@@ -159,7 +159,7 @@ var fromXML;
   function unescapeXML(str) {
     return str.replace(/(&(?:lt|gt|amp|apos|quot|#(?:\d{1,6}|x[0-9a-fA-F]{1,5}));)/g, function(str) {
       if (str[1] === "#") {
-        var code = (str[2] === "x") ? parseInt(str.substr(3), 16) : parseInt(str.substr(2), 10);
+        const code = (str[2] === "x") ? parseInt(str.substr(3), 16) : parseInt(str.substr(2), 10);
         if (code > -1) return String.fromCharCode(code);
       }
       return UNESCAPE[str] || str;
@@ -169,13 +169,13 @@ var fromXML;
   function toObject(elem, reviver) {
     if ("string" === typeof elem) return elem;
 
-    var raw = elem.r;
+    const raw = elem.r;
     if (raw) return raw;
 
-    var attributes = parseAttribute(elem, reviver);
-    var object;
-    var childList = elem.f;
-    var childLength = childList.length;
+    const attributes = parseAttribute(elem, reviver);
+    let object;
+    const childList = elem.f;
+    const childLength = childList.length;
 
     if (attributes || childLength > 1) {
       // merge attributes and child nodes
@@ -189,10 +189,10 @@ var fromXML;
       });
     } else if (childLength) {
       // the node has single child node but no attribute
-      var child = childList[0];
+      const child = childList[0];
       object = toObject(child, reviver);
       if (child.n) {
-        var wrap = {};
+        const wrap = {};
         wrap[child.n] = object;
         object = wrap;
       }
@@ -210,7 +210,7 @@ var fromXML;
 
   function addObject(object, key, val) {
     if ("undefined" === typeof val) return;
-    var prev = object[key];
+    const prev = object[key];
     if (prev instanceof Array) {
       prev.push(val);
     } else if (key in object) {

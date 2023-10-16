@@ -1,11 +1,10 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import Adw from 'gi://Adw'
+import GObject from 'gi://GObject'
+import Gtk from 'gi://Gtk'
 
-const { Adw, Gio, GObject, Gtk } = imports.gi
+import { Translations } from '../../../helpers/translationsForPrefs.js'
 
-const { Translations } = Me.imports.helpers.translations
-
-var SubPage = GObject.registerClass(
+export const SubPage = GObject.registerClass(
     class SubPage extends Gtk.Box {
       _init (title, page) {
         super._init({

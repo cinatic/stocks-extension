@@ -1,4 +1,4 @@
-const Soup = imports.gi.Soup
+import Soup from 'gi://Soup'
 
 const DEFAULT_TIME_OUT_IN_SECONDS = 10
 const DEFAULT_CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
@@ -59,7 +59,7 @@ const generateQueryString = params => {
   return `?${paramKeyValues.join('&')}`
 }
 
-var fetch = ({ url, method = 'GET', headers, queryParameters, customHttpSession = null }) => {
+export const fetch = ({ url, method = 'GET', headers, queryParameters, customHttpSession = null }) => {
   return new Promise(resolve => {
     url = url + generateQueryString(queryParameters)
 

@@ -1,28 +1,26 @@
-const { GObject, St } = imports.gi
+import GObject from 'gi://GObject'
+import St from 'gi://St'
 
 const Mainloop = imports.mainloop
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { ButtonGroup } from '../../buttons/buttonGroup.js'
+import { FlatList } from '../../flatList/flatList.js'
+import { StockCard } from '../../cards/stockCard.js'
+import { SearchBar } from '../../searchBar/searchBar.js'
+import { setTimeout, clearTimeout } from '../../../helpers/components.js'
+import { isNullOrEmpty, removeCache } from '../../../helpers/data.js'
 
-const { ButtonGroup } = Me.imports.components.buttons.buttonGroup
-const { FlatList } = Me.imports.components.flatList.flatList
-const { StockCard } = Me.imports.components.cards.stockCard
-const { SearchBar } = Me.imports.components.searchBar.searchBar
-const { setTimeout, clearTimeout } = Me.imports.helpers.components
-const { isNullOrEmpty, removeCache } = Me.imports.helpers.data
-
-const {
+import {
   SettingsHandler,
   STOCKS_PORTFOLIOS,
   STOCKS_SYMBOL_PAIRS,
   STOCKS_SELECTED_PORTFOLIO,
   STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
-} = Me.imports.helpers.settings
+} from '../../../helpers/settings.js'
 
-const { Translations } = Me.imports.helpers.translations
+import { Translations } from '../../../helpers/translations.js'
 
-const FinanceService = Me.imports.services.financeService
+import * as FinanceService from '../../../services/financeService.js'
 
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS,
@@ -31,7 +29,7 @@ const SETTING_KEYS_TO_REFRESH = [
   STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
 ]
 
-var StockOverviewScreen = GObject.registerClass({
+export const StockOverviewScreen = GObject.registerClass({
   GTypeName: 'StockExtension_StockOverviewScreen'
 }, class StockOverviewScreen extends St.BoxLayout {
   _init (mainEventHandler) {
@@ -60,7 +58,7 @@ var StockOverviewScreen = GObject.registerClass({
 
     this._searchBar.connect('refresh', () => {
       removeCache('summary_')
-      this._loadData()
+      this._loadData().catch(e => log(e))
       this._createPortfolioButtonGroup()
     })
 
@@ -68,7 +66,7 @@ var StockOverviewScreen = GObject.registerClass({
 
     this._settingsChangedId = this._settings.connect('changed', (value, key) => {
       if (SETTING_KEYS_TO_REFRESH.includes(key)) {
-        this._loadData()
+        this._loadData().catch(e => log(e))
         this._createPortfolioButtonGroup()
       }
     })
@@ -83,7 +81,7 @@ var StockOverviewScreen = GObject.registerClass({
 
     this._createPortfolioButtonGroup()
 
-    this._loadData()
+    this._loadData().catch(e => log(e))
 
     this._registerTimeout()
   }

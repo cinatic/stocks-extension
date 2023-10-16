@@ -1,11 +1,14 @@
-const { Gio, GLib, GObject } = imports.gi
+import Gio from 'gi://Gio'
+import GLib from 'gi://GLib'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 
-var getCustomIconPath = iconName => Gio.icon_new_for_string(Me.dir.get_child('icons').get_path() + '/' + iconName + '.svg')
+export const getCustomIconPath = iconName => {
+  const extensionObject = Extension.lookupByURL(import.meta.url);
+  Gio.icon_new_for_string(extensionObject.dir.get_child('icons').get_path() + '/' + iconName + '.svg')
+}
 
-var setTimeout = (func, time) => GLib.timeout_add(
+export const setTimeout = (func, time) => GLib.timeout_add(
     GLib.PRIORITY_DEFAULT,
     time,
     () => {
@@ -14,7 +17,7 @@ var setTimeout = (func, time) => GLib.timeout_add(
       return GLib.SOURCE_REMOVE
     })
 
-var clearTimeout = timerId => {
+export const clearTimeout = timerId => {
   GLib.source_remove(timerId)
 
   return null

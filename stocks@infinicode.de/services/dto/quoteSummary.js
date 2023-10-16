@@ -1,12 +1,9 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { isNullOrUndefined, moveDecimal } from '../../helpers/data.js'
+import { MARKETS } from '../meta/eastMoney.js'
+import { FINANCE_PROVIDER, MARKET_STATES } from '../meta/generic.js'
+import { Translations } from '../../helpers/translations.js'
 
-const { isNullOrUndefined, moveDecimal } = Me.imports.helpers.data
-const { MARKETS } = Me.imports.services.meta.eastMoney
-const { FINANCE_PROVIDER, MARKET_STATES } = Me.imports.services.meta.generic
-const { Translations } = Me.imports.helpers.translations
-
-var QuoteSummary = class QuoteSummary {
+export const QuoteSummary = class QuoteSummary {
   constructor (symbol, provider, name, error) {
     this.Name = name
     this.FullName = null
@@ -40,7 +37,7 @@ var QuoteSummary = class QuoteSummary {
   }
 }
 
-var createQuoteSummaryFromEastMoneyData = ({ symbol, quoteData, error }) => {
+export const createQuoteSummaryFromEastMoneyData = ({ symbol, quoteData, error }) => {
   const newObject = new QuoteSummary(symbol, FINANCE_PROVIDER.EAST_MONEY)
   newObject.Error = error
 
@@ -74,7 +71,7 @@ var createQuoteSummaryFromEastMoneyData = ({ symbol, quoteData, error }) => {
   return newObject
 }
 
-var createQuoteSummaryFromYahooData = ({ symbol, quoteData, error }) => {
+export const createQuoteSummaryFromYahooData = ({ symbol, quoteData, error }) => {
   const newObject = new QuoteSummary(symbol, FINANCE_PROVIDER.YAHOO)
   newObject.Error = error
 
@@ -137,7 +134,7 @@ var createQuoteSummaryFromYahooData = ({ symbol, quoteData, error }) => {
   return newObject
 }
 
-var createQuoteSummaryFromYahooDataV6 = ({ symbol, quoteData, error }) => {
+export const createQuoteSummaryFromYahooDataV6 = ({ symbol, quoteData, error }) => {
   const newObject = new QuoteSummary(symbol, FINANCE_PROVIDER.YAHOO)
   newObject.Error = error
 

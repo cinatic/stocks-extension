@@ -1,12 +1,9 @@
-const { Gio } = imports.gi
+import Gio from 'gi://Gio'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { SettingsHandler } from '../helpers/settings.js'
+import { TRANSACTION_TYPES } from './meta/generic.js'
 
-const { SettingsHandler } = Me.imports.helpers.settings
-const { TRANSACTION_TYPES } = Me.imports.services.meta.generic
-
-var loadCalculatedTransactionsForSymbol = ({ portfolioId, quoteSummary }) => {
+export const loadCalculatedTransactionsForSymbol = ({ portfolioId, quoteSummary }) => {
   const settings = new SettingsHandler()
   const transactionsBySymbol = ((settings.transactions[portfolioId] || {})[quoteSummary.Symbol] || []).sort((a, b) => a.date.localeCompare(b.date))
   const sellTransactions = transactionsBySymbol.filter(item => item.type === TRANSACTION_TYPES.SELL)
@@ -94,7 +91,7 @@ var loadCalculatedTransactionsForSymbol = ({ portfolioId, quoteSummary }) => {
   }
 }
 
-var save = ({ portfolioId, symbol, transaction }) => {
+export const save = ({ portfolioId, symbol, transaction }) => {
   const settings = new SettingsHandler()
   const transactions = settings.transactions
   const transactionsByPortfolio = transactions[portfolioId] || {}
@@ -122,7 +119,7 @@ var save = ({ portfolioId, symbol, transaction }) => {
   settings.transactions = transactions
 }
 
-var remove = ({ portfolioId, symbol, transaction }) => {
+export const remove = ({ portfolioId, symbol, transaction }) => {
   const settings = new SettingsHandler()
   const transactions = settings.transactions
   const transactionsByPortfolio = transactions[portfolioId] || {}
@@ -134,7 +131,7 @@ var remove = ({ portfolioId, symbol, transaction }) => {
   settings.transactions = transactions
 }
 
-var validate = (transaction) => {
+export const validate = (transaction) => {
   if (isNaN(parseInt(transaction.amount))) {
     return Translations.TRANSACTIONS.INVALID_AMOUNT
   }

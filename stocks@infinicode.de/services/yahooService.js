@@ -1,11 +1,8 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
-
-const { fetch } = Me.imports.helpers.fetch
-const { createQuoteSummaryFromYahooDataV6 } = Me.imports.services.dto.quoteSummary
-const { createQuoteHistoricalFromYahooData } = Me.imports.services.dto.quoteHistorical
-const { createNewsListFromYahooData } = Me.imports.services.dto.newsList
-const { INTERVAL_MAPPINGS } = Me.imports.services.meta.yahoo
+import { fetch } from '../helpers/fetch.js'
+import { createQuoteSummaryFromYahooDataV6 } from './dto/quoteSummary.js'
+import { createQuoteHistoricalFromYahooData } from './dto/quoteHistorical.js'
+import { createNewsListFromYahooData } from './dto/newsList.js'
+import { INTERVAL_MAPPINGS } from './meta/yahoo.js'
 
 const API_ENDPOINT = 'https://query1.finance.yahoo.com'
 const API_VERSION_SUMMARY = 'v6/finance'
@@ -21,7 +18,7 @@ const defaultQueryParameters = {
 
 const createQuoteSummaryFromYahooData = createQuoteSummaryFromYahooDataV6;
 
-var getQuoteSummary = async ({ symbol }) => {
+export const getQuoteSummary = async ({ symbol }) => {
   const queryParameters = {
     ...defaultQueryParameters,
     modules: 'price'
@@ -43,7 +40,7 @@ var getQuoteSummary = async ({ symbol }) => {
   return createQuoteSummaryFromYahooData(params)
 }
 
-var getHistoricalQuotes = async ({ symbol, range = '1mo', includeTimestamps = true }) => {
+export const getHistoricalQuotes = async ({ symbol, range = '1mo', includeTimestamps = true }) => {
   const queryParameters = {
     ...defaultQueryParameters,
     range,
@@ -62,7 +59,7 @@ var getHistoricalQuotes = async ({ symbol, range = '1mo', includeTimestamps = tr
   }
 }
 
-var getNewsList = async ({ symbol }) => {
+export const getNewsList = async ({ symbol }) => {
   const url = RSS_NEWS_ENDPOINT.replace('{SYMBOL}', symbol)
 
   const response = await fetch({ url })

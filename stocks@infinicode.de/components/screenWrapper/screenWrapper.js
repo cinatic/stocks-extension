@@ -1,15 +1,13 @@
-const { GObject, St } = imports.gi
+import GObject from 'gi://GObject'
+import St from 'gi://St'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { EditTransactionScreen } from '../screens/editTransactionScreen/editTransactionScreen.js'
+import { StockOverviewScreen } from '../screens/stockOverviewScreen/stockOverviewScreen.js'
+import { StockNewsListScreen } from '../screens/stockNewsListScreen/stockNewsListScreen.js'
+import { StockTransactionsScreen } from '../screens/stockTransactionsScreen/stockTransactionsScreen.js'
+import { StockDetailsScreen } from '../screens/stockDetailsScreen/stockDetailsScreen.js'
 
-const { EditTransactionScreen } = Me.imports.components.screens.editTransactionScreen.editTransactionScreen
-const { StockOverviewScreen } = Me.imports.components.screens.stockOverviewScreen.stockOverviewScreen
-const { StockNewsListScreen } = Me.imports.components.screens.stockNewsListScreen.stockNewsListScreen
-const { StockTransactionsScreen } = Me.imports.components.screens.stockTransactionsScreen.stockTransactionsScreen
-const { StockDetailsScreen } = Me.imports.components.screens.stockDetailsScreen.stockDetailsScreen
-
-var ScreenWrapper = GObject.registerClass({
+export const ScreenWrapper = GObject.registerClass({
       GTypeName: 'StockExtension_ScreenWrapper'
     },
     class ScreenWrapper extends St.Widget {

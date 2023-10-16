@@ -1,16 +1,15 @@
-const { Clutter, GObject, St } = imports.gi
+import Clutter from 'gi://Clutter'
+import GObject from 'gi://GObject'
+import St from 'gi://St'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { IconButton } from '../buttons/iconButton.js'
+import { roundOrDefault, getStockColorStyleClass } from '../../helpers/data.js'
+import { Translations } from '../../helpers/translations.js'
+import { TRANSACTION_TYPES } from '../../services/meta/generic.js'
 
-const { IconButton } = Me.imports.components.buttons.iconButton
-const { roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
-const { Translations } = Me.imports.helpers.translations
-const { TRANSACTION_TYPES } = Me.imports.services.meta.generic
+import * as TransactionService from '../../services/transactionService.js'
 
-const TransactionService = Me.imports.services.transactionService
-
-var TransactionCard = GObject.registerClass({
+export const TransactionCard = GObject.registerClass({
   GTypeName: 'StockExtension_TransactionCard'
 }, class TransactionCard extends St.Button {
   _init ({ portfolioId, transaction, quoteSummary, mainEventHandler }) {
@@ -219,7 +218,7 @@ var TransactionCard = GObject.registerClass({
       style_class: 'detail-item-value-box change',
       x_expand: false,
       y_expand: false,
-      x_align: St.Align.END
+      x_align: Clutter.ActorAlign.END
     })
 
     const quoteColorStyleClass = getStockColorStyleClass(change)

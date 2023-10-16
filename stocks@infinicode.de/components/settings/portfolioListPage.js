@@ -1,20 +1,19 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import Adw from 'gi://Adw'
+import GObject from 'gi://GObject'
+import Gio from 'gi://Gio'
+import Gtk from 'gi://Gtk'
 
-const { Adw, Gio, GObject, Gtk } = imports.gi
+import { Translations } from '../../helpers/translationsForPrefs.js'
 
-const { Translations } = Me.imports.helpers.translations
+import { NewItemModel } from './subcomponents/newItemModel.js'
+import { NewPortfolioRow } from './subcomponents/newPortfolioRow.js'
+import { PortfolioModelList } from './subcomponents/portfolioModelList.js'
+import { PortfolioRow } from './subcomponents/portfolioRow.js'
 
-const { NewItemModel } = Me.imports.components.settings.subcomponents.newItemModel
-const { NewPortfolioRow } = Me.imports.components.settings.subcomponents.newPortfolioRow
-const { PortfolioModelList } = Me.imports.components.settings.subcomponents.portfolioModelList
-const { PortfolioRow } = Me.imports.components.settings.subcomponents.portfolioRow
+import { SymbolsListPage } from './symbolsListPage.js'
+import { SubPage } from './subcomponents/subPage.js'
 
-const { SymbolsListPage } = Me.imports.components.settings.symbolsListPage
-
-const { SubPage } = Me.imports.components.settings.subcomponents.subPage
-
-var PortfolioListPage = GObject.registerClass({
+export const PortfolioListPage = GObject.registerClass({
       GTypeName: 'StockExtension-PortfolioListPage',
     },
     class PortfoliosListPreferencePage extends Adw.PreferencesPage {

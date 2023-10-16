@@ -1,16 +1,13 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { fromXML } from '../../helpers/xmlParser.js'
 
-const { fromXML } = Me.imports.helpers.xmlParser
-
-var NewsList = class NewsList {
+export const NewsList = class NewsList {
   constructor () {
     this.Items = []
     this.Error = null
   }
 }
 
-var NewsPreviewItem = class NewsPreviewItem {
+export const NewsPreviewItem = class NewsPreviewItem {
   constructor () {
     this.Description = null
     this.Link = null
@@ -19,7 +16,7 @@ var NewsPreviewItem = class NewsPreviewItem {
   }
 }
 
-var createNewsListFromYahooData = (responseData, type, error) => {
+export const createNewsListFromYahooData = (responseData, type, error) => {
   const newObject = new NewsList()
 
   newObject.Error = error

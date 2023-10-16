@@ -1,13 +1,12 @@
-const { GObject, St } = imports.gi
+import Clutter from 'gi://Clutter'
+import GObject from 'gi://GObject'
+import St from 'gi://St'
 
-const ExtensionUtils = imports.misc.extensionUtils
+import { fallbackIfNaN, roundOrDefault, getStockColorStyleClass, toLocalDateFormat } from '../../helpers/data.js'
+import { Translations } from '../../helpers/translations.js'
+import { MARKET_STATES } from '../../services/meta/generic.js'
 
-const Me = ExtensionUtils.getCurrentExtension()
-const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
-const { Translations } = Me.imports.helpers.translations
-const { MARKET_STATES } = Me.imports.services.meta.generic
-
-var StockDetails = GObject.registerClass({
+export const StockDetails = GObject.registerClass({
   GTypeName: 'StockExtension_StockDetails'
 }, class StockDetails extends St.BoxLayout {
   _init ({ quoteSummary }) {
@@ -36,7 +35,7 @@ var StockDetails = GObject.registerClass({
       style_class: 'header-box',
       x_expand: true,
       y_expand: true,
-      y_align: St.Align.MIDDLE
+      y_align: Clutter.ActorAlign.CENTER
     })
 
     if (quoteSummary.Error) {
@@ -173,7 +172,7 @@ var StockDetails = GObject.registerClass({
 
     leftDetailBox.add(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.TIME),
-        this._createDetailItemValue((new Date(quoteSummary.Timestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME))
+        this._createDetailItemValue(toLocalDateFormat(quoteSummary.Timestamp, Translations.FORMATS.DEFAULT_DATE_TIME))
     ))
 
     return leftDetailBox
@@ -200,14 +199,14 @@ var StockDetails = GObject.registerClass({
     if (quoteSummary.MarketState === MARKET_STATES.PRE) {
       rightDetailBox.add(this._createDetailItem(
           this._createDetailItemLabel(Translations.STOCKS.TIME_PRE_MARKET),
-          this._createDetailItemValue((new Date(quoteSummary.PreMarketTimestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME))
+          this._createDetailItemValue(toLocalDateFormat(quoteSummary.PreMarketTimestamp, Translations.FORMATS.DEFAULT_DATE_TIME))
       ))
     }
 
     if (quoteSummary.MarketState === MARKET_STATES.POST) {
       rightDetailBox.add(this._createDetailItem(
           this._createDetailItemLabel(Translations.STOCKS.TIME_POST_MARKET),
-          this._createDetailItemValue((new Date(quoteSummary.PostMarketTimestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME))
+          this._createDetailItemValue(toLocalDateFormat(quoteSummary.PostMarketTimestamp, Translations.FORMATS.DEFAULT_DATE_TIME))
       ))
     }
 
@@ -269,7 +268,7 @@ var StockDetails = GObject.registerClass({
       style_class: 'detail-item-value-box change',
       x_expand: false,
       y_expand: false,
-      x_align: St.Align.END
+      x_align: Clutter.ActorAlign.END
     })
 
     const quoteColorStyleClass = getStockColorStyleClass(change)

@@ -25,22 +25,22 @@
  *
  */
 
-const { Clutter, GObject, St } = imports.gi
+import Clutter from 'gi://Clutter'
+import GObject from 'gi://GObject'
+import St from 'gi://St'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js';
+import { SettingsHandler, setSettingsGetter } from './helpers/settings.js'
 
-const { MenuStockTicker } = Me.imports.components.stocks.menuStockTicker
-const { ScreenWrapper } = Me.imports.components.screenWrapper.screenWrapper
+setSettingsGetter(() => Extension.lookupByURL(import.meta.url).getSettings())
 
-const { EventHandler } = Me.imports.helpers.eventHandler
-const { SettingsHandler } = Me.imports.helpers.settings
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 
-const Gettext = imports.gettext.domain('stocks@infinicode.de')
-const _ = Gettext.gettext
+import { MenuStockTicker } from './components/stocks/menuStockTicker.js'
+import { ScreenWrapper } from './components/screenWrapper/screenWrapper.js'
 
-const Main = imports.ui.main
-const PanelMenu = imports.ui.panelMenu
+import { EventHandler } from './helpers/eventHandler.js'
 
 const MenuPosition = {
   LEFT: 0,
@@ -130,22 +130,17 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
   }
 })
 
-var stocksMenu
+let _stocksMenu
 
-function init (extensionMeta) {
-  ExtensionUtils.initTranslations()
-}
-
-function enable () {
-  stocksMenu = new StocksMenuButton()
-  Main.panel.addToStatusArea('stocksMenu', stocksMenu)
-  stocksMenu.checkPositionInPanel()
-}
-
-function disable () {
-  if (stocksMenu) {
-    stocksMenu.destroy()
+export default class StocksExtension extends Extension {
+  enable() {
+    _stocksMenu = new StocksMenuButton()
+    Main.panel.addToStatusArea('stocksMenu', _stocksMenu)
+    _stocksMenu.checkPositionInPanel()
   }
 
-  stocksMenu = null
+  disable() {
+    this._stocksMenu.destroy();
+    delete this._stocksMenu;
+  }
 }

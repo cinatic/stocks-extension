@@ -1,3 +1,4 @@
+let _ = nope => nope
 export const Translations = {
   EXTENSION: {
     NAME: _('Stocks Extension'),
@@ -111,3 +112,5 @@ export const Translations = {
     DEFAULT_DATE_TIME: _('%H:%M:%S %d.%m.%Y')
   }
 }
+
+export const setTranslationFn = trans => translationFn = trans

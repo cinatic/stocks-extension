@@ -1,14 +1,14 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import Adw from 'gi://Adw'
+import GObject from 'gi://GObject'
+import Gdk from 'gi://Gdk'
+import GLib from 'gi://GLib'
+import Gtk from 'gi://Gtk'
+import Pango from 'gi://Pango'
 
-const { Adw, Gdk, Gio, GLib, GObject, Gtk, Pango } = imports.gi
-const Gettext = imports.gettext.domain(Me.metadata['gettext-domain'])
-const _ = Gettext.gettext
+import { FINANCE_PROVIDER } from '../../../services/meta/generic.js'
+import { Translations } from '../../../helpers/translationsForPrefs.js'
 
-const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
-const { Translations } = Me.imports.helpers.translations
-
-var SymbolRow = GObject.registerClass({
+export const SymbolRow = GObject.registerClass({
   GTypeName: 'StockExtension-SymbolRow',
 }, class SymbolRowClass extends Adw.PreferencesRow {
   constructor (item, symbolModelList) {

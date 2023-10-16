@@ -1,20 +1,19 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import GObject from 'gi://GObject'
+import Gio from 'gi://Gio'
 
-const { Gio, GObject } = imports.gi
 
-const { StockItem } = Me.imports.components.settings.subcomponents.stockItem
+import { StockItem } from './stockItem.js'
 
-const { SettingsHandler, STOCKS_SYMBOL_PAIRS, } = Me.imports.helpers.settings
-const { Translations } = Me.imports.helpers.translations
+import { SettingsHandler, STOCKS_SYMBOL_PAIRS, } from '../../../helpers/settings.js'
+import { Translations } from '../../../helpers/translationsForPrefs.js'
 
-const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
+import { FINANCE_PROVIDER } from '../../../services/meta/generic.js'
 
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS
 ]
 
-var SymbolModelList = GObject.registerClass({
+export const SymbolModelList = GObject.registerClass({
   GTypeName: 'StockExtension-SymbolModelList',
 }, class SymbolModelList extends GObject.Object {
   static [GObject.interfaces] = [Gio.ListModel]

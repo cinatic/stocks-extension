@@ -1,6 +1,6 @@
-const { GObject } = imports.gi
+import GObject from 'gi://GObject'
 
-var StockItem = GObject.registerClass({
+export const StockItem = GObject.registerClass({
   GTypeName: 'StockExtension-StockItem',
   Properties: {
     'id': GObject.ParamSpec.string('id', 'id', 'id', GObject.ParamFlags.READWRITE, null),
