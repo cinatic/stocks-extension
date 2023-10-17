@@ -3,7 +3,7 @@ import GObject from 'gi://GObject'
 import Gtk from 'gi://Gtk'
 
 import { SettingsHandler } from '../../helpers/settings.js'
-import { Translations } from '../../helpers/translationsForPrefs.js'
+import { Translations } from '../../helpers/translations.js'
 
 export const SettingsPage = GObject.registerClass({
       GTypeName: 'StockExtension-SettingsPage',

@@ -4,15 +4,6 @@ const ByteArray = imports.byteArray
 let CACHE = {}
 const CACHE_TIME = 10 * 1000
 
-export const loadModule = async (modulePath) => {
-  try {
-    return await import(modulePath)
-  } catch (e) {
-    log("whut?")
-    log(e)
-  }
-}
-
 export const toLocalDateFormat = (date, format) => {
   const parsedDate = new Date(date)
   const glibDateTime = GLib.DateTime.new_from_iso8601(parsedDate.toISOString(), null)

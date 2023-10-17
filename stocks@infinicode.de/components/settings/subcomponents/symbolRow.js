@@ -6,7 +6,7 @@ import Gtk from 'gi://Gtk'
 import Pango from 'gi://Pango'
 
 import { FINANCE_PROVIDER } from '../../../services/meta/generic.js'
-import { Translations } from '../../../helpers/translationsForPrefs.js'
+import { Translations } from '../../../helpers/translations.js'
 
 export const SymbolRow = GObject.registerClass({
   GTypeName: 'StockExtension-SymbolRow',

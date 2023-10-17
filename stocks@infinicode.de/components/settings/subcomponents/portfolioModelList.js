@@ -4,7 +4,7 @@ import Gio from 'gi://Gio'
 import { PortfolioItem } from './portfolioItem.js'
 
 import { SettingsHandler, STOCKS_PORTFOLIOS } from '../../../helpers/settings.js'
-import { Translations } from '../../../helpers/translationsForPrefs.js'
+import { Translations } from '../../../helpers/translations.js'
 
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_PORTFOLIOS

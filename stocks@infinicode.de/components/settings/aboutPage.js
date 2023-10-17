@@ -7,7 +7,7 @@ import Gtk from 'gi://Gtk'
 import * as Config from 'resource:///org/gnome/Shell/Extensions/js/misc/config.js';
 
 
-import { Translations } from '../../helpers/translationsForPrefs.js'
+import { Translations } from '../../helpers/translations.js'
 
 export const AboutPage = GObject.registerClass({
       GTypeName: 'StockExtension-AboutPage',

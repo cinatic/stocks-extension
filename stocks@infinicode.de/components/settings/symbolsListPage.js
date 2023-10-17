@@ -3,7 +3,7 @@ import GObject from 'gi://GObject'
 import Gio from 'gi://Gio'
 import Gtk from 'gi://Gtk'
 
-import { Translations } from '../../helpers/translationsForPrefs.js'
+import { Translations } from '../../helpers/translations.js'
 import { SettingsHandler } from '../../helpers/settings.js'
 
 import { NewItemModel } from './subcomponents/newItemModel.js'

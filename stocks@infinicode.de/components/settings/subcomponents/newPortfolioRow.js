@@ -2,7 +2,7 @@ import Adw from 'gi://Adw'
 import GObject from 'gi://GObject'
 import Gtk from 'gi://Gtk'
 
-import { Translations } from '../../../helpers/translationsForPrefs.js'
+import { Translations } from '../../../helpers/translations.js'
 
 export const NewPortfolioRow = GObject.registerClass({
       GTypeName: 'StockExtension-NewPortfolioRow',

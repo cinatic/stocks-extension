@@ -29,13 +29,14 @@ import Clutter from 'gi://Clutter'
 import GObject from 'gi://GObject'
 import St from 'gi://St'
 
-import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js';
+import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js'
 import { SettingsHandler, setSettingsGetter } from './helpers/settings.js'
+import { Translations, initTranslations } from './helpers/translations.js'
 
 setSettingsGetter(() => Extension.lookupByURL(import.meta.url).getSettings())
 
-import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
+import * as Main from 'resource:///org/gnome/shell/ui/main.js'
+import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js'
 
 import { MenuStockTicker } from './components/stocks/menuStockTicker.js'
 import { ScreenWrapper } from './components/screenWrapper/screenWrapper.js'
@@ -133,14 +134,15 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
 let _stocksMenu
 
 export default class StocksExtension extends Extension {
-  enable() {
+  enable () {
+    initTranslations(_)
     _stocksMenu = new StocksMenuButton()
     Main.panel.addToStatusArea('stocksMenu', _stocksMenu)
     _stocksMenu.checkPositionInPanel()
   }
 
-  disable() {
-    this._stocksMenu.destroy();
-    delete this._stocksMenu;
+  disable () {
+    _stocksMenu.destroy()
+    _stocksMenu = null
   }
 }

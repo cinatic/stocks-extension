@@ -5,7 +5,7 @@ import Gio from 'gi://Gio'
 import { StockItem } from './stockItem.js'
 
 import { SettingsHandler, STOCKS_SYMBOL_PAIRS, } from '../../../helpers/settings.js'
-import { Translations } from '../../../helpers/translationsForPrefs.js'
+import { Translations } from '../../../helpers/translations.js'
 
 import { FINANCE_PROVIDER } from '../../../services/meta/generic.js'
 

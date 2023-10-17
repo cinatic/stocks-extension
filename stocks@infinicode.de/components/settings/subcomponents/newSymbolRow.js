@@ -2,7 +2,7 @@ import Adw from 'gi://Adw'
 import GObject from 'gi://GObject'
 import Gtk from 'gi://Gtk'
 
-import { Translations } from '../../../helpers/translationsForPrefs.js'
+import { Translations } from '../../../helpers/translations.js'
 
 export const NewSymbolRow = GObject.registerClass({
       GTypeName: 'StockExtension-NewSymbolRow',
