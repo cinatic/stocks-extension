@@ -4,7 +4,6 @@ import Gtk from 'gi://Gtk'
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
 
 import { initTranslations } from './helpers/translations.js'
-
 import { setSettingsGetter } from './helpers/settings.js'
 
 setSettingsGetter(() => ExtensionPreferences.lookupByURL(import.meta.url).getSettings())

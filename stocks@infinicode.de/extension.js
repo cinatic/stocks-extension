@@ -30,18 +30,17 @@ import GObject from 'gi://GObject'
 import St from 'gi://St'
 
 import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js'
-import { SettingsHandler, setSettingsGetter } from './helpers/settings.js'
-import { Translations, initTranslations } from './helpers/translations.js'
-
-setSettingsGetter(() => Extension.lookupByURL(import.meta.url).getSettings())
-
 import * as Main from 'resource:///org/gnome/shell/ui/main.js'
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js'
-
-import { MenuStockTicker } from './components/stocks/menuStockTicker.js'
 import { ScreenWrapper } from './components/screenWrapper/screenWrapper.js'
 
+import { MenuStockTicker } from './components/stocks/menuStockTicker.js'
+
 import { EventHandler } from './helpers/eventHandler.js'
+import { setSettingsGetter, SettingsHandler } from './helpers/settings.js'
+import { initTranslations } from './helpers/translations.js'
+
+setSettingsGetter(() => Extension.lookupByURL(import.meta.url).getSettings())
 
 const MenuPosition = {
   LEFT: 0,
@@ -142,7 +141,9 @@ export default class StocksExtension extends Extension {
   }
 
   disable () {
-    _stocksMenu.destroy()
-    _stocksMenu = null
+    if (_stocksMenu) {
+      _stocksMenu.destroy()
+      _stocksMenu = null
+    }
   }
 }
