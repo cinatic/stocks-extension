@@ -58,7 +58,7 @@ export const MenuStockTicker = GObject.registerClass({
 
     this._settings = new SettingsHandler()
 
-    this._sync()
+    this._sync().catch(e => log(e))
 
     this.connect('destroy', this._onDestroy.bind(this))
     this.connect('button-press-event', this._onPress.bind(this))
@@ -67,7 +67,7 @@ export const MenuStockTicker = GObject.registerClass({
       this._registerTimeout(false)
 
       if (SETTING_KEYS_TO_REFRESH.includes(key)) {
-        this._sync()
+        this._sync().catch(e => log(e))
       }
     })
 
@@ -311,7 +311,7 @@ export const MenuStockTicker = GObject.registerClass({
 
   _showNextStock () {
     this._visibleStockIndex = this._visibleStockIndex + 1 >= this._getEnabledSymbols().length ? 0 : this._visibleStockIndex + 1
-    this._sync()
+    this._sync().catch(e => log(e))
   }
 
   _onDestroy () {

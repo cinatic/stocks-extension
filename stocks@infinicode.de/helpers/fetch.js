@@ -18,6 +18,10 @@ const Response = class {
     }
   }
 
+  headers () {
+    return this.headers
+  }
+
   blob () {
     return this.body
   }
@@ -40,6 +44,11 @@ const appendHeaders = (message, headers) => {
   headerNames.forEach(headerName => message.request_headers.append(headerName, headers[headerName]))
 }
 
+const appendCookies = (message, rawCookies) => {
+  const cookies = rawCookies.map(rawCookie => Soup.Cookie.parse(rawCookie, null))
+  Soup.cookies_to_request(cookies, message)
+}
+
 const generateQueryString = params => {
   if (!params) {
     return ''
@@ -59,7 +68,7 @@ const generateQueryString = params => {
   return `?${paramKeyValues.join('&')}`
 }
 
-export const fetch = ({ url, method = 'GET', headers, queryParameters, customHttpSession = null }) => {
+export const fetch = ({ url, method = 'GET', headers, queryParameters, customHttpSession, cookies = null }) => {
   return new Promise(resolve => {
     url = url + generateQueryString(queryParameters)
 
@@ -69,6 +78,10 @@ export const fetch = ({ url, method = 'GET', headers, queryParameters, customHtt
 
     if (headers) {
       appendHeaders(request_message, headers)
+    }
+
+    if (cookies) {
+      appendCookies(request_message, cookies)
     }
 
     const httpSession = customHttpSession || new Soup.Session({
