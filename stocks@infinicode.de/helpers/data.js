@@ -16,8 +16,12 @@ export const fallbackIfNaN = (value, fallback = '--') => typeof value === 'undef
 export const closest = (array, target) => array.reduce((prev, curr) => Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev)
 
 export const decodeBase64JsonOrDefault = (encodedJson, defaultValue) => {
+  if (!encodedJson) {
+    return defaultValue
+  }
+
   try {
-    const utf8decoder = new TextDecoder();
+    const utf8decoder = new TextDecoder()
     const value = JSON.parse(utf8decoder.decode(GLib.base64_decode(encodedJson)))
 
     if (!value) {
