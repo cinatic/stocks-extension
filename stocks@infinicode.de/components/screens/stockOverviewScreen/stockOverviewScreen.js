@@ -1,25 +1,19 @@
 import GObject from 'gi://GObject'
 import St from 'gi://St'
-
-const Mainloop = imports.mainloop
-
-import { ButtonGroup } from '../../buttons/buttonGroup.js'
-import { FlatList } from '../../flatList/flatList.js'
-import { StockCard } from '../../cards/stockCard.js'
-import { SearchBar } from '../../searchBar/searchBar.js'
 import { isNullOrEmpty, removeCache } from '../../../helpers/data.js'
 
-import {
-  SettingsHandler,
-  STOCKS_PORTFOLIOS,
-  STOCKS_SYMBOL_PAIRS,
-  STOCKS_SELECTED_PORTFOLIO,
-  STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
-} from '../../../helpers/settings.js'
+import { SettingsHandler, STOCKS_PORTFOLIOS, STOCKS_SELECTED_PORTFOLIO, STOCKS_SYMBOL_PAIRS, STOCKS_USE_PROVIDER_INSTRUMENT_NAMES } from '../../../helpers/settings.js'
 
 import { Translations } from '../../../helpers/translations.js'
 
 import * as FinanceService from '../../../services/financeService.js'
+import { FINANCE_PROVIDER } from '../../../services/meta/generic.js'
+import { ButtonGroup } from '../../buttons/buttonGroup.js'
+import { StockCard } from '../../cards/stockCard.js'
+import { FlatList } from '../../flatList/flatList.js'
+import { SearchBar } from '../../searchBar/searchBar.js'
+
+const Mainloop = imports.mainloop
 
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS,
@@ -156,18 +150,33 @@ export const StockOverviewScreen = GObject.registerClass({
 
     this._showLoadingInfoTimeoutId = setTimeout(() => this._list.show_loading_info(), 500)
 
-    const quoteSummaries = await Promise.all(
-        symbols.map(symbolData => FinanceService.getQuoteSummary({
-          ...symbolData,
-          fallbackName: symbolData.name
-        }))
-    )
+    const [yahooQuoteSummaries, otherQuoteSummaries] = await Promise.all([
+      FinanceService.getQuoteSummaryList({
+        symbolsWithFallbackName: symbols.filter(item => item.provider === FINANCE_PROVIDER.YAHOO).map(symbolData => ({ ...symbolData, fallbackName: symbolData.name })),
+        provider: FINANCE_PROVIDER.YAHOO
+      }),
+
+      symbols.filter(item => item.provider !== FINANCE_PROVIDER.YAHOO).map(symbolData => FinanceService.getQuoteSummary({
+        ...symbolData,
+        fallbackName: symbolData.name
+      }))
+    ])
 
     this._showLoadingInfoTimeoutId = clearTimeout(this._showLoadingInfoTimeoutId)
 
     this._list.clear_list_items()
 
-    quoteSummaries.forEach(quoteSummary => {
+    const wildMixOfQuoteSummaries = [...yahooQuoteSummaries, ...otherQuoteSummaries]
+
+    symbols.forEach(symbolData => {
+      const { symbol, provider } = symbolData
+
+      const quoteSummary = wildMixOfQuoteSummaries?.find(item => item.Symbol === symbol && item.Provider === provider)
+
+      if (!quoteSummary) {
+        return
+      }
+
       this._list.addItem(new StockCard(quoteSummary, this._settings.selected_portfolio))
     })
 

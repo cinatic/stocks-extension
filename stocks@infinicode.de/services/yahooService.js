@@ -2,7 +2,7 @@ import { fetch } from '../helpers/fetch.js'
 import { SettingsHandler } from '../helpers/settings.js'
 import { createNewsListFromYahooData } from './dto/newsList.js'
 import { createQuoteHistoricalFromYahooData } from './dto/quoteHistorical.js'
-import { createQuoteSummaryFromYahooData } from './dto/quoteSummary.js'
+import { createQuoteSummaryFromYahooData, createQuoteSummaryFromYahooQuoteListData } from './dto/quoteSummary.js'
 import { INTERVAL_MAPPINGS } from './meta/yahoo.js'
 
 const COOKIE_URL = 'https://fc.yahoo.com/'
@@ -11,6 +11,7 @@ const CRUMB_URL = 'https://query2.finance.yahoo.com/v1/test/getcrumb'
 const API_ENDPOINT = 'https://query2.finance.yahoo.com'
 const API_VERSION_SUMMARY = 'v10/finance'
 const API_VERSION_CHART = 'v8/finance'
+const API_VERSION_QUOTE_LIST = 'v7/finance'
 const RSS_NEWS_ENDPOINT = 'https://feeds.finance.yahoo.com/rss/2.0/headline?s={SYMBOL}&region=US&lang=en-US'
 
 const defaultQueryParameters = {
@@ -49,6 +50,36 @@ const ensurePrerequisites = async () => {
   settings.yahoo_meta = newMetaData
 
   return newMetaData
+}
+
+export const getQuoteList = async ({ symbolsWithFallbackName }) => {
+  const yahooMeta = await ensurePrerequisites()
+
+  const queryParameters = {
+    ...defaultQueryParameters,
+    crumb: yahooMeta.crumb,
+    fields: 'fields=currencySymbol,currency,fromCurrency,toCurrency,exchangeTimezoneName,exchangeTimezoneShortName,gmtOffSetMilliseconds,regularMarketChange,regularMarketChangePercent,regularMarketVolume,regularMarketPrice,regularMarketTime,preMarketTime,postMarketTime,exchangeName,longName,extendedMarketTime',
+    symbols: symbolsWithFallbackName.map(item => item.symbol).join()
+  }
+
+  const url = `${API_ENDPOINT}/${API_VERSION_QUOTE_LIST}/quote`
+
+  const response = await fetch({
+    url,
+    queryParameters,
+    cookies: [yahooMeta.cookie]
+  })
+
+  const params = {
+    symbolsWithFallbackName,
+    quoteListData: response.json()
+  }
+
+  if (!response.ok) {
+    params.error = `${response.statusText} - ${response.text()}`
+  }
+
+  return createQuoteSummaryFromYahooQuoteListData(params)
 }
 
 export const getQuoteSummary = async ({ symbol }) => {

@@ -12,6 +12,31 @@ const services = {
   [FINANCE_PROVIDER.EAST_MONEY]: eastMoneyService
 }
 
+export const getQuoteSummaryList = async ({ symbolsWithFallbackName, provider }) => {
+  const settings = new SettingsHandler()
+
+  return cacheOrDefault(`summary_list_${symbolsWithFallbackName.map(item => item.symbol).sort().join('-')}_${provider}`, async () => {
+    const service = services[provider]
+
+    if (!service) {
+      return symbolsWithFallbackName.map(({ symbol, fallbackName }) => new QuoteSummary(symbol, provider, fallbackName, 'Invalid Provider'))
+    }
+
+    let resultList = []
+
+    symbolsWithFallbackName = symbolsWithFallbackName.map(item => ({
+      ...item,
+      forceFallbackName: !settings.use_provider_instrument_names
+    }))
+
+    if (symbolsWithFallbackName?.length > 0) {
+      resultList = await service.getQuoteList({ symbolsWithFallbackName })
+    }
+
+    return resultList
+  })
+}
+
 export const getQuoteSummary = async ({ symbol, provider, fallbackName }) => {
   const settings = new SettingsHandler()
 

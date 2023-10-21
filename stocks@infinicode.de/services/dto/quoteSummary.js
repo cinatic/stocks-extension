@@ -1,7 +1,7 @@
 import { isNullOrUndefined, moveDecimal } from '../../helpers/data.js'
+import { Translations } from '../../helpers/translations.js'
 import { MARKETS } from '../meta/eastMoney.js'
 import { FINANCE_PROVIDER, MARKET_STATES } from '../meta/generic.js'
-import { Translations } from '../../helpers/translations.js'
 
 export const QuoteSummary = class QuoteSummary {
   constructor (symbol, provider, name, error) {
@@ -71,13 +71,31 @@ export const createQuoteSummaryFromEastMoneyData = ({ symbol, quoteData, error }
   return newObject
 }
 
+export const createQuoteSummaryFromYahooQuoteListData = ({ symbolsWithFallbackName, quoteListData, error }) => {
+  const quotes = []
+
+  symbolsWithFallbackName.forEach(symbolWithFallbackName => {
+    const { symbol, fallbackName, forceFallbackName } = symbolWithFallbackName
+    const quoteData = quoteListData?.quoteResponse?.result?.find(quoteResult => quoteResult.symbol === symbol)
+    const quoteSummary = createQuoteSummaryFromYahooData({ symbol, quoteData: { quoteSummary: { result: [{ price: quoteData }] } }, error })
+
+    if (!quoteSummary.FullName || forceFallbackName) {
+      quoteSummary.FullName = fallbackName
+    }
+
+    quotes.push(quoteSummary)
+  })
+
+  return quotes
+}
+
 export const createQuoteSummaryFromYahooData = ({ symbol, quoteData, error }) => {
   const newObject = new QuoteSummary(symbol, FINANCE_PROVIDER.YAHOO)
   newObject.Error = error
 
-  if (quoteData && quoteData.quoteSummary) {
+  if (quoteData?.quoteSummary) {
     if (quoteData.quoteSummary.result) {
-      const priceData = (quoteData.quoteSummary.result[0] || []).price || {}
+      const priceData = (quoteData.quoteSummary.result[0] || {}).price || {}
 
       newObject.FullName = priceData.longName
 
@@ -97,7 +115,7 @@ export const createQuoteSummaryFromYahooData = ({ symbol, quoteData, error }) =>
       newObject.High = priceData.regularMarketDayHigh
       newObject.Volume = priceData.regularMarketVolume
       newObject.CurrencySymbol = priceData.currencySymbol
-      newObject.ExchangeName = priceData.exchangeName
+      newObject.ExchangeName = priceData.exchangeName || priceData.fullExchangeName
 
       newObject.MarketState = priceData.marketState
 

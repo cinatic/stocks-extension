@@ -1,27 +1,17 @@
 import Clutter from 'gi://Clutter'
 import GObject from 'gi://GObject'
-import St from 'gi://St'
 import Pango from 'gi://Pango'
+import St from 'gi://St'
 
-
-const Mainloop = imports.mainloop
-
-import { roundOrDefault, getStockColorStyleClass, isNullOrEmpty } from '../../helpers/data.js'
-
-import {
-  SettingsHandler,
-  STOCKS_SYMBOL_PAIRS, STOCKS_TICKER_INTERVAL,
-  STOCKS_SHOW_OFF_MARKET_TICKER_PRICES,
-  STOCKS_TICKER_DISPLAY_VARIATION,
-  STOCKS_TICKER_STOCK_AMOUNT,
-  STOCKS_PORTFOLIOS,
-  STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
-} from '../../helpers/settings.js'
+import { getStockColorStyleClass, isNullOrEmpty, roundOrDefault } from '../../helpers/data.js'
+import { SettingsHandler, STOCKS_PORTFOLIOS, STOCKS_SHOW_OFF_MARKET_TICKER_PRICES, STOCKS_SYMBOL_PAIRS, STOCKS_TICKER_DISPLAY_VARIATION, STOCKS_TICKER_INTERVAL, STOCKS_TICKER_STOCK_AMOUNT, STOCKS_USE_PROVIDER_INSTRUMENT_NAMES } from '../../helpers/settings.js'
 
 import { Translations } from '../../helpers/translations.js'
-
-import { MARKET_STATES } from '../../services/meta/generic.js'
 import * as FinanceService from '../../services/financeService.js'
+
+import { FINANCE_PROVIDER, MARKET_STATES } from '../../services/meta/generic.js'
+
+const Mainloop = imports.mainloop
 
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS,
@@ -97,22 +87,39 @@ export const MenuStockTicker = GObject.registerClass({
 
     this._showLoadingInfoTimeoutId = setTimeout(this._showInfoMessage.bind(this), 500)
 
-    const quoteSummaries = await Promise.all(tickerBatch.map(stockItem => FinanceService.getQuoteSummary({
-      ...stockItem,
-      fallbackName: stockItem.name
-    })))
+    const [yahooQuoteSummaries, otherQuoteSummaries] = await Promise.all([
+      FinanceService.getQuoteSummaryList({
+        symbolsWithFallbackName: tickerBatch.filter(item => item.provider === FINANCE_PROVIDER.YAHOO).map(symbolData => ({ ...symbolData, fallbackName: symbolData.name })),
+        provider: FINANCE_PROVIDER.YAHOO
+      }),
+
+      tickerBatch.filter(item => item.provider !== FINANCE_PROVIDER.YAHOO).map(symbolData => FinanceService.getQuoteSummary({
+        ...symbolData,
+        fallbackName: symbolData.name
+      }))
+    ])
+
+    const wildMixOfQuoteSummaries = [...yahooQuoteSummaries, ...otherQuoteSummaries]
 
     clearTimeout(this._showLoadingInfoTimeoutId)
 
-    this._createMenuTicker({ quoteSummaries })
+    this._createMenuTicker({ tickerBatch, quoteSummaries: wildMixOfQuoteSummaries })
   }
 
-  _createMenuTicker ({ quoteSummaries }) {
+  _createMenuTicker ({ tickerBatch, quoteSummaries }) {
     this.destroy_all_children()
 
     const tickerItemCreationFn = this._getTickerItemCreationFunction()
 
-    quoteSummaries.forEach((quoteSummary, index) => {
+    tickerBatch.forEach((symbolData, index) => {
+      const { symbol, provider } = symbolData
+
+      const quoteSummary = quoteSummaries?.find(item => item.Symbol === symbol && item.Provider === provider)
+
+      if (!quoteSummary) {
+        return
+      }
+
       const stockTickerItemBox = tickerItemCreationFn.call(this, quoteSummary)
       this.add_child(stockTickerItemBox)
 
