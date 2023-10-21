@@ -9,7 +9,6 @@ import { NewsCard } from '../../cards/newsCard.js'
 import { FlatList } from '../../flatList/flatList.js'
 import { SearchBar } from '../../searchBar/searchBar.js'
 
-import { setTimeout, clearTimeout } from '../../../helpers/components.js'
 import { removeCache } from '../../../helpers/data.js'
 
 import * as FinanceService from '../../../services/financeService.js'

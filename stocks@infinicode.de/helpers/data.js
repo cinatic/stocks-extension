@@ -1,5 +1,4 @@
 import GLib from 'gi://GLib'
-const ByteArray = imports.byteArray
 
 let CACHE = {}
 const CACHE_TIME = 10 * 1000
@@ -18,7 +17,8 @@ export const closest = (array, target) => array.reduce((prev, curr) => Math.abs(
 
 export const decodeBase64JsonOrDefault = (encodedJson, defaultValue) => {
   try {
-    const value = JSON.parse(ByteArray.toString(GLib.base64_decode(encodedJson)))
+    const utf8decoder = new TextDecoder();
+    const value = JSON.parse(utf8decoder.decode(GLib.base64_decode(encodedJson)))
 
     if (!value) {
       return defaultValue

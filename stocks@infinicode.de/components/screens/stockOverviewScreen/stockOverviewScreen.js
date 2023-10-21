@@ -7,7 +7,6 @@ import { ButtonGroup } from '../../buttons/buttonGroup.js'
 import { FlatList } from '../../flatList/flatList.js'
 import { StockCard } from '../../cards/stockCard.js'
 import { SearchBar } from '../../searchBar/searchBar.js'
-import { setTimeout, clearTimeout } from '../../../helpers/components.js'
 import { isNullOrEmpty, removeCache } from '../../../helpers/data.js'
 
 import {

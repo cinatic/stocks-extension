@@ -6,7 +6,6 @@ import Pango from 'gi://Pango'
 
 const Mainloop = imports.mainloop
 
-import { setTimeout, clearTimeout } from '../../helpers/components.js'
 import { roundOrDefault, getStockColorStyleClass, isNullOrEmpty } from '../../helpers/data.js'
 
 import {
