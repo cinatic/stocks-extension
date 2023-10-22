@@ -1,13 +1,16 @@
 import GLib from 'gi://GLib'
 
-import { decodeBase64JsonOrDefault, isNullOrEmpty, isNullOrUndefined } from './data.js'
-
 import { FINANCE_PROVIDER } from '../services/meta/generic.js'
 
-let _getSettings = () => {}
-export const setSettingsGetter = (settings) => {
-  _getSettings = settings
+import { decodeBase64JsonOrDefault, isNullOrEmpty, isNullOrUndefined } from './data.js'
+
+let _settings = null
+let _extensionObject = {}
+
+export const initSettings = extensionObject => {
+  _extensionObject = extensionObject
 }
+
 export const POSITION_IN_PANEL_KEY = 'position-in-panel'
 export const STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
 export const STOCKS_PORTFOLIOS = 'portfolios'
@@ -47,10 +50,6 @@ export const convertOldSettingsFormat = rawString => rawString.split('-&&-').map
 }))
 
 export const SettingsHandler = class SettingsHandler {
-  constructor () {
-    this._settings = _getSettings()
-  }
-
   get position_in_panel () {
     return this._settings.get_enum(POSITION_IN_PANEL_KEY)
   }
@@ -148,6 +147,18 @@ export const SettingsHandler = class SettingsHandler {
 
   set yahoo_meta (value) {
     this._settings.set_string(STOCKS_YAHOO_META, GLib.base64_encode(JSON.stringify(value)))
+  }
+
+  get extensionObject () {
+    return _extensionObject
+  }
+
+  get _settings () {
+    if (!_settings) {
+      _settings = this.extensionObject.getSettings()
+    }
+
+    return _settings
   }
 
   connect (identifier, onChange) {

@@ -37,10 +37,9 @@ import { ScreenWrapper } from './components/screenWrapper/screenWrapper.js'
 import { MenuStockTicker } from './components/stocks/menuStockTicker.js'
 
 import { EventHandler } from './helpers/eventHandler.js'
-import { setSettingsGetter, SettingsHandler } from './helpers/settings.js'
+import { initSettings, SettingsHandler } from './helpers/settings.js'
 import { initTranslations } from './helpers/translations.js'
 
-setSettingsGetter(() => Extension.lookupByURL(import.meta.url).getSettings())
 
 const MenuPosition = {
   LEFT: 0,
@@ -134,6 +133,7 @@ let _stocksMenu
 
 export default class StocksExtension extends Extension {
   enable () {
+    initSettings(this)
     initTranslations(_)
     _stocksMenu = new StocksMenuButton()
     Main.panel.addToStatusArea('stocksMenu', _stocksMenu)

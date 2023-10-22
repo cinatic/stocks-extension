@@ -2,8 +2,6 @@ import GObject from 'gi://GObject'
 import St from 'gi://St'
 import Gio from 'gi://Gio'
 
-const Mainloop = imports.mainloop
-
 import { ButtonGroup } from '../../buttons/buttonGroup.js'
 import { NewsCard } from '../../cards/newsCard.js'
 import { FlatList } from '../../flatList/flatList.js'
@@ -133,10 +131,6 @@ export const StockNewsListScreen = GObject.registerClass({
   _onDestroy () {
     if (this._showLoadingInfoTimeoutId) {
       clearTimeout(this._showLoadingInfoTimeoutId)
-    }
-
-    if (this._autoRefreshTimeoutId) {
-      Mainloop.source_remove(this._autoRefreshTimeoutId)
     }
   }
 })

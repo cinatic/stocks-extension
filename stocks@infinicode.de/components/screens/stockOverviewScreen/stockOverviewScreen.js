@@ -13,8 +13,6 @@ import { StockCard } from '../../cards/stockCard.js'
 import { FlatList } from '../../flatList/flatList.js'
 import { SearchBar } from '../../searchBar/searchBar.js'
 
-const Mainloop = imports.mainloop
-
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS,
   STOCKS_SELECTED_PORTFOLIO,
@@ -124,11 +122,9 @@ export const StockOverviewScreen = GObject.registerClass({
   }
 
   _registerTimeout () {
-    this._autoRefreshTimeoutId = Mainloop.timeout_add_seconds(this._settings.ticker_interval || 10, () => {
+    this._autoRefreshTimeoutId = setInterval(() => {
       this._loadData()
-
-      return true
-    })
+    }, (this._settings.ticker_interval || 10) * 1000)
   }
 
   async _loadData () {
@@ -200,7 +196,7 @@ export const StockOverviewScreen = GObject.registerClass({
     }
 
     if (this._autoRefreshTimeoutId) {
-      Mainloop.source_remove(this._autoRefreshTimeoutId)
+      clearInterval(this._autoRefreshTimeoutId)
     }
 
     if (this._settingsChangedId) {

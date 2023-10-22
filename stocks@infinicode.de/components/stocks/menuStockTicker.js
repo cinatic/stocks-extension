@@ -11,8 +11,6 @@ import * as FinanceService from '../../services/financeService.js'
 
 import { FINANCE_PROVIDER, MARKET_STATES } from '../../services/meta/generic.js'
 
-const Mainloop = imports.mainloop
-
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS,
   STOCKS_PORTFOLIOS,
@@ -300,7 +298,7 @@ export const MenuStockTicker = GObject.registerClass({
 
   _registerTimeout (toggleImmediately = true) {
     if (this._toggleDisplayTimeout) {
-      Mainloop.source_remove(this._toggleDisplayTimeout)
+      clearInterval(this._toggleDisplayTimeout)
       this._toggleDisplayTimeout = null
     }
 
@@ -308,11 +306,9 @@ export const MenuStockTicker = GObject.registerClass({
       this._showNextStock()
     }
 
-    this._toggleDisplayTimeout = Mainloop.timeout_add_seconds(this._settings.ticker_interval || 10, () => {
+    this._toggleDisplayTimeout = setInterval(() => {
       this._showNextStock()
-
-      return true
-    })
+    }, (this._settings.ticker_interval || 10) * 1000)
   }
 
   _showNextStock () {
@@ -322,7 +318,7 @@ export const MenuStockTicker = GObject.registerClass({
 
   _onDestroy () {
     if (this._toggleDisplayTimeout) {
-      Mainloop.source_remove(this._toggleDisplayTimeout)
+      clearInterval(this._toggleDisplayTimeout)
     }
 
     if (this._settingsChangedId) {

@@ -2,7 +2,7 @@ import Clutter from 'gi://Clutter'
 import GObject from 'gi://GObject'
 import St from 'gi://St'
 
-import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js'
+import { SettingsHandler } from '../../helpers/settings.js'
 import { IconButton } from '../buttons/iconButton.js'
 import { Translations } from '../../helpers/translations.js'
 
@@ -108,9 +108,9 @@ export const SearchBar = GObject.registerClass({
       icon_name: 'emblem-system-symbolic',
       icon_size: 18,
       onClick: () => {
-        const extensionObject = Extension.lookupByURL(import.meta.url);
+        const settings = new SettingsHandler()
         this._mainEventHandler.emit('hide-panel')
-        extensionObject.openPreferences();
+        settings.extensionObject.openPreferences();
       }
     })
 
