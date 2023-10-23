@@ -77,7 +77,20 @@ export const createQuoteSummaryFromYahooQuoteListData = ({ symbolsWithFallbackNa
   symbolsWithFallbackName.forEach(symbolWithFallbackName => {
     const { symbol, fallbackName, forceFallbackName } = symbolWithFallbackName
     const quoteData = quoteListData?.quoteResponse?.result?.find(quoteResult => quoteResult.symbol === symbol)
-    const quoteSummary = createQuoteSummaryFromYahooData({ symbol, quoteData: { quoteSummary: { result: [{ price: quoteData }] } }, error })
+
+    const sanitizedQuoteData = {}
+
+    Object.keys(quoteData || {}).forEach(field => {
+      const value = quoteData[field]
+
+      sanitizedQuoteData[field] = value
+
+      if (value && field?.includes('Percent')) {
+        sanitizedQuoteData[field] = value / 100
+      }
+    })
+
+    const quoteSummary = createQuoteSummaryFromYahooData({ symbol, quoteData: { quoteSummary: { result: [{ price: sanitizedQuoteData }] } }, error })
 
     if (!quoteSummary.FullName || forceFallbackName) {
       quoteSummary.FullName = fallbackName

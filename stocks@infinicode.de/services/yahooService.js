@@ -58,7 +58,7 @@ export const getQuoteList = async ({ symbolsWithFallbackName }) => {
   const queryParameters = {
     ...defaultQueryParameters,
     crumb: yahooMeta.crumb,
-    fields: 'fields=currencySymbol,currency,fromCurrency,toCurrency,exchangeTimezoneName,exchangeTimezoneShortName,gmtOffSetMilliseconds,regularMarketChange,regularMarketChangePercent,regularMarketVolume,regularMarketPrice,regularMarketTime,preMarketTime,postMarketTime,exchangeName,longName,extendedMarketTime',
+    fields: 'fields=currencySymbol,currency,fromCurrency,toCurrency,exchangeTimezoneName,exchangeTimezoneShortName,preMarketPrice,preMarketChange,preMarketChangePercent,gmtOffSetMilliseconds,regularMarketChange,regularMarketPreviousClose,regularMarketChangePercent,regularMarketVolume,regularMarketPrice,regularMarketTime,preMarketTime,postMarketTime,postMarketPrice,postMarketChange,postMarketChangePercent,exchangeName,longName,extendedMarketTime',
     symbols: symbolsWithFallbackName.map(item => item.symbol).join()
   }
 
