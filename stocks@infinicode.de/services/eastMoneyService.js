@@ -1,11 +1,9 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
-
-const { fetch } = Me.imports.helpers.fetch
-const { createQuoteSummaryFromEastMoneyData } = Me.imports.services.dto.quoteSummary
-const { createQuoteHistoricalFromEastMoneyData } = Me.imports.services.dto.quoteHistorical
-const { CHART_RANGES } = Me.imports.services.meta.generic
-const { INTERVAL_MAPPINGS } = Me.imports.services.meta.eastMoney
+import { toLocalDateFormat } from '../helpers/data.js'
+import { fetch } from '../helpers/fetch.js'
+import { createQuoteSummaryFromEastMoneyData } from './dto/quoteSummary.js'
+import { createQuoteHistoricalFromEastMoneyData } from './dto/quoteHistorical.js'
+import { CHART_RANGES } from './meta/generic.js'
+import { INTERVAL_MAPPINGS } from './meta/eastMoney.js'
 
 const API_ENDPOINT = 'https://push2his.eastmoney.com'
 const API_VERSION_SUMMARY = 'api/qt/stock/get'
@@ -18,7 +16,7 @@ const API_CHART_SERIES_FIELDS = 'f51,f53,f56,f58,f86'
 
 const defaultQueryParameters = {}
 
-var getQuoteSummary = async ({ symbol }) => {
+export const getQuoteSummary = async ({ symbol }) => {
   const queryParameters = {
     ...defaultQueryParameters,
     secid: symbol,
@@ -40,7 +38,7 @@ var getQuoteSummary = async ({ symbol }) => {
   return createQuoteSummaryFromEastMoneyData(params)
 }
 
-var getHistoricalQuotes = async ({ symbol, range = '1mo' }) => {
+export const getHistoricalQuotes = async ({ symbol, range = '1mo' }) => {
   const queryParameters = {
     ...defaultQueryParameters,
     secid: symbol,
@@ -55,7 +53,7 @@ var getHistoricalQuotes = async ({ symbol, range = '1mo' }) => {
   }
 }
 
-var getNewsList = async () => {
+export const getNewsList = async () => {
   // FIXME ...
   return []
 }
@@ -86,8 +84,8 @@ const _getHistoricalQuotes = async ({ queryParameters, range }) => {
     ...queryParameters,
     klt: INTERVAL_MAPPINGS[range],
     fqt: 1, // 1 before rehabilitation, 2 after rehabilitation
-    beg: startDate.toLocaleFormat('%Y%m%d'),
-    end: endDate.toLocaleFormat('%Y%m%d')
+    beg: toLocalDateFormat(startDate, '%Y%m%d'),
+    end: toLocalDateFormat(endDate, '%Y%m%d')
   }
 
   const response = await fetch({ url, queryParameters })
@@ -119,19 +117,19 @@ const _createDateRange = range => {
       return [startDate, endDate]
 
     case CHART_RANGES.YEAR_TO_DATE:
-      startDate = new Date(endDate.toLocaleFormat('%Y-01-01'))
+      startDate = new Date(toLocalDateFormat(endDate, '%Y-01-01'))
       return [startDate, endDate]
 
     case CHART_RANGES.YEAR:
-      startDate = new Date(endDate.toLocaleFormat(`${endDate.getFullYear() - 1}-%m-%d`))
+      startDate = new Date(toLocalDateFormat(endDate, `${endDate.getFullYear() - 1}-%m-%d`))
       return [startDate, endDate]
 
     case CHART_RANGES.FIVE_YEARS:
-      startDate = new Date(endDate.toLocaleFormat(`${endDate.getFullYear() - 5}-%m-%d`))
+      startDate = new Date(toLocalDateFormat(endDate, `${endDate.getFullYear() - 5}-%m-%d`))
       return [startDate, endDate]
 
     case CHART_RANGES.MAX:
-      startDate = new Date(endDate.toLocaleFormat(`${endDate.getFullYear() - 20}-%m-%d`))
+      startDate = new Date(toLocalDateFormat(endDate, `${endDate.getFullYear() - 20}-%m-%d`))
       return [startDate, endDate]
   }
 }

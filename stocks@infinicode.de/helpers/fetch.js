@@ -1,4 +1,4 @@
-const Soup = imports.gi.Soup
+import Soup from 'gi://Soup'
 
 const DEFAULT_TIME_OUT_IN_SECONDS = 10
 const DEFAULT_CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
@@ -16,6 +16,10 @@ const Response = class {
 
       this.ok = (this.status === Soup.Status.OK)
     }
+  }
+
+  headers () {
+    return this.headers
   }
 
   blob () {
@@ -40,6 +44,11 @@ const appendHeaders = (message, headers) => {
   headerNames.forEach(headerName => message.request_headers.append(headerName, headers[headerName]))
 }
 
+const appendCookies = (message, rawCookies) => {
+  const cookies = rawCookies.map(rawCookie => Soup.Cookie.parse(rawCookie, null))
+  Soup.cookies_to_request(cookies, message)
+}
+
 const generateQueryString = params => {
   if (!params) {
     return ''
@@ -59,7 +68,7 @@ const generateQueryString = params => {
   return `?${paramKeyValues.join('&')}`
 }
 
-var fetch = ({ url, method = 'GET', headers, queryParameters, customHttpSession = null }) => {
+export const fetch = ({ url, method = 'GET', headers, queryParameters, customHttpSession, cookies = null }) => {
   return new Promise(resolve => {
     url = url + generateQueryString(queryParameters)
 
@@ -69,6 +78,10 @@ var fetch = ({ url, method = 'GET', headers, queryParameters, customHttpSession 
 
     if (headers) {
       appendHeaders(request_message, headers)
+    }
+
+    if (cookies) {
+      appendCookies(request_message, cookies)
     }
 
     const httpSession = customHttpSession || new Soup.Session({

@@ -1,27 +1,25 @@
-const { Clutter, GObject, St } = imports.gi
+import GObject from 'gi://GObject'
+import St from 'gi://St'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { IconButton } from '../../buttons/iconButton.js'
+import { ButtonGroup } from '../../buttons/buttonGroup.js'
+import { FlatList } from '../../flatList/flatList.js'
+import { TransactionCard } from '../../cards/transactionCard.js'
+import { TransactionSummaryCard } from '../../cards/transactionSummaryCard.js'
+import { SearchBar } from '../../searchBar/searchBar.js'
 
-const { IconButton } = Me.imports.components.buttons.iconButton
-const { ButtonGroup } = Me.imports.components.buttons.buttonGroup
-const { FlatList } = Me.imports.components.flatList.flatList
-const { TransactionCard } = Me.imports.components.cards.transactionCard
-const { TransactionSummaryCard } = Me.imports.components.cards.transactionSummaryCard
-const { SearchBar } = Me.imports.components.searchBar.searchBar
+import { isNullOrEmpty } from '../../../helpers/data.js'
+import { Translations } from '../../../helpers/translations.js'
 
-const { isNullOrEmpty } = Me.imports.helpers.data
-const { Translations } = Me.imports.helpers.translations
+import * as FinanceService from '../../../services/financeService.js'
+import * as TransactionService from '../../../services/transactionService.js'
 
-const FinanceService = Me.imports.services.financeService
-const TransactionService = Me.imports.services.transactionService
-
-const {
+import {
   SettingsHandler,
   STOCKS_PORTFOLIOS,
   STOCKS_SYMBOL_PAIRS,
   STOCKS_TRANSACTIONS
-} = Me.imports.helpers.settings
+} from '../../../helpers/settings.js'
 
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS,
@@ -29,7 +27,7 @@ const SETTING_KEYS_TO_REFRESH = [
   STOCKS_TRANSACTIONS
 ]
 
-var StockTransactionsScreen = GObject.registerClass({
+export const StockTransactionsScreen = GObject.registerClass({
   GTypeName: 'StockExtension_StockTransactionsScreen'
 }, class StockTransactionsScreen extends St.BoxLayout {
   _init ({ portfolioId, quoteSummary, mainEventHandler }) {
@@ -69,7 +67,7 @@ var StockTransactionsScreen = GObject.registerClass({
     })
 
     searchBar.connect('refresh', () => {
-      this._sync()
+      this._sync().catch(e => log(e))
     })
 
     this._content = new St.BoxLayout({
@@ -117,13 +115,13 @@ var StockTransactionsScreen = GObject.registerClass({
 
     this._settingsChangedId = this._settings.connect('changed', (value, key) => {
       if (SETTING_KEYS_TO_REFRESH.includes(key)) {
-        this._sync()
+        this._sync().catch(e => log(e))
       }
     })
 
     this.connect('destroy', this._onDestroy.bind(this))
 
-    this._sync()
+    this._sync().catch(e => log(e))
   }
 
   async _sync () {

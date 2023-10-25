@@ -1,20 +1,19 @@
-const { Clutter, GObject, St } = imports.gi
+import Clutter from 'gi://Clutter'
+import GObject from 'gi://GObject'
+import St from 'gi://St'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { ButtonGroup } from '../../buttons/buttonGroup.js'
+import { Chart } from '../../chart/chart.js'
+import { StockDetails } from '../../stocks/stockDetails.js'
+import { SearchBar } from '../../searchBar/searchBar.js'
 
-const { ButtonGroup } = Me.imports.components.buttons.buttonGroup
-const { Chart } = Me.imports.components.chart.chart
-const { StockDetails } = Me.imports.components.stocks.stockDetails
-const { SearchBar } = Me.imports.components.searchBar.searchBar
+import { clearCache, roundOrDefault, getStockColorStyleClass, toLocalDateFormat } from '../../../helpers/data.js'
+import { Translations } from '../../../helpers/translations.js'
 
-const { clearCache, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
-const { Translations } = Me.imports.helpers.translations
+import { CHART_RANGES, CHART_RANGES_MAX_GAP } from '../../../services/meta/generic.js'
+import * as FinanceService from '../../../services/financeService.js'
 
-const { CHART_RANGES, CHART_RANGES_MAX_GAP } = Me.imports.services.meta.generic
-const FinanceService = Me.imports.services.financeService
-
-var StockDetailsScreen = GObject.registerClass({
+export const StockDetailsScreen = GObject.registerClass({
   GTypeName: 'StockExtension_StockDetailsScreen'
 }, class StockDetailsScreen extends St.BoxLayout {
   _init ({ portfolioId, quoteSummary, mainEventHandler }) {
@@ -30,7 +29,7 @@ var StockDetailsScreen = GObject.registerClass({
     this._selectedChartRange = CHART_RANGES.INTRADAY
     this._quoteSummary = null
 
-    this._sync()
+    this._sync().catch(e => log(e))
   }
 
   async _sync () {
@@ -61,7 +60,7 @@ var StockDetailsScreen = GObject.registerClass({
 
     searchBar.connect('refresh', () => {
       clearCache()
-      this._sync()
+      this._sync().catch(e => log(e))
     })
 
     const stockDetailsTabButtonGroup = new ButtonGroup({
@@ -109,7 +108,7 @@ var StockDetailsScreen = GObject.registerClass({
 
     chartRangeButtonGroup.connect('clicked', (_, stButton) => {
       this._selectedChartRange = stButton.buttonData.value
-      this._sync()
+      this._sync().catch(e => log(e))
     })
 
     this._chart = new Chart({
@@ -146,7 +145,7 @@ var StockDetailsScreen = GObject.registerClass({
 
       const changeColorStyleClass = getStockColorStyleClass(changePercentage)
 
-      chartValueLabel.text = `${(new Date(x)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)} ${roundOrDefault(y)}`
+      chartValueLabel.text = `${toLocalDateFormat(x, Translations.FORMATS.DEFAULT_DATE_TIME)} ${roundOrDefault(y)}`
       chartValueChangeLabel.text = `(${changeAbsolute} / ${changePercentage} %)`
       chartValueChangeLabel.style_class = `chart-hover-change-label ${changeColorStyleClass}`
     })

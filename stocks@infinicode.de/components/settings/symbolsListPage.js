@@ -1,17 +1,17 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import Adw from 'gi://Adw'
+import GObject from 'gi://GObject'
+import Gio from 'gi://Gio'
+import Gtk from 'gi://Gtk'
 
-const { Adw, Gio, GObject, Gtk } = imports.gi
+import { Translations } from '../../helpers/translations.js'
+import { SettingsHandler } from '../../helpers/settings.js'
 
-const { Translations } = Me.imports.helpers.translations
-const { SettingsHandler } = Me.imports.helpers.settings
+import { NewItemModel } from './subcomponents/newItemModel.js'
+import { NewSymbolRow } from './subcomponents/newSymbolRow.js'
+import { SymbolModelList } from './subcomponents/symbolModelList.js'
+import { SymbolRow } from './subcomponents/symbolRow.js'
 
-const { NewItemModel } = Me.imports.components.settings.subcomponents.newItemModel
-const { NewSymbolRow } = Me.imports.components.settings.subcomponents.newSymbolRow
-const { SymbolModelList } = Me.imports.components.settings.subcomponents.symbolModelList
-const { SymbolRow } = Me.imports.components.settings.subcomponents.symbolRow
-
-var SymbolsListPage = GObject.registerClass({
+export const SymbolsListPage = GObject.registerClass({
       GTypeName: 'StockExtension-SymbolsListPage',
     },
     class SymbolsListPreferencePage extends Adw.PreferencesPage {

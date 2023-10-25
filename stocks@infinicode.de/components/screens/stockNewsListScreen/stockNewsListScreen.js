@@ -1,22 +1,17 @@
-const { Clutter, Gio, GObject, St } = imports.gi
+import GObject from 'gi://GObject'
+import St from 'gi://St'
+import Gio from 'gi://Gio'
 
-const Mainloop = imports.mainloop
+import { ButtonGroup } from '../../buttons/buttonGroup.js'
+import { NewsCard } from '../../cards/newsCard.js'
+import { FlatList } from '../../flatList/flatList.js'
+import { SearchBar } from '../../searchBar/searchBar.js'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { removeCache } from '../../../helpers/data.js'
 
-const { ButtonGroup } = Me.imports.components.buttons.buttonGroup
-const { NewsCard } = Me.imports.components.cards.newsCard
-const { FlatList } = Me.imports.components.flatList.flatList
-const { SearchBar } = Me.imports.components.searchBar.searchBar
+import * as FinanceService from '../../../services/financeService.js'
 
-const { Translations } = Me.imports.helpers.translations
-const { setTimeout, clearTimeout } = Me.imports.helpers.components
-const { removeCache } = Me.imports.helpers.data
-
-const FinanceService = Me.imports.services.financeService
-
-var StockNewsListScreen = GObject.registerClass({
+export const StockNewsListScreen = GObject.registerClass({
   GTypeName: 'StockExtension_StockNewsListScreen'
 }, class StockNewsListScreen extends St.BoxLayout {
   _init ({ quoteSummary, portfolioId, mainEventHandler }) {
@@ -76,14 +71,14 @@ var StockNewsListScreen = GObject.registerClass({
 
     this._searchBar.connect('refresh', () => {
       removeCache(`news_${this._passedQuoteSummary.Provider}_${this._passedQuoteSummary.Symbol}`)
-      this._loadData()
+      this._loadData().catch(e => log(e))
     })
 
     this._searchBar.connect('text-change', (sender, searchText) => this._filter_results(searchText))
 
     this._list.connect('clicked-item', (sender, item) => Gio.AppInfo.launch_default_for_uri_async(item.cardItem.Link, null, null, null))
 
-    this._loadData()
+    this._loadData().catch(e => log(e))
   }
 
   async _loadData () {
@@ -136,10 +131,6 @@ var StockNewsListScreen = GObject.registerClass({
   _onDestroy () {
     if (this._showLoadingInfoTimeoutId) {
       clearTimeout(this._showLoadingInfoTimeoutId)
-    }
-
-    if (this._autoRefreshTimeoutId) {
-      Mainloop.source_remove(this._autoRefreshTimeoutId)
     }
   }
 })

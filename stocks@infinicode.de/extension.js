@@ -25,22 +25,21 @@
  *
  */
 
-const { Clutter, GObject, St } = imports.gi
+import Clutter from 'gi://Clutter'
+import GObject from 'gi://GObject'
+import St from 'gi://St'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js'
+import * as Main from 'resource:///org/gnome/shell/ui/main.js'
+import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js'
+import { ScreenWrapper } from './components/screenWrapper/screenWrapper.js'
 
-const { MenuStockTicker } = Me.imports.components.stocks.menuStockTicker
-const { ScreenWrapper } = Me.imports.components.screenWrapper.screenWrapper
+import { MenuStockTicker } from './components/stocks/menuStockTicker.js'
 
-const { EventHandler } = Me.imports.helpers.eventHandler
-const { SettingsHandler } = Me.imports.helpers.settings
+import { EventHandler } from './helpers/eventHandler.js'
+import { initSettings, SettingsHandler } from './helpers/settings.js'
+import { initTranslations } from './helpers/translations.js'
 
-const Gettext = imports.gettext.domain('stocks@infinicode.de')
-const _ = Gettext.gettext
-
-const Main = imports.ui.main
-const PanelMenu = imports.ui.panelMenu
 
 const MenuPosition = {
   LEFT: 0,
@@ -130,22 +129,21 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
   }
 })
 
-var stocksMenu
+let _stocksMenu
 
-function init (extensionMeta) {
-  ExtensionUtils.initTranslations()
-}
-
-function enable () {
-  stocksMenu = new StocksMenuButton()
-  Main.panel.addToStatusArea('stocksMenu', stocksMenu)
-  stocksMenu.checkPositionInPanel()
-}
-
-function disable () {
-  if (stocksMenu) {
-    stocksMenu.destroy()
+export default class StocksExtension extends Extension {
+  enable () {
+    initSettings(this)
+    initTranslations(_)
+    _stocksMenu = new StocksMenuButton()
+    Main.panel.addToStatusArea('stocksMenu', _stocksMenu)
+    _stocksMenu.checkPositionInPanel()
   }
 
-  stocksMenu = null
+  disable () {
+    if (_stocksMenu) {
+      _stocksMenu.destroy()
+      _stocksMenu = null
+    }
+  }
 }

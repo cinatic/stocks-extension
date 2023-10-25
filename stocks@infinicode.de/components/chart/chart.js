@@ -1,11 +1,10 @@
-const { Clutter, GObject, St } = imports.gi
+import Clutter from 'gi://Clutter'
+import GObject from 'gi://GObject'
+import St from 'gi://St'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { closest, fallbackIfNaN, isNullOrEmpty, isNullOrUndefined, getComplementaryColor } from '../../helpers/data.js'
 
-const { closest, fallbackIfNaN, isNullOrEmpty, isNullOrUndefined, getComplementaryColor } = Me.imports.helpers.data
-
-var Chart = GObject.registerClass({
+export const Chart = GObject.registerClass({
   GTypeName: 'StockExtension_Chart',
   Signals: {
     'chart-hover': {

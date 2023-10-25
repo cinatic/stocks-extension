@@ -1,13 +1,11 @@
-const { Clutter, GObject, Pango, St } = imports.gi
+import GObject from 'gi://GObject'
+import St from 'gi://St'
+import Pango from 'gi://Pango'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { toLocalDateFormat } from '../../helpers/data.js'
+import { Translations } from '../../helpers/translations.js'
 
-const { fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
-const { Translations } = Me.imports.helpers.translations
-const { MARKET_STATES } = Me.imports.services.meta.generic
-
-var NewsCard = GObject.registerClass({
+export const NewsCard = GObject.registerClass({
   GTypeName: 'StockExtension_NewsCard'
 }, class NewsCard extends St.Button {
   _init (newsItem, fgColor) {
@@ -59,7 +57,7 @@ var NewsCard = GObject.registerClass({
     const newsDetailsLabel = new St.Label({
       style_class: 'news-details small-text fwb',
       x_expand: true,
-      text: this.cardItem.Date.toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)
+      text: toLocalDateFormat(this.cardItem.Date, Translations.FORMATS.DEFAULT_DATE_TIME)
     })
 
     newsDetailsLabel.set_style(`border-color: ${this._fgColor};`)

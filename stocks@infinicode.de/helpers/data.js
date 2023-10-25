@@ -1,18 +1,28 @@
-const ByteArray = imports.byteArray;
-const { GLib } = imports.gi
+import GLib from 'gi://GLib'
 
 let CACHE = {}
 const CACHE_TIME = 10 * 1000
 
-var isNullOrUndefined = value => typeof value === 'undefined' || value === null
-var isNullOrEmpty = value => isNullOrUndefined(value) || value.length === 0
-var fallbackIfNaN = (value, fallback = '--') => typeof value === 'undefined' || value === null || isNaN(value) ? fallback : value
+export const toLocalDateFormat = (date, format) => {
+  const parsedDate = new Date(date)
+  const glibDateTime = GLib.DateTime.new_from_iso8601(parsedDate.toISOString(), null)
+  return glibDateTime ? glibDateTime.format(format) : date.toISOString()
+}
 
-var closest = (array, target) => array.reduce((prev, curr) => Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev)
+export const isNullOrUndefined = value => typeof value === 'undefined' || value === null
+export const isNullOrEmpty = value => isNullOrUndefined(value) || value.length === 0
+export const fallbackIfNaN = (value, fallback = '--') => typeof value === 'undefined' || value === null || isNaN(value) ? fallback : value
 
-var decodeBase64JsonOrDefault = (encodedJson, defaultValue) => {
+export const closest = (array, target) => array.reduce((prev, curr) => Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev)
+
+export const decodeBase64JsonOrDefault = (encodedJson, defaultValue) => {
+  if (!encodedJson) {
+    return defaultValue
+  }
+
   try {
-    const value = JSON.parse(ByteArray.toString(GLib.base64_decode(encodedJson)))
+    const utf8decoder = new TextDecoder()
+    const value = JSON.parse(utf8decoder.decode(GLib.base64_decode(encodedJson)))
 
     if (!value) {
       return defaultValue
@@ -25,11 +35,11 @@ var decodeBase64JsonOrDefault = (encodedJson, defaultValue) => {
   }
 }
 
-var clearCache = () => {
+export const clearCache = () => {
   CACHE = {}
 }
 
-var removeCache = (keyToDelete, startsWith = true) => {
+export const removeCache = (keyToDelete, startsWith = true) => {
   let keys = [keyToDelete]
 
   if (startsWith) {
@@ -39,7 +49,7 @@ var removeCache = (keyToDelete, startsWith = true) => {
   keys.forEach(key => delete CACHE[key])
 }
 
-var cacheOrDefault = async (cacheKey, evaluator, cacheDuration = CACHE_TIME) => {
+export const cacheOrDefault = async (cacheKey, evaluator, cacheDuration = CACHE_TIME) => {
   const [timestamp, data] = CACHE[cacheKey] || []
 
   if (timestamp && data && timestamp + cacheDuration >= Date.now()) {
@@ -53,7 +63,7 @@ var cacheOrDefault = async (cacheKey, evaluator, cacheDuration = CACHE_TIME) => 
   return freshData
 }
 
-var getStockColorStyleClass = change => {
+export const getStockColorStyleClass = change => {
   let quoteColorStyleClass = 'quote-neutral'
 
   if (change) {
@@ -67,10 +77,10 @@ var getStockColorStyleClass = change => {
   return quoteColorStyleClass
 }
 
-var getComplementaryColor = (hex, bw = true) => {
+export const getComplementaryColor = (hex, bw = true) => {
   const padZero = (str, len) => {
     len = len || 2
-    var zeros = new Array(len).join('0')
+    const zeros = new Array(len).join('0')
     return (zeros + str).slice(-len)
   }
 
@@ -84,7 +94,7 @@ var getComplementaryColor = (hex, bw = true) => {
   if (hex.length !== 6) {
     throw new Error('Invalid HEX color.')
   }
-  var r = parseInt(hex.slice(0, 2), 16),
+  let r = parseInt(hex.slice(0, 2), 16),
       g = parseInt(hex.slice(2, 4), 16),
       b = parseInt(hex.slice(4, 6), 16)
   if (bw) {
@@ -101,7 +111,7 @@ var getComplementaryColor = (hex, bw = true) => {
   return '#' + padZero(r) + padZero(g) + padZero(b)
 }
 
-var moveDecimal = (value, decimalPlaces) => {
+export const moveDecimal = (value, decimalPlaces) => {
   if (!value) {
     return value
   }
@@ -109,4 +119,4 @@ var moveDecimal = (value, decimalPlaces) => {
   return value / Math.pow(10, decimalPlaces)
 }
 
-var roundOrDefault = (number, defaultValue = '--') => isNullOrUndefined(number) ? defaultValue : (Math.round((number + Number.EPSILON) * 100) / 100).toFixed(2)
+export const roundOrDefault = (number, defaultValue = '--') => isNullOrUndefined(number) ? defaultValue : (Math.round((number + Number.EPSILON) * 100) / 100).toFixed(2)

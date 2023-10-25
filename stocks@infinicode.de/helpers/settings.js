@@ -1,23 +1,29 @@
-const { Gio, GLib } = imports.gi
+import GLib from 'gi://GLib'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { FINANCE_PROVIDER } from '../services/meta/generic.js'
 
-const { decodeBase64JsonOrDefault, isNullOrEmpty, isNullOrUndefined } = Me.imports.helpers.data
-const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
+import { decodeBase64JsonOrDefault, isNullOrEmpty, isNullOrUndefined } from './data.js'
 
-var POSITION_IN_PANEL_KEY = 'position-in-panel'
-var STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
-var STOCKS_PORTFOLIOS = 'portfolios'
-var STOCKS_TRANSACTIONS = 'transactions'
-var STOCKS_TICKER_INTERVAL = 'ticker-interval'
-var STOCKS_SHOW_OFF_MARKET_TICKER_PRICES = 'show-ticker-off-market-prices'
-var STOCKS_TICKER_STOCK_AMOUNT = 'ticker-stock-amount'
-var STOCKS_SELECTED_PORTFOLIO = 'selected-portfolio'
-var STOCKS_TICKER_DISPLAY_VARIATION = 'ticker-display-variation'
-var STOCKS_USE_PROVIDER_INSTRUMENT_NAMES = 'use-provider-instrument-names'
+let _settings = null
+let _extensionObject = {}
 
-var DEFAULT_SYMBOL_DATA = [
+export const initSettings = extensionObject => {
+  _extensionObject = extensionObject
+}
+
+export const POSITION_IN_PANEL_KEY = 'position-in-panel'
+export const STOCKS_SYMBOL_PAIRS = 'symbol-pairs'
+export const STOCKS_PORTFOLIOS = 'portfolios'
+export const STOCKS_TRANSACTIONS = 'transactions'
+export const STOCKS_TICKER_INTERVAL = 'ticker-interval'
+export const STOCKS_SHOW_OFF_MARKET_TICKER_PRICES = 'show-ticker-off-market-prices'
+export const STOCKS_TICKER_STOCK_AMOUNT = 'ticker-stock-amount'
+export const STOCKS_SELECTED_PORTFOLIO = 'selected-portfolio'
+export const STOCKS_TICKER_DISPLAY_VARIATION = 'ticker-display-variation'
+export const STOCKS_USE_PROVIDER_INSTRUMENT_NAMES = 'use-provider-instrument-names'
+export const STOCKS_YAHOO_META = 'yahoo-meta'
+
+export const DEFAULT_SYMBOL_DATA = [
   {
     symbol: 'BABA',
     name: 'Alibaba (NY)',
@@ -26,7 +32,7 @@ var DEFAULT_SYMBOL_DATA = [
   }
 ]
 
-var DEFAULT_PORTFOLIO_DATA = [
+export const DEFAULT_PORTFOLIO_DATA = [
   {
     id: 'e3e619c6c567328e22f79bfd647b3003',
     name: 'List 1',
@@ -36,18 +42,14 @@ var DEFAULT_PORTFOLIO_DATA = [
   }
 ]
 
-var convertOldSettingsFormat = rawString => rawString.split('-&&-').map(symbolPairString => ({
+export const convertOldSettingsFormat = rawString => rawString.split('-&&-').map(symbolPairString => ({
   name: symbolPairString.split('-§§-')[0],
   symbol: symbolPairString.split('-§§-')[1],
   showInTicker: true,
   provider: FINANCE_PROVIDER.YAHOO
 }))
 
-var SettingsHandler = class SettingsHandler {
-  constructor () {
-    this._settings = ExtensionUtils.getSettings()
-  }
-
+export const SettingsHandler = class SettingsHandler {
   get position_in_panel () {
     return this._settings.get_enum(POSITION_IN_PANEL_KEY)
   }
@@ -136,6 +138,27 @@ var SettingsHandler = class SettingsHandler {
 
   set selected_portfolio (v) {
     this._settings.set_string(STOCKS_SELECTED_PORTFOLIO, v)
+  }
+
+  get yahoo_meta () {
+    const rawString = this._settings.get_string(STOCKS_YAHOO_META)
+    return decodeBase64JsonOrDefault(rawString, {})
+  }
+
+  set yahoo_meta (value) {
+    this._settings.set_string(STOCKS_YAHOO_META, GLib.base64_encode(JSON.stringify(value)))
+  }
+
+  get extensionObject () {
+    return _extensionObject
+  }
+
+  get _settings () {
+    if (!_settings) {
+      _settings = this.extensionObject.getSettings()
+    }
+
+    return _settings
   }
 
   connect (identifier, onChange) {

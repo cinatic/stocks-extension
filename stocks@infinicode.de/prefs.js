@@ -1,30 +1,34 @@
-const { Gdk, Gio, GObject, Gtk } = imports.gi
+import Gdk from 'gi://Gdk'
+import Gtk from 'gi://Gtk'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
 
-const { AboutPage } = Me.imports.components.settings.aboutPage
-const { PortfolioListPage } = Me.imports.components.settings.portfolioListPage
-const { SettingsPage } = Me.imports.components.settings.settingsPage
+import { initTranslations } from './helpers/translations.js'
+import { initSettings } from './helpers/settings.js'
 
-function init () {
-  ExtensionUtils.initTranslations()
-}
+import { AboutPage } from './components/settings/aboutPage.js'
+import { PortfolioListPage } from './components/settings/portfolioListPage.js'
+import { SettingsPage } from './components/settings/settingsPage.js'
 
-function fillPreferencesWindow (window) {
-  let iconTheme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
-  if (!iconTheme.get_search_path().includes(Me.path + '/media')) {
-    iconTheme.add_search_path(Me.path + '/media')
+export default class StocksExtensionPreferences extends ExtensionPreferences {
+  fillPreferencesWindow (window) {
+    initSettings(this)
+    initTranslations(_)
+
+    let iconTheme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
+    if (!iconTheme.get_search_path().includes(this.path + '/media')) {
+      iconTheme.add_search_path(this.path + '/media')
+    }
+
+    window.set_search_enabled(true)
+
+    const portfolioListPage = new PortfolioListPage()
+    window.add(portfolioListPage)
+
+    const settingsPage = new SettingsPage()
+    window.add(settingsPage)
+
+    const aboutPage = new AboutPage(this.path, this.metadata)
+    window.add(aboutPage)
   }
-
-  window.set_search_enabled(true)
-
-  const portfolioListPage = new PortfolioListPage()
-  window.add(portfolioListPage)
-
-  const settingsPage = new SettingsPage()
-  window.add(settingsPage)
-
-  const aboutPage = new AboutPage()
-  window.add(aboutPage)
 }

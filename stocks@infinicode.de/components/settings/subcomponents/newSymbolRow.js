@@ -1,11 +1,10 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import Adw from 'gi://Adw'
+import GObject from 'gi://GObject'
+import Gtk from 'gi://Gtk'
 
-const { Adw, Gio, GObject, Gtk } = imports.gi
+import { Translations } from '../../../helpers/translations.js'
 
-const { Translations } = Me.imports.helpers.translations
-
-var NewSymbolRow = GObject.registerClass({
+export const NewSymbolRow = GObject.registerClass({
       GTypeName: 'StockExtension-NewSymbolRow',
     },
     class StocksNewSymbolRowClass extends Adw.PreferencesRow {

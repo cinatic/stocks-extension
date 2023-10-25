@@ -1,15 +1,14 @@
-const { Clutter, GObject, St } = imports.gi
+import Clutter from 'gi://Clutter'
+import GObject from 'gi://GObject'
+import St from 'gi://St'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { ButtonGroup } from '../../buttons/buttonGroup.js'
+import { SearchBar } from '../../searchBar/searchBar.js'
+import { Translations } from '../../../helpers/translations.js'
+import { TRANSACTION_TYPES } from '../../../services/meta/generic.js'
+import * as TransactionService from '../../../services/transactionService.js'
 
-const { ButtonGroup } = Me.imports.components.buttons.buttonGroup
-const { SearchBar } = Me.imports.components.searchBar.searchBar
-const { Translations } = Me.imports.helpers.translations
-const { TRANSACTION_TYPES } = Me.imports.services.meta.generic
-const TransactionService = Me.imports.services.transactionService
-
-var EditTransactionScreen = GObject.registerClass({
+export const EditTransactionScreen = GObject.registerClass({
   GTypeName: 'StockExtension_EditTransactionScreen'
 }, class EditTransactionScreen extends St.BoxLayout {
   _init ({ portfolioId, quoteSummary, transaction, mainEventHandler }) {

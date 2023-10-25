@@ -1,28 +1,17 @@
-const { GObject, St } = imports.gi
+import GObject from 'gi://GObject'
+import St from 'gi://St'
+import { isNullOrEmpty, removeCache } from '../../../helpers/data.js'
 
-const Mainloop = imports.mainloop
+import { SettingsHandler, STOCKS_PORTFOLIOS, STOCKS_SELECTED_PORTFOLIO, STOCKS_SYMBOL_PAIRS, STOCKS_USE_PROVIDER_INSTRUMENT_NAMES } from '../../../helpers/settings.js'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { Translations } from '../../../helpers/translations.js'
 
-const { ButtonGroup } = Me.imports.components.buttons.buttonGroup
-const { FlatList } = Me.imports.components.flatList.flatList
-const { StockCard } = Me.imports.components.cards.stockCard
-const { SearchBar } = Me.imports.components.searchBar.searchBar
-const { setTimeout, clearTimeout } = Me.imports.helpers.components
-const { isNullOrEmpty, removeCache } = Me.imports.helpers.data
-
-const {
-  SettingsHandler,
-  STOCKS_PORTFOLIOS,
-  STOCKS_SYMBOL_PAIRS,
-  STOCKS_SELECTED_PORTFOLIO,
-  STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
-} = Me.imports.helpers.settings
-
-const { Translations } = Me.imports.helpers.translations
-
-const FinanceService = Me.imports.services.financeService
+import * as FinanceService from '../../../services/financeService.js'
+import { FINANCE_PROVIDER } from '../../../services/meta/generic.js'
+import { ButtonGroup } from '../../buttons/buttonGroup.js'
+import { StockCard } from '../../cards/stockCard.js'
+import { FlatList } from '../../flatList/flatList.js'
+import { SearchBar } from '../../searchBar/searchBar.js'
 
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS,
@@ -31,7 +20,7 @@ const SETTING_KEYS_TO_REFRESH = [
   STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
 ]
 
-var StockOverviewScreen = GObject.registerClass({
+export const StockOverviewScreen = GObject.registerClass({
   GTypeName: 'StockExtension_StockOverviewScreen'
 }, class StockOverviewScreen extends St.BoxLayout {
   _init (mainEventHandler) {
@@ -60,7 +49,7 @@ var StockOverviewScreen = GObject.registerClass({
 
     this._searchBar.connect('refresh', () => {
       removeCache('summary_')
-      this._loadData()
+      this._loadData().catch(e => log(e))
       this._createPortfolioButtonGroup()
     })
 
@@ -68,7 +57,7 @@ var StockOverviewScreen = GObject.registerClass({
 
     this._settingsChangedId = this._settings.connect('changed', (value, key) => {
       if (SETTING_KEYS_TO_REFRESH.includes(key)) {
-        this._loadData()
+        this._loadData().catch(e => log(e))
         this._createPortfolioButtonGroup()
       }
     })
@@ -83,7 +72,7 @@ var StockOverviewScreen = GObject.registerClass({
 
     this._createPortfolioButtonGroup()
 
-    this._loadData()
+    this._loadData().catch(e => log(e))
 
     this._registerTimeout()
   }
@@ -133,11 +122,9 @@ var StockOverviewScreen = GObject.registerClass({
   }
 
   _registerTimeout () {
-    this._autoRefreshTimeoutId = Mainloop.timeout_add_seconds(this._settings.ticker_interval || 10, () => {
+    this._autoRefreshTimeoutId = setInterval(() => {
       this._loadData()
-
-      return true
-    })
+    }, (this._settings.ticker_interval || 10) * 1000)
   }
 
   async _loadData () {
@@ -159,18 +146,33 @@ var StockOverviewScreen = GObject.registerClass({
 
     this._showLoadingInfoTimeoutId = setTimeout(() => this._list.show_loading_info(), 500)
 
-    const quoteSummaries = await Promise.all(
-        symbols.map(symbolData => FinanceService.getQuoteSummary({
-          ...symbolData,
-          fallbackName: symbolData.name
-        }))
-    )
+    const [yahooQuoteSummaries, otherQuoteSummaries] = await Promise.all([
+      FinanceService.getQuoteSummaryList({
+        symbolsWithFallbackName: symbols.filter(item => item.provider === FINANCE_PROVIDER.YAHOO).map(symbolData => ({ ...symbolData, fallbackName: symbolData.name })),
+        provider: FINANCE_PROVIDER.YAHOO
+      }),
+
+      symbols.filter(item => item.provider !== FINANCE_PROVIDER.YAHOO).map(symbolData => FinanceService.getQuoteSummary({
+        ...symbolData,
+        fallbackName: symbolData.name
+      }))
+    ])
 
     this._showLoadingInfoTimeoutId = clearTimeout(this._showLoadingInfoTimeoutId)
 
     this._list.clear_list_items()
 
-    quoteSummaries.forEach(quoteSummary => {
+    const wildMixOfQuoteSummaries = [...yahooQuoteSummaries, ...otherQuoteSummaries]
+
+    symbols.forEach(symbolData => {
+      const { symbol, provider } = symbolData
+
+      const quoteSummary = wildMixOfQuoteSummaries?.find(item => item.Symbol === symbol && item.Provider === provider)
+
+      if (!quoteSummary) {
+        return
+      }
+
       this._list.addItem(new StockCard(quoteSummary, this._settings.selected_portfolio))
     })
 
@@ -194,7 +196,7 @@ var StockOverviewScreen = GObject.registerClass({
     }
 
     if (this._autoRefreshTimeoutId) {
-      Mainloop.source_remove(this._autoRefreshTimeoutId)
+      clearInterval(this._autoRefreshTimeoutId)
     }
 
     if (this._settingsChangedId) {

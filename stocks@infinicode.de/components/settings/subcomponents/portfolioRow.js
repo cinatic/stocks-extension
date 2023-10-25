@@ -1,13 +1,11 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import Adw from 'gi://Adw'
+import GObject from 'gi://GObject'
+import Gdk from 'gi://Gdk'
+import GLib from 'gi://GLib'
+import Gtk from 'gi://Gtk'
+import Pango from 'gi://Pango'
 
-const { Adw, Gdk, Gio, GLib, GObject, Gtk, Pango } = imports.gi
-const Gettext = imports.gettext.domain(Me.metadata['gettext-domain'])
-const _ = Gettext.gettext
-
-const { Translations } = Me.imports.helpers.translations
-
-var PortfolioRow = GObject.registerClass({
+export const PortfolioRow = GObject.registerClass({
   GTypeName: 'StockExtension-PortfolioRow',
 }, class PortfolioRowClass extends Adw.PreferencesRow {
   constructor (item, portfolioModelList) {

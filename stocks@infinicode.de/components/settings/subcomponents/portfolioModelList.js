@@ -1,18 +1,16 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import GObject from 'gi://GObject'
+import Gio from 'gi://Gio'
 
-const { Gio, GObject } = imports.gi
+import { PortfolioItem } from './portfolioItem.js'
 
-const { PortfolioItem } = Me.imports.components.settings.subcomponents.portfolioItem
-
-const { SettingsHandler, STOCKS_PORTFOLIOS } = Me.imports.helpers.settings
-const { Translations } = Me.imports.helpers.translations
+import { SettingsHandler, STOCKS_PORTFOLIOS } from '../../../helpers/settings.js'
+import { Translations } from '../../../helpers/translations.js'
 
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_PORTFOLIOS
 ]
 
-var PortfolioModelList = GObject.registerClass({
+export const PortfolioModelList = GObject.registerClass({
   GTypeName: 'StockExtension-PortfolioModelList',
 }, class PortfolioModelList extends GObject.Object {
   static [GObject.interfaces] = [Gio.ListModel]

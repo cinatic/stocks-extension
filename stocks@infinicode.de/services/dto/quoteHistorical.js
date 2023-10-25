@@ -1,4 +1,4 @@
-var QuoteHistorical = class QuoteSummary {
+export const QuoteHistorical = class QuoteSummary {
   constructor () {
     this.MarketStart = null
     this.MarketEnd = null
@@ -8,7 +8,7 @@ var QuoteHistorical = class QuoteSummary {
   }
 }
 
-var createQuoteHistoricalFromEastMoneyData = (responseData, type, error) => {
+export const createQuoteHistoricalFromEastMoneyData = (responseData, type, error) => {
   const newObject = new QuoteHistorical()
 
   newObject.Error = error
@@ -54,7 +54,7 @@ var createQuoteHistoricalFromEastMoneyData = (responseData, type, error) => {
   return newObject
 }
 
-var createQuoteHistoricalFromYahooData = (responseData, error) => {
+export const createQuoteHistoricalFromYahooData = (responseData, error) => {
   const newObject = new QuoteHistorical()
 
   newObject.Error = error

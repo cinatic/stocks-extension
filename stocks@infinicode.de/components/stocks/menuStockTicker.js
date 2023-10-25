@@ -1,27 +1,15 @@
-const { Clutter, GObject, Pango, St } = imports.gi
+import Clutter from 'gi://Clutter'
+import GObject from 'gi://GObject'
+import Pango from 'gi://Pango'
+import St from 'gi://St'
 
-const Mainloop = imports.mainloop
+import { getStockColorStyleClass, isNullOrEmpty, roundOrDefault } from '../../helpers/data.js'
+import { SettingsHandler, STOCKS_PORTFOLIOS, STOCKS_SHOW_OFF_MARKET_TICKER_PRICES, STOCKS_SYMBOL_PAIRS, STOCKS_TICKER_DISPLAY_VARIATION, STOCKS_TICKER_INTERVAL, STOCKS_TICKER_STOCK_AMOUNT, STOCKS_USE_PROVIDER_INSTRUMENT_NAMES } from '../../helpers/settings.js'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { Translations } from '../../helpers/translations.js'
+import * as FinanceService from '../../services/financeService.js'
 
-const { setTimeout, clearTimeout } = Me.imports.helpers.components
-const { roundOrDefault, getStockColorStyleClass, isNullOrEmpty } = Me.imports.helpers.data
-
-const {
-  SettingsHandler,
-  STOCKS_SYMBOL_PAIRS, STOCKS_TICKER_INTERVAL,
-  STOCKS_SHOW_OFF_MARKET_TICKER_PRICES,
-  STOCKS_TICKER_DISPLAY_VARIATION,
-  STOCKS_TICKER_STOCK_AMOUNT,
-  STOCKS_PORTFOLIOS,
-  STOCKS_USE_PROVIDER_INSTRUMENT_NAMES
-} = Me.imports.helpers.settings
-
-const { Translations } = Me.imports.helpers.translations
-
-const { MARKET_STATES } = Me.imports.services.meta.generic
-const FinanceService = Me.imports.services.financeService
+import { FINANCE_PROVIDER, MARKET_STATES } from '../../services/meta/generic.js'
 
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS,
@@ -40,7 +28,7 @@ const TICKER_ITEM_VARIATION = {
   MINIMAL: 3
 }
 
-var MenuStockTicker = GObject.registerClass({
+export const MenuStockTicker = GObject.registerClass({
   GTypeName: 'StockExtension_MenuStockTicker'
 }, class MenuStockTicker extends St.BoxLayout {
   _init () {
@@ -57,7 +45,7 @@ var MenuStockTicker = GObject.registerClass({
 
     this._settings = new SettingsHandler()
 
-    this._sync()
+    this._sync().catch(e => log(e))
 
     this.connect('destroy', this._onDestroy.bind(this))
     this.connect('button-press-event', this._onPress.bind(this))
@@ -66,7 +54,7 @@ var MenuStockTicker = GObject.registerClass({
       this._registerTimeout(false)
 
       if (SETTING_KEYS_TO_REFRESH.includes(key)) {
-        this._sync()
+        this._sync().catch(e => log(e))
       }
     })
 
@@ -97,22 +85,39 @@ var MenuStockTicker = GObject.registerClass({
 
     this._showLoadingInfoTimeoutId = setTimeout(this._showInfoMessage.bind(this), 500)
 
-    const quoteSummaries = await Promise.all(tickerBatch.map(stockItem => FinanceService.getQuoteSummary({
-      ...stockItem,
-      fallbackName: stockItem.name
-    })))
+    const [yahooQuoteSummaries, otherQuoteSummaries] = await Promise.all([
+      FinanceService.getQuoteSummaryList({
+        symbolsWithFallbackName: tickerBatch.filter(item => item.provider === FINANCE_PROVIDER.YAHOO).map(symbolData => ({ ...symbolData, fallbackName: symbolData.name })),
+        provider: FINANCE_PROVIDER.YAHOO
+      }),
+
+      tickerBatch.filter(item => item.provider !== FINANCE_PROVIDER.YAHOO).map(symbolData => FinanceService.getQuoteSummary({
+        ...symbolData,
+        fallbackName: symbolData.name
+      }))
+    ])
+
+    const wildMixOfQuoteSummaries = [...yahooQuoteSummaries, ...otherQuoteSummaries]
 
     clearTimeout(this._showLoadingInfoTimeoutId)
 
-    this._createMenuTicker({ quoteSummaries })
+    this._createMenuTicker({ tickerBatch, quoteSummaries: wildMixOfQuoteSummaries })
   }
 
-  _createMenuTicker ({ quoteSummaries }) {
+  _createMenuTicker ({ tickerBatch, quoteSummaries }) {
     this.destroy_all_children()
 
     const tickerItemCreationFn = this._getTickerItemCreationFunction()
 
-    quoteSummaries.forEach((quoteSummary, index) => {
+    tickerBatch.forEach((symbolData, index) => {
+      const { symbol, provider } = symbolData
+
+      const quoteSummary = quoteSummaries?.find(item => item.Symbol === symbol && item.Provider === provider)
+
+      if (!quoteSummary) {
+        return
+      }
+
       const stockTickerItemBox = tickerItemCreationFn.call(this, quoteSummary)
       this.add_child(stockTickerItemBox)
 
@@ -293,7 +298,7 @@ var MenuStockTicker = GObject.registerClass({
 
   _registerTimeout (toggleImmediately = true) {
     if (this._toggleDisplayTimeout) {
-      Mainloop.source_remove(this._toggleDisplayTimeout)
+      clearInterval(this._toggleDisplayTimeout)
       this._toggleDisplayTimeout = null
     }
 
@@ -301,21 +306,19 @@ var MenuStockTicker = GObject.registerClass({
       this._showNextStock()
     }
 
-    this._toggleDisplayTimeout = Mainloop.timeout_add_seconds(this._settings.ticker_interval || 10, () => {
+    this._toggleDisplayTimeout = setInterval(() => {
       this._showNextStock()
-
-      return true
-    })
+    }, (this._settings.ticker_interval || 10) * 1000)
   }
 
   _showNextStock () {
     this._visibleStockIndex = this._visibleStockIndex + 1 >= this._getEnabledSymbols().length ? 0 : this._visibleStockIndex + 1
-    this._sync()
+    this._sync().catch(e => log(e))
   }
 
   _onDestroy () {
     if (this._toggleDisplayTimeout) {
-      Mainloop.source_remove(this._toggleDisplayTimeout)
+      clearInterval(this._toggleDisplayTimeout)
     }
 
     if (this._settingsChangedId) {

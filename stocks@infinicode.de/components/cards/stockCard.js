@@ -1,14 +1,14 @@
-const { Clutter, GObject, Pango, St } = imports.gi
+import Clutter from 'gi://Clutter'
+import GObject from 'gi://GObject'
+import St from 'gi://St'
+import Pango from 'gi://Pango'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import { isNullOrEmpty, fallbackIfNaN, roundOrDefault, getStockColorStyleClass, toLocalDateFormat } from '../../helpers/data.js'
+import { Translations } from '../../helpers/translations.js'
+import { MARKET_STATES } from '../../services/meta/generic.js'
+import * as TransactionService from '../../services/transactionService.js'
 
-const { isNullOrEmpty, fallbackIfNaN, roundOrDefault, getStockColorStyleClass } = Me.imports.helpers.data
-const { Translations } = Me.imports.helpers.translations
-const { MARKET_STATES } = Me.imports.services.meta.generic
-const TransactionService = Me.imports.services.transactionService
-
-var StockCard = GObject.registerClass({
+export const StockCard = GObject.registerClass({
   GTypeName: 'StockExtension_StockCard'
 }, class StockCard extends St.Button {
   _init (quoteSummary, portfolioId) {
@@ -44,7 +44,7 @@ var StockCard = GObject.registerClass({
     const headerBox = new St.BoxLayout({
       style_class: 'header-box',
       x_expand: true,
-      y_align: St.Align.MIDDLE
+      y_align: Clutter.ActorAlign.CENTER
     })
 
     const leftBox = this._createStockInfo()
@@ -170,7 +170,7 @@ var StockCard = GObject.registerClass({
 
     const additionalInformationLabel = new St.Label({
       style_class: 'additional-quote-information-label small-text fwb',
-      text: `  |  ${fallbackIfNaN(Math.round(this.cardItem.Volume / 1000))} k  |  ${(new Date(this.cardItem.Timestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)}`
+      text: `  |  ${fallbackIfNaN(Math.round(this.cardItem.Volume / 1000))} k  |  ${toLocalDateFormat(this.cardItem.Timestamp, Translations.FORMATS.DEFAULT_DATE_TIME)}`
     })
 
     additionalInformationLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
@@ -208,7 +208,7 @@ var StockCard = GObject.registerClass({
 
     const additionalInformationLabel = new St.Label({
       style_class: 'additional-quote-information-label small-text fwb',
-      text: ` |  ${Translations.STOCKS.PRE_MARKET}  |  ${(new Date(this.cardItem.PreMarketTimestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)}`
+      text: ` |  ${Translations.STOCKS.PRE_MARKET}  |  ${toLocalDateFormat(this.cardItem.PreMarketTimestamp, Translations.FORMATS.DEFAULT_DATE_TIME)}`
     })
 
     additionalInformationLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
@@ -246,7 +246,7 @@ var StockCard = GObject.registerClass({
 
     const additionalInformationLabel = new St.Label({
       style_class: 'additional-quote-information-label small-text fwb',
-      text: `  |  ${Translations.STOCKS.POST_MARKET}  |  ${(new Date(this.cardItem.PostMarketTimestamp)).toLocaleFormat(Translations.FORMATS.DEFAULT_DATE_TIME)}`
+      text: `  |  ${Translations.STOCKS.POST_MARKET}  |  ${toLocalDateFormat(this.cardItem.PostMarketTimestamp, Translations.FORMATS.DEFAULT_DATE_TIME)}`
     })
 
     additionalInformationLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
@@ -333,7 +333,7 @@ var StockCard = GObject.registerClass({
       style_class: 'detail-item-value-box change',
       x_expand: false,
       y_expand: false,
-      x_align: St.Align.END
+      x_align: Clutter.ActorAlign.END
     })
 
     const quoteColorStyleClass = getStockColorStyleClass(change)

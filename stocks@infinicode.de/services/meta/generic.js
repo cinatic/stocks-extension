@@ -1,4 +1,4 @@
-var CHART_RANGES = {
+export const CHART_RANGES = {
   INTRADAY: '1d',
   WEEK: '5d',
   MONTH: '1mo',
@@ -9,12 +9,12 @@ var CHART_RANGES = {
   MAX: 'max'
 }
 
-var TRANSACTION_TYPES = {
+export const TRANSACTION_TYPES = {
   BUY: 'buy',
   SELL: 'sell'
 }
 
-var CHART_RANGES_MAX_GAP = {
+export const CHART_RANGES_MAX_GAP = {
   [CHART_RANGES.INTRADAY]: null,
   [CHART_RANGES.WEEK]: 3600 * 1000,
   [CHART_RANGES.MONTH]: 3600 * 1000,
@@ -25,12 +25,12 @@ var CHART_RANGES_MAX_GAP = {
   [CHART_RANGES.MAX]: null
 }
 
-var FINANCE_PROVIDER = {
+export const FINANCE_PROVIDER = {
   YAHOO: 'yahoo',
   EAST_MONEY: 'eastmoney'
 }
 
-var MARKET_STATES = {
+export const MARKET_STATES = {
   PRE: 'PRE',
   PRE_WITHOUT_DATA: 'POST_WITHOUT_DATA',
   POST: 'POST',
@@ -38,7 +38,7 @@ var MARKET_STATES = {
   REGULAR: 'REGULAR'
 }
 
-var CHART_RANGES_IN_DAYS = {
+export const CHART_RANGES_IN_DAYS = {
   INTRADAY: 1,
   WEEK: 7,
   MONTH: 30,

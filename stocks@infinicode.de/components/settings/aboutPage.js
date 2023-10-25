@@ -1,15 +1,19 @@
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
+import Adw from 'gi://Adw'
+import GObject from 'gi://GObject'
+import GdkPixbuf from 'gi://GdkPixbuf'
+import GLib from 'gi://GLib'
+import Gtk from 'gi://Gtk'
 
-const { Adw, GdkPixbuf, Gio, GLib, GObject, Gtk } = imports.gi
+import * as Config from 'resource:///org/gnome/Shell/Extensions/js/misc/config.js';
 
-const { Translations } = Me.imports.helpers.translations
 
-var AboutPage = GObject.registerClass({
+import { Translations } from '../../helpers/translations.js'
+
+export const AboutPage = GObject.registerClass({
       GTypeName: 'StockExtension-AboutPage',
     },
     class AboutPagePreferencesPage extends Adw.PreferencesPage {
-      _init () {
+      _init (extensionPath, metadata) {
         super._init({
           title: Translations.SETTINGS.TITLE_ABOUT,
           icon_name: 'help-about-symbolic',
@@ -50,8 +54,8 @@ var AboutPage = GObject.registerClass({
           title: Translations.MISC.EXTENSION_VERSION,
         })
         let releaseVersion
-        if (Me.metadata.version) {
-          releaseVersion = Me.metadata.version
+        if (metadata?.version) {
+          releaseVersion = metadata.version
         } else {
           releaseVersion = 'unknown'
         }
@@ -64,8 +68,8 @@ var AboutPage = GObject.registerClass({
           title: Translations.MISC.GIT_COMMIT
         })
         let commitVersion
-        if (Me.metadata.commit) {
-          commitVersion = Me.metadata.commit
+        if (metadata?.commit) {
+          commitVersion = metadata?.commit
         }
         commitRow.add_suffix(new Gtk.Label({
           label: commitVersion ? commitVersion : '',
@@ -78,7 +82,7 @@ var AboutPage = GObject.registerClass({
           title: Translations.MISC.GNOME_VERSION,
         })
         gnomeVersionRow.add_suffix(new Gtk.Label({
-          label: imports.misc.config.PACKAGE_VERSION + '',
+          label: Config.PACKAGE_VERSION + '',
         }))
         extensionInfoGroup.add(gnomeVersionRow)
 
@@ -125,16 +129,16 @@ var AboutPage = GObject.registerClass({
         let linksGroup = new Adw.PreferencesGroup()
         let linksBox = new Adw.ActionRow()
 
-        let pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(Me.path + '/media/donate-icon.svg', -1, 50, true)
+        let pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(extensionPath + '/media/donate-icon.svg', -1, 50, true)
         let donateImage = Gtk.Picture.new_for_pixbuf(pixbuf)
         let donateLinkButton = new Gtk.LinkButton({
           child: donateImage,
           uri: 'https://www.paypal.com/donate/?hosted_button_id=US78C8SZ6UHHQ',
         })
 
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(Me.path + '/media/source-icon.svg', -1, 50, true)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(extensionPath + '/media/source-icon.svg', -1, 50, true)
         let sourceCodeImage = Gtk.Picture.new_for_pixbuf(pixbuf)
-        let projectUrl = Me.metadata.url
+        let projectUrl = metadata?.url
         let projectLinkButton = new Gtk.LinkButton({
           child: sourceCodeImage,
           uri: projectUrl,
@@ -162,7 +166,7 @@ var AboutPage = GObject.registerClass({
       }
     })
 
-var GNU_SOFTWARE = '<span size="small">' +
+const GNU_SOFTWARE = '<span size="small">' +
     'This program comes with absolutely no warranty.\n' +
     'See the <a href="https://gnu.org/licenses/old-licenses/gpl-2.0.html">' +
     'GNU General Public License, version 2 or later</a> for details.' +
