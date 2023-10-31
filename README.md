@@ -19,14 +19,14 @@ A extension to display stock quotes in GNOME Shell Panel
 
 ## Installation
 
-### Over extensions.gnome.org (EGO)
-
-Install via install button -> https://extensions.gnome.org/extension/1422/stocks-extension/
-
 ### Generic (Local installation)
 
-Move files into your locale extension directory (~/.local/share/gnome-shell/extensions/stocks@infinicode.de) and enable the extension via the Tweak Tool, it is **important** to move it to **stocks@infinicode.de** otherwise the extension will not be recognized by GNOME.
-Restart GNOME Shell (`Alt`+`F2`, `r`, `Enter`) and enable the extension through *gnome-tweak-tool*.
+#### Release Package
+[Download](https://github.com/cinatic/stocks-extension/releases) a release and put the content into `~/.local/share/gnome-shell/extensions/stocks@infinicode.de` (you need to create a directory).
+
+#### Make install
+
+Clone the repo and run `make install`
 
 ### ArchLinux User Repo (thx [@flortsch](https://github.com/flortsch))
 Install the package (https://aur.archlinux.org/packages/gnome-shell-extension-stocks-extension/) e.g. by using yay:
