@@ -1,4 +1,4 @@
-const ByteArray = imports.byteArray;
+const ByteArray = imports.byteArray
 const { GLib } = imports.gi
 
 let CACHE = {}

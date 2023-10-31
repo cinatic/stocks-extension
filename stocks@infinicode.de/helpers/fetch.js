@@ -17,8 +17,8 @@ const Response = class {
     }
   }
 
-  blob () {
-    return ((this.message || {}).response_body || {}).data
+  headers () {
+    return this.headers
   }
 
   text () {
@@ -41,6 +41,11 @@ const appendHeaders = (message, headers) => {
   headerNames.forEach(headerName => message.request_headers.append(headerName, headers[headerName]))
 }
 
+const appendCookies = (message, rawCookies) => {
+  const cookies = rawCookies.map(rawCookie => Soup.Cookie.parse(rawCookie, new Soup.URI('https://yahoo.com')))
+  Soup.cookies_to_request(cookies, message)
+}
+
 const generateQueryString = params => {
   if (!params) {
     return ''
@@ -60,7 +65,7 @@ const generateQueryString = params => {
   return `?${paramKeyValues.join('&')}`
 }
 
-var fetch = ({ url, method = 'GET', headers, queryParameters, customHttpSession = null }) => {
+var fetch = ({ url, method = 'GET', headers, queryParameters, customHttpSession = null, cookies = null }) => {
   return new Promise(resolve => {
     url = url + generateQueryString(queryParameters)
 
@@ -72,7 +77,11 @@ var fetch = ({ url, method = 'GET', headers, queryParameters, customHttpSession 
       appendHeaders(request_message, headers)
     }
 
-    const httpSession = customHttpSession || new Soup.SessionAsync({
+    if (cookies) {
+      appendCookies(request_message, cookies)
+    }
+
+    const httpSession = customHttpSession || new Soup.Session({
       user_agent: DEFAULT_CHROME_USER_AGENT,
       timeout: DEFAULT_TIME_OUT_IN_SECONDS
     })

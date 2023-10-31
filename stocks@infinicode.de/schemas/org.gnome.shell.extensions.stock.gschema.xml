@@ -48,5 +48,9 @@
             <default>true</default>
             <summary>If enabled instrument names will be used from data provider.</summary>
         </key>
+        <key name="yahoo-meta" type="s">
+            <default>''</default>
+            <summary>Meta Data For Yahoo Requests</summary>
+        </key>
     </schema>
 </schemalist>
