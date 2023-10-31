@@ -5,7 +5,7 @@ const CACHE_TIME = 10 * 1000
 
 export const toLocalDateFormat = (date, format) => {
   const parsedDate = new Date(date)
-  const glibDateTime = GLib.DateTime.new_from_iso8601(parsedDate.toISOString(), null)
+  const glibDateTime = GLib.DateTime.new_from_iso8601(parsedDate.toISOString(), GLib.TimeZone.new_local()).to_local()
   return glibDateTime ? glibDateTime.format(format) : date.toISOString()
 }
 
