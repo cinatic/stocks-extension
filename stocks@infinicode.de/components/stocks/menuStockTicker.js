@@ -22,6 +22,7 @@ const { Translations } = Me.imports.helpers.translations
 
 const { MARKET_STATES } = Me.imports.services.meta.generic
 const FinanceService = Me.imports.services.financeService
+const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
 
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS,
@@ -57,7 +58,7 @@ var MenuStockTicker = GObject.registerClass({
 
     this._settings = new SettingsHandler()
 
-    this._sync()
+    this._sync().catch(e => log(e))
 
     this.connect('destroy', this._onDestroy.bind(this))
     this.connect('button-press-event', this._onPress.bind(this))
@@ -66,7 +67,7 @@ var MenuStockTicker = GObject.registerClass({
       this._registerTimeout(false)
 
       if (SETTING_KEYS_TO_REFRESH.includes(key)) {
-        this._sync()
+        this._sync().catch(e => log(e))
       }
     })
 
@@ -97,22 +98,39 @@ var MenuStockTicker = GObject.registerClass({
 
     this._showLoadingInfoTimeoutId = setTimeout(this._showInfoMessage.bind(this), 500)
 
-    const quoteSummaries = await Promise.all(tickerBatch.map(stockItem => FinanceService.getQuoteSummary({
-      ...stockItem,
-      fallbackName: stockItem.name
-    })))
+    const [yahooQuoteSummaries, otherQuoteSummaries] = await Promise.all([
+      FinanceService.getQuoteSummaryList({
+        symbolsWithFallbackName: tickerBatch.filter(item => item.provider === FINANCE_PROVIDER.YAHOO).map(symbolData => ({ ...symbolData, fallbackName: symbolData.name })),
+        provider: FINANCE_PROVIDER.YAHOO
+      }),
+
+      tickerBatch.filter(item => item.provider !== FINANCE_PROVIDER.YAHOO).map(symbolData => FinanceService.getQuoteSummary({
+        ...symbolData,
+        fallbackName: symbolData.name
+      }))
+    ])
+
+    const wildMixOfQuoteSummaries = [...yahooQuoteSummaries, ...otherQuoteSummaries]
 
     clearTimeout(this._showLoadingInfoTimeoutId)
 
-    this._createMenuTicker({ quoteSummaries })
+    this._createMenuTicker({ tickerBatch, quoteSummaries: wildMixOfQuoteSummaries })
   }
 
-  _createMenuTicker ({ quoteSummaries }) {
+  _createMenuTicker ({ tickerBatch, quoteSummaries }) {
     this.destroy_all_children()
 
     const tickerItemCreationFn = this._getTickerItemCreationFunction()
 
-    quoteSummaries.forEach((quoteSummary, index) => {
+    tickerBatch.forEach((symbolData, index) => {
+      const { symbol, provider } = symbolData
+
+      const quoteSummary = quoteSummaries?.find(item => item.Symbol === symbol && item.Provider === provider)
+
+      if (!quoteSummary) {
+        return
+      }
+
       const stockTickerItemBox = tickerItemCreationFn.call(this, quoteSummary)
       this.add_child(stockTickerItemBox)
 
@@ -310,7 +328,7 @@ var MenuStockTicker = GObject.registerClass({
 
   _showNextStock () {
     this._visibleStockIndex = this._visibleStockIndex + 1 >= this._getEnabledSymbols().length ? 0 : this._visibleStockIndex + 1
-    this._sync()
+    this._sync().catch(e => log(e))
   }
 
   _onDestroy () {

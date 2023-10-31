@@ -11,6 +11,7 @@ const { StockCard } = Me.imports.components.cards.stockCard
 const { SearchBar } = Me.imports.components.searchBar.searchBar
 const { setTimeout, clearTimeout } = Me.imports.helpers.components
 const { isNullOrEmpty, removeCache } = Me.imports.helpers.data
+const { FINANCE_PROVIDER } = Me.imports.services.meta.generic
 
 const {
   SettingsHandler,
@@ -60,7 +61,7 @@ var StockOverviewScreen = GObject.registerClass({
 
     this._searchBar.connect('refresh', () => {
       removeCache('summary_')
-      this._loadData()
+      this._loadData().catch(e => log(e))
       this._createPortfolioButtonGroup()
     })
 
@@ -68,7 +69,7 @@ var StockOverviewScreen = GObject.registerClass({
 
     this._settingsChangedId = this._settings.connect('changed', (value, key) => {
       if (SETTING_KEYS_TO_REFRESH.includes(key)) {
-        this._loadData()
+        this._loadData().catch(e => log(e))
         this._createPortfolioButtonGroup()
       }
     })
@@ -83,7 +84,7 @@ var StockOverviewScreen = GObject.registerClass({
 
     this._createPortfolioButtonGroup()
 
-    this._loadData()
+    this._loadData().catch(e => log(e))
 
     this._registerTimeout()
   }
@@ -159,18 +160,33 @@ var StockOverviewScreen = GObject.registerClass({
 
     this._showLoadingInfoTimeoutId = setTimeout(() => this._list.show_loading_info(), 500)
 
-    const quoteSummaries = await Promise.all(
-        symbols.map(symbolData => FinanceService.getQuoteSummary({
+    const [yahooQuoteSummaries, otherQuoteSummaries] = await Promise.all([
+      FinanceService.getQuoteSummaryList({
+        symbolsWithFallbackName: symbols.filter(item => item.provider === FINANCE_PROVIDER.YAHOO).map(symbolData => ({ ...symbolData, fallbackName: symbolData.name })),
+        provider: FINANCE_PROVIDER.YAHOO
+      }),
+
+      symbols.filter(item => item.provider !== FINANCE_PROVIDER.YAHOO).map(symbolData => FinanceService.getQuoteSummary({
           ...symbolData,
           fallbackName: symbolData.name
         }))
-    )
+    ])
 
     this._showLoadingInfoTimeoutId = clearTimeout(this._showLoadingInfoTimeoutId)
 
     this._list.clear_list_items()
 
-    quoteSummaries.forEach(quoteSummary => {
+    const wildMixOfQuoteSummaries = [...yahooQuoteSummaries, ...otherQuoteSummaries]
+
+    symbols.forEach(symbolData => {
+      const { symbol, provider } = symbolData
+
+      const quoteSummary = wildMixOfQuoteSummaries?.find(item => item.Symbol === symbol && item.Provider === provider)
+
+      if (!quoteSummary) {
+        return
+      }
+
       this._list.addItem(new StockCard(quoteSummary, this._settings.selected_portfolio))
     })
 

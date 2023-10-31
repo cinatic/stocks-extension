@@ -16,6 +16,7 @@ var STOCKS_TICKER_STOCK_AMOUNT = 'ticker-stock-amount'
 var STOCKS_SELECTED_PORTFOLIO = 'selected-portfolio'
 var STOCKS_TICKER_DISPLAY_VARIATION = 'ticker-display-variation'
 var STOCKS_USE_PROVIDER_INSTRUMENT_NAMES = 'use-provider-instrument-names'
+var STOCKS_YAHOO_META = 'yahoo-meta'
 
 var DEFAULT_SYMBOL_DATA = [
   {
@@ -136,6 +137,15 @@ var SettingsHandler = class SettingsHandler {
 
   set selected_portfolio (v) {
     this._settings.set_string(STOCKS_SELECTED_PORTFOLIO, v)
+  }
+
+  get yahoo_meta () {
+    const rawString = this._settings.get_string(STOCKS_YAHOO_META)
+    return decodeBase64JsonOrDefault(rawString, {})
+  }
+
+  set yahoo_meta (value) {
+    this._settings.set_string(STOCKS_YAHOO_META, GLib.base64_encode(JSON.stringify(value)))
   }
 
   connect (identifier, onChange) {

@@ -74,13 +74,44 @@ var createQuoteSummaryFromEastMoneyData = ({ symbol, quoteData, error }) => {
   return newObject
 }
 
+var createQuoteSummaryFromYahooQuoteListData = ({ symbolsWithFallbackName, quoteListData, error }) => {
+  const quotes = []
+
+  symbolsWithFallbackName.forEach(symbolWithFallbackName => {
+    const { symbol, fallbackName, forceFallbackName } = symbolWithFallbackName
+    const quoteData = quoteListData?.quoteResponse?.result?.find(quoteResult => quoteResult.symbol === symbol)
+
+    const sanitizedQuoteData = {}
+
+    Object.keys(quoteData || {}).forEach(field => {
+      const value = quoteData[field]
+
+      sanitizedQuoteData[field] = value
+
+      if (value && field?.includes('Percent')) {
+        sanitizedQuoteData[field] = value / 100
+      }
+    })
+
+    const quoteSummary = createQuoteSummaryFromYahooData({ symbol, quoteData: { quoteSummary: { result: [{ price: sanitizedQuoteData }] } }, error })
+
+    if (!quoteSummary.FullName || forceFallbackName) {
+      quoteSummary.FullName = fallbackName
+    }
+
+    quotes.push(quoteSummary)
+  })
+
+  return quotes
+}
+
 var createQuoteSummaryFromYahooData = ({ symbol, quoteData, error }) => {
   const newObject = new QuoteSummary(symbol, FINANCE_PROVIDER.YAHOO)
   newObject.Error = error
 
   if (quoteData && quoteData.quoteSummary) {
     if (quoteData.quoteSummary.result) {
-      const priceData = (quoteData.quoteSummary.result[0] || []).price || {}
+      const priceData = (quoteData.quoteSummary.result[0] || {}).price || {}
 
       newObject.FullName = priceData.longName
 
@@ -100,7 +131,7 @@ var createQuoteSummaryFromYahooData = ({ symbol, quoteData, error }) => {
       newObject.High = priceData.regularMarketDayHigh
       newObject.Volume = priceData.regularMarketVolume
       newObject.CurrencySymbol = priceData.currencySymbol
-      newObject.ExchangeName = priceData.exchangeName
+      newObject.ExchangeName = priceData.exchangeName || priceData.fullExchangeName
 
       newObject.MarketState = priceData.marketState
 
