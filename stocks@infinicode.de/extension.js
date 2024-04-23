@@ -65,14 +65,14 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
     super._init(menuAlignment, _('Stocks'))
     this.add_style_class_name('stocks-extension')
 
-    this.add_actor(new MenuStockTicker())
+    this.add_child(new MenuStockTicker())
 
     const bin = new St.Widget({ style_class: 'stocks-extension' })
     bin._delegate = this
     this.menu.box.add_child(bin)
 
     this._screenWrapper = new ScreenWrapper(this._mainEventHandler)
-    bin.add_actor(this._screenWrapper)
+    bin.add_child(this._screenWrapper)
 
     // Bind events
     // FIXME: figure out and fix why this triggers
@@ -100,7 +100,7 @@ let StocksMenuButton = GObject.registerClass(class StocksMenuButton extends Pane
       return
     }
 
-    parent.remove_actor(container)
+    parent.remove_child(container)
 
     let children = null
 

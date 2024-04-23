@@ -44,7 +44,7 @@ export const ButtonGroup = GObject.registerClass({
     })
     innerContentBox.add_child(this._content)
 
-    this.add_actor(innerContentBox)
+    this.add_child(innerContentBox)
 
     this.connect('destroy', this._onDestroy.bind(this))
 

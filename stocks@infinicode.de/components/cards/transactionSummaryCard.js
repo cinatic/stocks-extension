@@ -152,17 +152,17 @@ export const TransactionSummaryCard = GObject.registerClass({
       vertical: true
     })
 
-    leftDetailBox.add(this._createDetailItem(
+    leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TODAY),
         this._createDetailItemValueForChange(transactionResult.today, quoteSummary.CurrencySymbol, transactionResult.todayPercent)
     ))
 
-    leftDetailBox.add(this._createDetailItem(
+    leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.VALUE),
         this._createDetailItemValue(`${roundOrDefault(transactionResult.value, '--')} ${quoteSummary.CurrencySymbol}`)
     ))
 
-    leftDetailBox.add(this._createDetailItem(
+    leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.ALLTIME),
         this._createDetailItemValueForChange(transactionResult.alltime, quoteSummary.CurrencySymbol, transactionResult.alltimePercent)
     ))
@@ -178,17 +178,17 @@ export const TransactionSummaryCard = GObject.registerClass({
       vertical: true
     })
 
-    rightDetailBox.add(this._createDetailItem(
+    rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TOTAL),
         this._createDetailItemValueForChange(transactionResult.total, quoteSummary.CurrencySymbol, transactionResult.totalPercent)
     ))
 
-    rightDetailBox.add(this._createDetailItem(
+    rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.COST),
         this._createDetailItemValue(`${roundOrDefault(transactionResult.unrealizedCost, '--')} ${quoteSummary.CurrencySymbol}`)
     ))
 
-    rightDetailBox.add(this._createDetailItem(
+    rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.REALIZED),
         this._createDetailItemValueForChange(transactionResult.realized, quoteSummary.CurrencySymbol, transactionResult.realizedPercent)
     ))
@@ -214,6 +214,7 @@ export const TransactionSummaryCard = GObject.registerClass({
       style_class: 'detail-item-label-bin',
       x_expand: true,
       y_expand: false,
+      x_align: Clutter.ActorAlign.START,
       child: new St.Label({ style_class: 'detail-item-label', text })
     })
 
@@ -225,6 +226,7 @@ export const TransactionSummaryCard = GObject.registerClass({
       style_class: 'detail-item-value-bin',
       x_expand: true,
       y_expand: false,
+      x_align: Clutter.ActorAlign.END,
       child: new St.Label({ style_class: `detail-item-value tar ${additionalStyleClass || ''}`, text: text.toString() })
     })
 

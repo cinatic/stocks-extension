@@ -43,7 +43,7 @@ export const FlatList = GObject.registerClass({
       this.enable_persistent_scroll_position()
     }
 
-    this.add_actor(this._content)
+    this.add_child(this._content)
 
     this.connect('destroy', this._onDestroy.bind(this))
   }
@@ -59,19 +59,15 @@ export const FlatList = GObject.registerClass({
   enable_persistent_scroll_position () {
     const cacheKey = `${this._id}_scroll_position`;
     this.connect('scroll-event', () => {
-      cacheOrDefault(cacheKey, () => this.vscroll.adjustment.value, -1)
-    })
-
-    this.vscroll.connect('scroll-stop', () => {
-      cacheOrDefault(cacheKey, () => this.vscroll.adjustment.value, -1)
+      cacheOrDefault(cacheKey, () => this.vadjustment.value, -1)
     })
 
     this._content.connect('stage-views-changed', async () => {
-      const savedScrollPosition = await cacheOrDefault(cacheKey, () => this.vscroll.adjustment.value, 365 * 24 * 60 * 60 * 1000)
+      const savedScrollPosition = await cacheOrDefault(cacheKey, () => this.vadjustment.value, 365 * 24 * 60 * 60 * 1000)
 
       this._resetScrollPositionTimeoutId = setTimeout(() => {
-        if (this.vscroll.adjustment.value !== savedScrollPosition) {
-          this.vscroll.adjustment.value = savedScrollPosition
+        if (this.vadjustment.value !== savedScrollPosition) {
+          this.vadjustment.value = savedScrollPosition
         }
       }, 150)
     })

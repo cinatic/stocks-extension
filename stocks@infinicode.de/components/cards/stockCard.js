@@ -280,7 +280,7 @@ export const StockCard = GObject.registerClass({
       vertical: true
     })
 
-    leftDetailBox.add(this._createDetailItem(
+    leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TODAY),
         this._createDetailItemValueForChange(transactionResult.today, quoteSummary.CurrencySymbol, transactionResult.todayPercent)
     ))
@@ -296,7 +296,7 @@ export const StockCard = GObject.registerClass({
       vertical: true
     })
 
-    rightDetailBox.add(this._createDetailItem(
+    rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TOTAL),
         this._createDetailItemValueForChange(transactionResult.total, quoteSummary.CurrencySymbol, transactionResult.totalPercent)
     ))
@@ -322,6 +322,7 @@ export const StockCard = GObject.registerClass({
       style_class: 'detail-item-label-bin',
       x_expand: true,
       y_expand: false,
+      x_align: Clutter.ActorAlign.START,
       child: new St.Label({ style_class: 'detail-item-label small-text fwb', text })
     })
 
