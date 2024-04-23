@@ -60,7 +60,7 @@ export const Chart = GObject.registerClass({
     const fgColor = themeNode.get_foreground_color()
 
     const newColorString = getComplementaryColor(fgColor.to_string().slice(1, 7), false)
-    const secondaryColor = Clutter.color_from_string(`${newColorString}ff`)[1]
+    const secondaryColor = Clutter.Color.from_string(`${newColorString}ff`)[1]
 
     const baseParams = {
       cairoContext,
@@ -87,7 +87,7 @@ export const Chart = GObject.registerClass({
     // scale data to width / height of our cairo canvas
     const seriesData = this._transformSeriesData(this.data, width, height)
 
-    Clutter.cairo_set_source_color(cairoContext, primaryColor)
+    cairoContext.setSourceRGBA(primaryColor.red, primaryColor.green, primaryColor.blue, 0.4);
 
     // get first data
     const [firstValueX, firstValueY] = [0, 0]
@@ -127,7 +127,7 @@ export const Chart = GObject.registerClass({
     const barWidth = 3
     const barWidthPerSide = barWidth / 3 // left, middle, right
 
-    Clutter.cairo_set_source_color(cairoContext, secondaryColor)
+    cairoContext.setSourceRGBA(secondaryColor.red, secondaryColor.green, secondaryColor.blue, 0.5);
 
     cairoContext.moveTo(0, height)
 
@@ -190,15 +190,14 @@ export const Chart = GObject.registerClass({
         y1,
         y2,
         cairoContext,
-        color: Clutter.color_from_string('#ff0000ff')[1],
+        color: Clutter.Color.from_string('#ff0000ff')[1],
         lineWidth: 1.5
       })
     })
   }
 
   draw_line ({ x1, x2, y1, y2, cairoContext, color, dashed, lineWidth = 0.5 }) {
-    Clutter.cairo_set_source_color(cairoContext, color)
-
+    cairoContext.setSourceRGBA(color.red, color.green, color.blue, 1);
     cairoContext.setLineWidth(lineWidth)
 
     if (dashed) {

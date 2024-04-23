@@ -40,7 +40,8 @@ export const SearchBar = GObject.registerClass({
   _createSearchArea ({ showFilterInputBox }) {
     const searchInputBox = new St.BoxLayout({
       style_class: 'search-area-box',
-      x_expand: true
+      x_expand: true,
+      x_align: Clutter.ActorAlign.START
     })
 
     if (this.back_screen_name) {

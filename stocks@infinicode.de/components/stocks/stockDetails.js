@@ -136,41 +136,41 @@ export const StockDetails = GObject.registerClass({
       vertical: true
     })
 
-    leftDetailBox.add(this._createDetailItem(
+    leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.SYMBOL),
         this._createDetailItemValue(quoteSummary.Symbol)
     ))
 
-    leftDetailBox.add(this._createDetailItem(
+    leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.CHANGE),
         this._createDetailItemValueForChange(quoteSummary.Change, quoteSummary.CurrencySymbol, quoteSummary.ChangePercent)
     ))
 
     if (quoteSummary.MarketState === MARKET_STATES.PRE) {
-      leftDetailBox.add(this._createDetailItem(
+      leftDetailBox.add_child(this._createDetailItem(
           this._createDetailItemLabel(Translations.STOCKS.CHANGE_PRE_MARKET),
           this._createDetailItemValueForChange(quoteSummary.PreMarketChange, quoteSummary.CurrencySymbol, quoteSummary.PreMarketChangePercent)
       ))
     }
 
     if (quoteSummary.MarketState === MARKET_STATES.POST) {
-      leftDetailBox.add(this._createDetailItem(
+      leftDetailBox.add_child(this._createDetailItem(
           this._createDetailItemLabel(Translations.STOCKS.CHANGE_POST_MARKET),
           this._createDetailItemValueForChange(quoteSummary.PostMarketChange, quoteSummary.CurrencySymbol, quoteSummary.PostMarketChangePercent)
       ))
     }
 
-    leftDetailBox.add(this._createDetailItem(
+    leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.OPEN),
         this._createDetailItemValue(roundOrDefault(quoteSummary.Open))
     ))
 
-    leftDetailBox.add(this._createDetailItem(
+    leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.HIGH),
         this._createDetailItemValue(roundOrDefault(quoteSummary.High))
     ))
 
-    leftDetailBox.add(this._createDetailItem(
+    leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.TIME),
         this._createDetailItemValue(toLocalDateFormat(quoteSummary.Timestamp, Translations.FORMATS.DEFAULT_DATE_TIME))
     ))
@@ -186,41 +186,41 @@ export const StockDetails = GObject.registerClass({
       vertical: true
     })
 
-    rightDetailBox.add(this._createDetailItem(
+    rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.EXCHANGE),
         this._createDetailItemValue(quoteSummary.ExchangeName || Translations.UNKNOWN)
     ))
 
-    rightDetailBox.add(this._createDetailItem(
+    rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.PREVIOUS_CLOSE),
         this._createDetailItemValue(roundOrDefault(quoteSummary.PreviousClose))
     ))
 
     if (quoteSummary.MarketState === MARKET_STATES.PRE) {
-      rightDetailBox.add(this._createDetailItem(
+      rightDetailBox.add_child(this._createDetailItem(
           this._createDetailItemLabel(Translations.STOCKS.TIME_PRE_MARKET),
           this._createDetailItemValue(toLocalDateFormat(quoteSummary.PreMarketTimestamp, Translations.FORMATS.DEFAULT_DATE_TIME))
       ))
     }
 
     if (quoteSummary.MarketState === MARKET_STATES.POST) {
-      rightDetailBox.add(this._createDetailItem(
+      rightDetailBox.add_child(this._createDetailItem(
           this._createDetailItemLabel(Translations.STOCKS.TIME_POST_MARKET),
           this._createDetailItemValue(toLocalDateFormat(quoteSummary.PostMarketTimestamp, Translations.FORMATS.DEFAULT_DATE_TIME))
       ))
     }
 
-    rightDetailBox.add(this._createDetailItem(
+    rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.CLOSE),
         this._createDetailItemValue(roundOrDefault(quoteSummary.Close))
     ))
 
-    rightDetailBox.add(this._createDetailItem(
+    rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.LOW),
         this._createDetailItemValue(roundOrDefault(quoteSummary.Low))
     ))
 
-    rightDetailBox.add(this._createDetailItem(
+    rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.VOLUME),
         this._createDetailItemValue(fallbackIfNaN(quoteSummary.Volume))
     ))
@@ -246,6 +246,7 @@ export const StockDetails = GObject.registerClass({
       style_class: 'detail-item-label-bin',
       x_expand: true,
       y_expand: true,
+      x_align: Clutter.ActorAlign.START,
       child: new St.Label({ style_class: 'detail-item-label', text })
     })
 
@@ -257,6 +258,7 @@ export const StockDetails = GObject.registerClass({
       style_class: 'detail-item-value-bin',
       x_expand: true,
       y_expand: true,
+      x_align: Clutter.ActorAlign.END,
       child: new St.Label({ style_class: `detail-item-value tar ${additionalStyleClass || ''}`, text: text.toString() })
     })
 

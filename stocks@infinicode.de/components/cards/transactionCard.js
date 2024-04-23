@@ -139,17 +139,17 @@ export const TransactionCard = GObject.registerClass({
       vertical: true
     })
 
-    leftDetailBox.add(this._createDetailItem(
+    leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TODAY),
         this._createDetailItemValueForChange(transaction.today, quoteSummary.CurrencySymbol, transaction.todayPercent)
     ))
 
-    leftDetailBox.add(this._createDetailItem(
+    leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.VALUE),
         this._createDetailItemValue(`${roundOrDefault(transaction.value, '--')} ${quoteSummary.CurrencySymbol}`)
     ))
 
-    leftDetailBox.add(this._createDetailItem(
+    leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.REALIZED),
         this._createDetailItemValueForChange(transaction.realized, quoteSummary.CurrencySymbol, transaction.realizedPercent)
     ))
@@ -165,12 +165,12 @@ export const TransactionCard = GObject.registerClass({
       vertical: true
     })
 
-    rightDetailBox.add(this._createDetailItem(
+    rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TOTAL),
         this._createDetailItemValueForChange(transaction.total, quoteSummary.CurrencySymbol, transaction.totalPercent)
     ))
 
-    rightDetailBox.add(this._createDetailItem(
+    rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.COST),
         this._createDetailItemValue(`${roundOrDefault(transaction.cost, '--')} ${quoteSummary.CurrencySymbol}`)
     ))
@@ -196,6 +196,7 @@ export const TransactionCard = GObject.registerClass({
       style_class: 'detail-item-label-bin',
       x_expand: true,
       y_expand: false,
+      x_align: Clutter.ActorAlign.START,
       child: new St.Label({ style_class: 'detail-item-label', text })
     })
 
@@ -207,6 +208,7 @@ export const TransactionCard = GObject.registerClass({
       style_class: 'detail-item-value-bin',
       x_expand: true,
       y_expand: false,
+      x_align: Clutter.ActorAlign.END,
       child: new St.Label({ style_class: `detail-item-value tar ${additionalStyleClass || ''}`, text: text.toString() })
     })
 
