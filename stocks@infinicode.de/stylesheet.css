@@ -45,6 +45,12 @@
     max-height: 630px;
 }
 
+/* make position consistent to panel icon */
+.stocks-extension .menu-stock-ticker {
+    max-width: 200px;
+    width: 200px;
+}
+
 .stocks-extension .menu-stock-ticker .stock-info-box,
 .stocks-extension .menu-stock-ticker .stock-quote-box {
     font-size: 1em;
@@ -82,7 +88,7 @@
 }
 
 .stocks-extension .search-bar .search-area-box StEntry {
-    width: 400px;
+    width: 300px;
 }
 
 .stocks-extension .search-bar .search-area-box .navigate-back-icon-button {

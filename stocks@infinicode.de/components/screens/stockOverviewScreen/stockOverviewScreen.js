@@ -39,7 +39,7 @@ export const StockOverviewScreen = GObject.registerClass({
 
     this._searchBar = new SearchBar({ mainEventHandler: this._mainEventHandler })
     this._portfolioGroup = new ButtonGroup({ buttons: [], y_expand: false })
-    this._list = new FlatList({ id: 'stock_overview', persistScrollPosition: true })
+    this._list = new FlatList({ id: 'stock_overview', persistScrollPosition: false })
 
     this.add_child(this._searchBar)
     this.add_child(this._portfolioGroup)
