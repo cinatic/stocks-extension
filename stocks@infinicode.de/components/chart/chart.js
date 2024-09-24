@@ -1,4 +1,4 @@
-import Clutter from 'gi://Clutter'
+import Cogl from 'gi://Cogl'
 import GObject from 'gi://GObject'
 import St from 'gi://St'
 
@@ -60,7 +60,7 @@ export const Chart = GObject.registerClass({
     const fgColor = themeNode.get_foreground_color()
 
     const newColorString = getComplementaryColor(fgColor.to_string().slice(1, 7), false)
-    const secondaryColor = Clutter.Color.from_string(`${newColorString}ff`)[1]
+    const secondaryColor = Cogl.Color.from_string(`${newColorString}ff`)[1]
 
     const baseParams = {
       cairoContext,
@@ -190,7 +190,7 @@ export const Chart = GObject.registerClass({
         y1,
         y2,
         cairoContext,
-        color: Clutter.Color.from_string('#ff0000ff')[1],
+        color: Cogl.Color.from_string('#ff0000ff')[1],
         lineWidth: 1.5
       })
     })
