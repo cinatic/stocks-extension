@@ -20,6 +20,8 @@ export const ButtonGroup = GObject.registerClass({
 
     if (!enableScrollbar) {
       this.set_policy(St.PolicyType.NEVER, St.PolicyType.NEVER)
+    } else {
+      this.set_policy(St.PolicyType.AUTOMATIC, St.PolicyType.AUTOMATIC)
     }
 
     // this.set_overlay_scrollbars(true)
