@@ -7,7 +7,8 @@
   "gettext-domain": "stocks@infinicode.de",
   "shell-version": [
     "46",
-    "47"
+    "47",
+    "48"
   ],
   "url": "https://github.com/cinatic/stocks-extension",
   "uuid": "stocks@infinicode.de",
