@@ -4,6 +4,16 @@
 
 A extension to display stock quotes in GNOME Shell Panel
 
+> **⚠️  Status**
+>  
+> **This project is unmaintained.**  
+>
+> I do not plan to continue active development. Thanks to everyone who contributed to this project.
+>  
+> Forks for independent continuation are welcome.
+>
+> Thank you for your attention to this matter
+
 <p align="middle">
     <img alt="projects" src="images/overview.png" width="700">
 </p>
